@@ -16,8 +16,6 @@ class Material {
 
     loadShader(gl) {
         initShaders(gl, this.vertexShaderSource, this.fragmentShaderSource);
-        // for the future, add parameters to the shader
-        currentlyLoadedMaterial = this;
     }
 }
 

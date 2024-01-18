@@ -232,7 +232,7 @@ class MeshRegistry {
         }
 
         let mesh = new Mesh(vertices, normals, indices);
-        mesh.print();
+        // mesh.print();
         return mesh;
     }
 }

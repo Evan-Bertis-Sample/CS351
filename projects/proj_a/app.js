@@ -52,10 +52,10 @@ async function main() {
 
 	buildScene();
 	loadMeshes();
+	drawAll();
 	
 	var tick = function () {
 		requestAnimationFrame(tick, g_canvasID);
-		drawAll();
 		timerAll();
 	};
 
@@ -69,7 +69,7 @@ function buildScene()
 	cube = createObject(
 		meshName = "cube",
 		materialName = "base",
-		position = new Vector3(0, 0, 0),
+		position = new Vector3([0, 0, -5]),
 	)
 	g_sceneGraph.addObject(cube);
 
@@ -142,7 +142,7 @@ function drawAll()
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 	// Draw the scene graph
-	// g_sceneGraph.draw();
+	g_sceneGraph.traverse(drawNode);
 }
 
 function drawNode(node, modelMatrix)
@@ -170,12 +170,9 @@ function drawNode(node, modelMatrix)
 		return;
 	}	
 
-	// get the material
-	material = g_materialRegistry.getMaterial(node.renderInfo.material);
-
+	modelMatrix.printMe();
 	// load the material
-	material.load();
-
+	g_materialRegistry.setMaterial(node.renderInfo.material, gl);
 	// draw the mesh
 	mesh.draw(gl);
 

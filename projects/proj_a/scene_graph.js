@@ -29,9 +29,19 @@ class Transform {
 
     // Returns the model matrix for this transform
     getLocalModelMatrix() {
-        let rotationMatrix = new Matrix4().setFromQuat(this.rotation);
-        let scaleMatrix = new Matrix4().setScale(this.scale);
-        let translationMatrix = new Matrix4().setTranslate(this.position);
+        // console.log("Local Model Matrix:");
+        this.rotation.normalize();
+        let rotationMatrix = new Matrix4().setFromQuat(this.rotation.x, this.rotation.y, this.rotation.z, this.rotation.w);
+        // console.log("Rotation Matrix:");
+        // rotationMatrix.printMe();
+
+        let scaleMatrix = new Matrix4().setScale(this.scale.elements[0], this.scale.elements[1], this.scale.elements[2]);
+        // console.log("Scale Matrix:");
+        // scaleMatrix.printMe();
+
+        let translationMatrix = new Matrix4().setTranslate(this.position.elements[0], this.position.elements[1], this.position.elements[2]);
+        // console.log("Translation Matrix:");
+        // translationMatrix.printMe();
 
         // scale, then rotate, then translate
         return translationMatrix.multiply(rotationMatrix.multiply(scaleMatrix));
@@ -201,6 +211,8 @@ class SceneGraph {
     _traverseHelper(node, callback, parentModelMatrix) {
         let localModelMatrix = node.transform.getLocalModelMatrix();
         let modelMatrix = parentModelMatrix.multiply(localModelMatrix);
+        // console.log("Node: " + node.renderInfo.mesh);
+        // modelMatrix.printMe();
         callback(node, modelMatrix);
         for (var i = 0; i < node.children.length; i++) {
             this._traverseHelper(node.children[i], callback, modelMatrix);
