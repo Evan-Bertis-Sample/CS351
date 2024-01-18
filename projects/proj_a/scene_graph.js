@@ -271,7 +271,8 @@ class SceneGraph {
     // Sets the position of the camera
     // position: a Vector3 representing the position of the camera
     setCameraPosition(position) {
-        this.camera.transform.position = position;
+        // reverse the position
+        this.camera.transform.position = new Vector3([-position.elements[0], -position.elements[1], -position.elements[2]]);
     }
 
     // Sets the rotation of the camera
@@ -300,8 +301,6 @@ class SceneGraph {
     setCameraRotationFromAxisAngle(axis, angle) {
         this.camera.transform.setRotationFromAxisAngle(axis, angle);
     }
-
-    //
 }
 
 // Some helper functions for the scene graph

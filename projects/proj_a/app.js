@@ -17,9 +17,14 @@ var g_meshRegistry; // The mesh registry for the application
 
 // These buffers aren't actually sent to the GPU
 // Rather, they are used to store the vertices, normals, and indices, then used create the buffers
-var g_vertexBuffer = []; // The vertex buffer for the application
-var g_normalBuffer = []; // The normal buffer for the application
-var g_indexBuffer = []; // The index buffer for the application
+var g_vertexArray = []; // The vertex buffer for the application
+var g_normalArray = []; // The normal buffer for the application
+var g_indexArray = []; // The index buffer for the application
+
+// These buffers are sent to the GPU
+var g_vertexBuffer; // The vertex buffer for the application
+var g_normalBuffer; // The normal buffer for the application
+var g_indexBuffer; // The index buffer for the application
 
 
 
@@ -74,6 +79,8 @@ function buildScene()
 	g_sceneGraph.addObject(cube);
 
 	console.log("Built scene graph");
+
+	g_sceneGraph.setCameraPosition(new Vector3([1, 1, 0]));
 	g_sceneGraph.print();
 }
 
@@ -84,21 +91,23 @@ function loadMeshes()
 
 	// now create the buffers that we will send to the GPU
 	// create the vertex buffer
-	let vertexArray = vec4ArrayToFloat32Array(g_vertexBuffer);
-	let vertexBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+	let vertexArray = vec4ArrayToFloat32Array(g_vertexArray);
+	g_vertexBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, g_vertexBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, vertexArray, gl.STATIC_DRAW);
 	// create the normal buffer
-	let normalArray = vec4ArrayToFloat32Array(g_normalBuffer);
-	let normalBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, normalArray, gl.STATIC_DRAW);
+	// let normalArray = vec4ArrayToFloat32Array(g_normalArray);
+	// g_normalBuffer = gl.createBuffer();
+	// gl.bindBuffer(gl.ARRAY_BUFFER, g_normalBuffer);
+	// gl.bufferData(gl.ARRAY_BUFFER, normalArray, gl.STATIC_DRAW);
 
 	// create the index buffer
-	let indexArray = new Uint16Array(g_indexBuffer);
-	let indexBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+	let indexArray = new Uint16Array(g_indexArray);
+	g_indexBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, g_indexBuffer);
 	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indexArray, gl.STATIC_DRAW);
+
+
 }
 
 function vec4ArrayToFloat32Array(vecArray)
@@ -128,7 +137,7 @@ function loadMeshHelper(node, modelMatrix)
 	}
 
 	// load the mesh
-	mesh.loadObject(g_vertexBuffer, g_normalBuffer, g_indexBuffer);
+	mesh.loadObject(g_vertexArray, g_normalArray, g_indexArray);
 }
 
 function timerAll() 

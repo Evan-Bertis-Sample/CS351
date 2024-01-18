@@ -15,7 +15,24 @@ class Material {
     }
 
     loadShader(gl) {
+        console.log("Loading shader: " + this.name);
         initShaders(gl, this.vertexShaderSource, this.fragmentShaderSource);
+        // set the attributes
+        var a_position = gl.getAttribLocation(gl.program, 'a_position');
+        if (a_position < 0) {
+            console.log('Failed to get the storage location of a_Position');
+            return;
+        }
+
+        // var a_normal = gl.getAttribLocation(gl.program, 'a_normal');
+        // if (a_normal < 0) {
+        //     console.log('Failed to get the storage location of a_normal');
+        //     return;
+        // }
+
+        // set the vertex attribute pointer
+        gl.vertexAttribPointer(a_position, 4, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(a_position);
     }
 }
 
