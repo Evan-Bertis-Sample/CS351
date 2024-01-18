@@ -91,18 +91,17 @@ class Mesh {
         this.vertexStartIndex = vertexBuffer.length;
         this.normalStartIndex = normalBuffer.length;
         for (var i = 0; i < this.vertices.length; i++) {
-            vertexBuffer.push(
-                new Vector4(this.vertices[i].elements[0], 
-                            this.vertices[i].elements[1], 
-                            this.vertices[i].elements[2], 
-                            1)
-            );
+            let posVec = new Vector4([this.vertices[i].elements[0],
+                                      this.vertices[i].elements[1],
+                                      this.vertices[i].elements[2],
+                                      1]);
+            vertexBuffer.push(posVec);
         }
 
         // TODO: fix this
         for (var i = 0; i < this.vertices.length; i++) {
             normalBuffer.push(
-                new Vector4(1, 0, 0, 0)
+                new Vector4([1, 0, 0, 0])
             );
         }
 
@@ -121,6 +120,8 @@ class Mesh {
             return;
         }
 
+        console.log("Drawing mesh");
+        console.log("Vertex index range: " + this.vertexStartIndex + " - " + (this.vertexStartIndex + this.vertices.length));
         // draw the mesh
         gl.drawArrays(gl.TRIANGLES, this.vertexStartIndex, this.vertices.length);
     }

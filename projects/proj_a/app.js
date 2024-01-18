@@ -80,7 +80,7 @@ function buildScene()
 
 	console.log("Built scene graph");
 
-	g_sceneGraph.setCameraPosition(new Vector3([1, 1, 0]));
+	// g_sceneGraph.setCameraPosition(new Vector3([1, 1, 0]));
 	g_sceneGraph.print();
 }
 
@@ -88,7 +88,6 @@ function loadMeshes()
 {
 	// load the meshes into the buffers
 	g_sceneGraph.traverse(loadMeshHelper);
-
 	// now create the buffers that we will send to the GPU
 	// create the vertex buffer
 	let vertexArray = vec4ArrayToFloat32Array(g_vertexArray);
@@ -102,10 +101,10 @@ function loadMeshes()
 	// gl.bufferData(gl.ARRAY_BUFFER, normalArray, gl.STATIC_DRAW);
 
 	// create the index buffer
-	let indexArray = new Uint16Array(g_indexArray);
-	g_indexBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, g_indexBuffer);
-	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indexArray, gl.STATIC_DRAW);
+	// let indexArray = new Uint16Array(g_indexArray);
+	// g_indexBuffer = gl.createBuffer();
+	// gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, g_indexBuffer);
+	// gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indexArray, gl.STATIC_DRAW);
 
 
 }
