@@ -181,7 +181,13 @@ function drawNode(node, modelMatrix)
 
 	modelMatrix.printMe();
 	// load the material
+	let materialObject = g_materialRegistry.getMaterial(node.renderInfo.material);
+	if (materialObject == null) {
+		console.log("Material is null");
+		return;
+	}
 	g_materialRegistry.setMaterial(node.renderInfo.material, gl);
+	gl.uniformMatrix4fv(materialObject.uloc_modelMatrix, false, modelMatrix.elements);
 	// draw the mesh
 	mesh.draw(gl);
 

@@ -7,7 +7,6 @@ class Material {
         this.name = name;
         this.vertexShaderSource = vertexShaderSource;
         this.fragmentShaderSource = fragmentShaderSource;
-        
         // stores the parameters for the shader
         // key: parameter name
         // value: (parameter value, parameter size)
@@ -33,6 +32,13 @@ class Material {
         // set the vertex attribute pointer
         gl.vertexAttribPointer(a_position, 4, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(a_position);
+
+        // get location of the uniform variables
+        this.uloc_modelMatrix = gl.getUniformLocation(gl.program, 'u_modelMatrix');
+        if (!this.uloc_modelMatrix) {
+            console.log('Failed to get the storage location of u_modelMatrix');
+            return;
+        }
     }
 }
 
