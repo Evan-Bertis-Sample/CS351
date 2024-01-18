@@ -122,7 +122,7 @@ class Mesh {
         }
 
         // draw the mesh
-        gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, this.indexStartIndex * 2);
+        gl.drawArrays(gl.TRIANGLES, this.vertexStartIndex, this.vertices.length);
     }
 
 }
