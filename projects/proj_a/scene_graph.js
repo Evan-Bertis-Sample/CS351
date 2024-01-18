@@ -173,6 +173,8 @@ class SceneNode {
         child.parent = null;
     }
 
+    // please please please
+
     // Returns the model matrix for this SceneNode
     // Note : This is a decently expensive operation, so use sparingly, especially if the scene graph is large
     // It is best to traverse the scene graph and use the model matrix of the node you are currently on
