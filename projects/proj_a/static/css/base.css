@@ -1,0 +1,109 @@
+:root {
+    font-size: 16px;
+    font-family: 'Open Sans';
+    --light-primary: #F1F7ED;
+    --light-secondary: #E0EEC6;
+    --dark-primary: #243E36;
+    --dark-secondary: #496F4D;
+    --accent: #eca148;
+    --accent-soft: #a1be8d;
+    --shadow-color: #00000033;
+    --navbar-width: 5rem;
+    --notion-content-width: 60%;
+}
+
+body {
+    color: var(--dark-primary);
+    background-color: var(--light-primary);
+    margin: 0;
+    padding: 0;
+}
+
+.body-container {
+    box-sizing: border-box;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 2rem 10rem;
+    display: flex; 
+    flex-direction: column;
+    gap: 0.5rem;
+    overflow-x: hidden;
+}
+
+canvas {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    height: auto;
+    max-height: 70vh;
+    aspect-ratio: 16/9;
+    object-fit: contain;
+    overflow: hidden;
+}
+
+.button {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--light-primary);
+    border: var(--light-primary);
+    border-radius: 1rem;
+    padding: 0.5rem 1.5rem;
+    margin: 0.25rem;
+    background-color: var(--dark-primary);
+    transition: 0.2s ease-in-out;
+}
+
+.button:hover {
+    background-color: var(--dark-secondary);
+    border: var(--dark-secondary);
+    cursor: pointer;
+}
+
+hr {
+    /* just a line of background color */
+    border: none;
+    height: 2px;
+    background-color: var(--accent-soft);
+    margin: 1.5rem 0rem;
+    padding: 0;
+
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+}
+
+h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+}
+
+h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+}
+
+h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    color: var(--dark-secondary);
+    font-weight: 600; 
+    transition: 0.25s ease-in-out;
+}
+
+a:hover {
+    color: var(--accent-soft);
+}
