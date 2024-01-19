@@ -142,7 +142,7 @@ class MaterialRegistry {
             return;
         }
         console.log("Passing uniforms for material: " + this.currentlyLoadedMaterial)
-        modelMatrix.printMe();
+        // modelMatrix.printMe();
 
         // pass the model matrix
         gl.uniformMatrix4fv(material.uLoc_modelMatrix, false, modelMatrix.elements);

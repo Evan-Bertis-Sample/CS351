@@ -88,27 +88,51 @@ class Mesh {
             return;
         }
 
-        // append the vertices, normals, and indices to the buffers
+        // // append the vertices, normals, and indices to the buffers
+        // this.vertexStartIndex = vertexBuffer.length;
+        // this.normalStartIndex = normalBuffer.length;
+        // for (var i = 0; i < this.vertices.length; i++) {
+        //     let posVec = new Vector4([this.vertices[i].elements[0],
+        //                               this.vertices[i].elements[1],
+        //                               this.vertices[i].elements[2],
+        //                               1]);
+        //     vertexBuffer.push(posVec);
+        // }
+
+        // // TODO: fix this
+        // for (var i = 0; i < this.vertices.length; i++) {
+        //     normalBuffer.push(
+        //         new Vector4([1, 0, 0, 0])
+        //     );
+        // }
+
+        // this.indexStartIndex = indexBuffer.length;
+        // for (var i = 0; i < this.indices.length; i++) {
+        //     indexBuffer.push(this.indices[i] + this.vertexStartIndex);
+        // }
+
         this.vertexStartIndex = vertexBuffer.length;
-        this.normalStartIndex = normalBuffer.length;
-        for (var i = 0; i < this.vertices.length; i++) {
-            let posVec = new Vector4([this.vertices[i].elements[0],
-                                      this.vertices[i].elements[1],
-                                      this.vertices[i].elements[2],
+
+        for (var i = 0; i < this.indices.length; i++) {
+            let vertexIndex = this.indices[i];
+            let normalIndex = this.indices[i];
+            let vertex = this.vertices[vertexIndex];
+
+            let posVec = new Vector4([vertex.elements[0],
+                                      vertex.elements[1],
+                                      vertex.elements[2],
                                       1]);
             vertexBuffer.push(posVec);
-        }
 
-        // TODO: fix this
-        for (var i = 0; i < this.vertices.length; i++) {
-            normalBuffer.push(
-                new Vector4([1, 0, 0, 0])
-            );
-        }
+            // let normal = this.normals[normalIndex];
+            // normalBuffer.push(
+            //     new Vector4([normal.elements[0],
+            //                  normal.elements[1],
+            //                  normal.elements[2],
+            //                  0])
+            // );
 
-        this.indexStartIndex = indexBuffer.length;
-        for (var i = 0; i < this.indices.length; i++) {
-            indexBuffer.push(this.indices[i] + this.vertexStartIndex);
+            // indexBuffer.push(vertexBuffer.length - 1);
         }
     }
 
@@ -121,11 +145,13 @@ class Mesh {
             return;
         }
 
-        console.log("Drawing mesh");
-        console.log("Vertex index range: " + this.vertexStartIndex + " - " + (this.vertexStartIndex + this.vertices.length));
+        // console.log("Drawing mesh");
+        let vertexCount = this.indices.length;
+        // console.log("Vertex index range: " + this.vertexStartIndex + " - " + (this.vertexStartIndex + vertexCount));
         // draw the mesh
-        gl.drawArrays(gl.LINE_LOOP, this.vertexStartIndex, this.vertices.length);
-        gl.drawArrays(gl.POINTS, this.vertexStartIndex, this.vertices.length);
+        // gl.drawArrays(gl.LINE_LOOP, this.vertexStartIndex, vertexCount);
+        // gl.drawArrays(gl.POINTS, this.vertexStartIndex, vertexCount);
+        gl.drawArrays(gl.TRIANGLES, this.vertexStartIndex, vertexCount);
     }
 
 }

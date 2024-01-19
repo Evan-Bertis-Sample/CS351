@@ -9,5 +9,12 @@ uniform mat4 u_modelMatrix;
 // main
 void main()
 {
-    gl_Position = u_modelMatrix * a_position;
+    // Transform the vertex position into screen space
+    vec4 screenPos = u_modelMatrix * a_position;
+    screenPos = screenPos / screenPos.w;
+
+    // now convert it into texture space
+    screenPos = screenPos * 0.5 + 0.5;
+    
+    gl_Position = screenPos;
 }

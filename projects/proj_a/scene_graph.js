@@ -193,6 +193,8 @@ class SceneGraph {
     constructor() {
         this.root = new SceneNode(null, new Transform());
         this.camera = this.root.addChild(new SceneNode(null, new Transform()));
+        this.projectionMatrix = new Matrix4();
+        this.projectionMatrix.setPerspective(30, 1, 1, 100);
     }
 
     // Traverses the scene graph

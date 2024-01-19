@@ -27,6 +27,8 @@ var g_normalBuffer; // The normal buffer for the application
 var g_indexBuffer; // The index buffer for the application
 
 
+// controls
+var g_cameraPosition = new Vector3([0, 0, 0]);
 
 // Configuration
 var materialDirectories = ["./static/materials/base"];
@@ -55,27 +57,61 @@ async function main() {
 	// Specify the color for clearing <canvas>
 	gl.clearColor(1, 1, 1, 1);
 
+	// Enable the depth test
+	gl.enable(gl.DEPTH_TEST);
+
+	// Clear the color buffer bit
+	gl.clear(gl.COLOR_BUFFER_BIT);
+
+	// Set the view port
+	gl.viewport(0, 0, g_canvasID.width, g_canvasID.height);
+
 	buildScene();
+	addEventListeners();
 	loadMeshes();
 	drawAll();
-	
+
 	var tick = function () {
 		requestAnimationFrame(tick, g_canvasID);
-		// drawAll();
-		timerAll();
+		drawAll();
+		update();
 	};
 
 	tick();
 }
 
+function addEventListeners() {
+	document.addEventListener('keydown', keyDownHandler);
+}
+
+function keyDownHandler(event) {
+	if (event.key == "ArrowUp") {
+		g_cameraPosition.elements[2] += 0.1;
+	}
+	if (event.key == "ArrowDown") {
+		g_cameraPosition.elements[2] -= 0.1;
+	}
+	if (event.key == "ArrowLeft") {
+		g_cameraPosition.elements[0] -= 0.1;
+	}
+	if (event.key == "ArrowRight") {
+		g_cameraPosition.elements[0] += 0.1;
+	}
+	if (event.key == "w") {
+		g_cameraPosition.elements[1] += 0.1;
+	}
+	if (event.key == "s") {
+		g_cameraPosition.elements[1] -= 0.1;
+	}
+}
+
 // builds the initial scene graph
-function buildScene()
-{
+function buildScene() {
 	g_sceneGraph = new SceneGraph();
 	cube = createObject(
 		meshName = "cube",
 		materialName = "base",
-		position = new Vector3([0, 0, -1]),
+		position = g_cameraPosition,
 	)
 	g_sceneGraph.addObject(cube);
 
@@ -85,8 +121,7 @@ function buildScene()
 	g_sceneGraph.print();
 }
 
-function loadMeshes()
-{
+function loadMeshes() {
 	// load the meshes into the buffers
 	g_sceneGraph.traverse(loadMeshHelper);
 	// now create the buffers that we will send to the GPU
@@ -95,6 +130,7 @@ function loadMeshes()
 	g_vertexBufferID = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, g_vertexBufferID);
 	gl.bufferData(gl.ARRAY_BUFFER, vertexArray, gl.STATIC_DRAW);
+
 	// create the normal buffer
 	// let normalArray = vec4ArrayToFloat32Array(g_normalArray);
 	// g_normalBuffer = gl.createBuffer();
@@ -108,8 +144,7 @@ function loadMeshes()
 	// gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indexArray, gl.STATIC_DRAW);
 }
 
-function vec4ArrayToFloat32Array(vecArray)
-{
+function vec4ArrayToFloat32Array(vecArray) {
 	let floatArray = new Float32Array(vecArray.length * 4);
 	for (let i = 0; i < vecArray.length; i++) {
 		floatArray[i * 3] = vecArray[i].elements[0];
@@ -120,8 +155,7 @@ function vec4ArrayToFloat32Array(vecArray)
 	return floatArray;
 }
 
-function loadMeshHelper(node, modelMatrix)
-{
+function loadMeshHelper(node, modelMatrix) {
 	if (node.renderInfo.mesh == "") {
 		console.log("Skipping node with no mesh");
 		return;
@@ -138,13 +172,7 @@ function loadMeshHelper(node, modelMatrix)
 	mesh.loadObject(g_vertexArray, g_normalArray, g_indexArray);
 }
 
-function timerAll() 
-{
-
-}
-
-function drawAll()
-{
+function drawAll() {
 	// Clear <canvas>
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -152,32 +180,31 @@ function drawAll()
 	g_sceneGraph.traverse(drawNode);
 }
 
-function drawNode(node, modelMatrix)
-{
+function drawNode(node, modelMatrix) {
 	// draw the node
 	// get the mesh and material from the node
 	// get the model matrix from the node
 	// draw the mesh with the material and model matrix
 	let mesh = node.renderInfo.mesh;
 	if (mesh == "") {
-		console.log("Mesh is null");
+		// console.log("Mesh is null");
 		return;
 	}
 
 	let material = node.renderInfo.material;
 	if (material == "") {
-		console.log("Material is null");
+		// console.log("Material is null");
 		return;
 	}
 
 	// get the mesh
 	mesh = g_meshRegistry.getMesh(node.renderInfo.mesh);
 	if (mesh == null) {
-		console.log("Mesh is null");
+		// console.log("Mesh is null");
 		return;
-	}	
+	}
 
-	modelMatrix.printMe();
+	// modelMatrix.printMe();
 	// load the material
 	let materialObject = g_materialRegistry.getMaterial(node.renderInfo.material);
 	if (materialObject == null) {
@@ -185,9 +212,16 @@ function drawNode(node, modelMatrix)
 		return;
 	}
 	g_materialRegistry.setMaterial(node.renderInfo.material, gl);
-	g_materialRegistry.passUniforms(gl, modelMatrix);
-	gl.uniformMatrix4fv(materialObject.uloc_modelMatrix, false, modelMatrix.elements);
+
+	let projectionMatrix = g_sceneGraph.projectionMatrix;
+	let finalMatrix = projectionMatrix.multiply(modelMatrix);
+	g_materialRegistry.passUniforms(gl, finalMatrix);
 	// draw the mesh
 	mesh.draw(gl);
 
+}
+
+function update() {
+	g_cameraPosition.printMe();
+	g_sceneGraph.setCameraPosition(g_cameraPosition);
 }
