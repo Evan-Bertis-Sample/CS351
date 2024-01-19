@@ -17,8 +17,8 @@ class Material {
         console.log("Loading shader: " + this.name);
         initShaders(gl, this.vertexShaderSource, this.fragmentShaderSource);
         // set the attributes
-        var a_position = gl.getAttribLocation(gl.program, 'a_position');
-        if (a_position < 0) {
+        var aLoc_position = gl.getAttribLocation(gl.program, 'a_position');
+        if (aLoc_position < 0) {
             console.log('Failed to get the storage location of a_Position');
             return;
         }
@@ -30,12 +30,12 @@ class Material {
         // }
 
         // set the vertex attribute pointer
-        gl.vertexAttribPointer(a_position, 4, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(a_position);
+        gl.vertexAttribPointer(aLoc_position, 4, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(aLoc_position);
 
         // get location of the uniform variables
-        this.uloc_modelMatrix = gl.getUniformLocation(gl.program, 'u_modelMatrix');
-        if (!this.uloc_modelMatrix) {
+        this.uLoc_modelMatrix = gl.getUniformLocation(gl.program, 'u_modelMatrix');
+        if (this.uLoc_modelMatrix < 0) {
             console.log('Failed to get the storage location of u_modelMatrix');
             return;
         }
@@ -126,5 +126,25 @@ class MaterialRegistry {
         this.currentlyLoadedMaterial = name;
         let material = this.getMaterial(name);
         material.loadShader(gl);
+    }
+
+    // sets the material parameters for the next object
+    // these are all the uniforms that any material should have
+    passUniforms(gl, modelMatrix) {
+        let material = this.getMaterial(this.currentlyLoadedMaterial);
+        if (material == null) {
+            console.log("Can't pass uniforms, material is null");
+            return;
+        }
+        if (material.uLoc_modelMatrix < 0)
+        {
+            console.log("Material Model Matrix is null");
+            return;
+        }
+        console.log("Passing uniforms for material: " + this.currentlyLoadedMaterial)
+        modelMatrix.printMe();
+
+        // pass the model matrix
+        gl.uniformMatrix4fv(material.uLoc_modelMatrix, false, modelMatrix.elements);
     }
 }

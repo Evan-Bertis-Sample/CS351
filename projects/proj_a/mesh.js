@@ -84,6 +84,7 @@ class Mesh {
     {
         if (this.vertexStartIndex != -1) {
             // already loaded
+            console.log("Mesh already loaded");
             return;
         }
 
@@ -123,7 +124,8 @@ class Mesh {
         console.log("Drawing mesh");
         console.log("Vertex index range: " + this.vertexStartIndex + " - " + (this.vertexStartIndex + this.vertices.length));
         // draw the mesh
-        gl.drawArrays(gl.TRIANGLES, this.vertexStartIndex, this.vertices.length);
+        gl.drawArrays(gl.LINE_LOOP, this.vertexStartIndex, this.vertices.length);
+        gl.drawArrays(gl.POINTS, this.vertexStartIndex, this.vertices.length);
     }
 
 }

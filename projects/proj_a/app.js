@@ -22,7 +22,7 @@ var g_normalArray = []; // The normal buffer for the application
 var g_indexArray = []; // The index buffer for the application
 
 // These buffers are sent to the GPU
-var g_vertexBuffer; // The vertex buffer for the application
+var g_vertexBufferID; // The vertex buffer for the application
 var g_normalBuffer; // The normal buffer for the application
 var g_indexBuffer; // The index buffer for the application
 
@@ -61,6 +61,7 @@ async function main() {
 	
 	var tick = function () {
 		requestAnimationFrame(tick, g_canvasID);
+		// drawAll();
 		timerAll();
 	};
 
@@ -74,7 +75,7 @@ function buildScene()
 	cube = createObject(
 		meshName = "cube",
 		materialName = "base",
-		position = new Vector3([0, 0, -5]),
+		position = new Vector3([0, 0, -1]),
 	)
 	g_sceneGraph.addObject(cube);
 
@@ -91,8 +92,8 @@ function loadMeshes()
 	// now create the buffers that we will send to the GPU
 	// create the vertex buffer
 	let vertexArray = vec4ArrayToFloat32Array(g_vertexArray);
-	g_vertexBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, g_vertexBuffer);
+	g_vertexBufferID = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, g_vertexBufferID);
 	gl.bufferData(gl.ARRAY_BUFFER, vertexArray, gl.STATIC_DRAW);
 	// create the normal buffer
 	// let normalArray = vec4ArrayToFloat32Array(g_normalArray);
@@ -105,8 +106,6 @@ function loadMeshes()
 	// g_indexBuffer = gl.createBuffer();
 	// gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, g_indexBuffer);
 	// gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indexArray, gl.STATIC_DRAW);
-
-
 }
 
 function vec4ArrayToFloat32Array(vecArray)
@@ -186,6 +185,7 @@ function drawNode(node, modelMatrix)
 		return;
 	}
 	g_materialRegistry.setMaterial(node.renderInfo.material, gl);
+	g_materialRegistry.passUniforms(gl, modelMatrix);
 	gl.uniformMatrix4fv(materialObject.uloc_modelMatrix, false, modelMatrix.elements);
 	// draw the mesh
 	mesh.draw(gl);
