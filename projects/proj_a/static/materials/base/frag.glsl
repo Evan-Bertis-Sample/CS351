@@ -3,9 +3,9 @@ precision mediump float;
 
 // constants
 const vec4 lightingDirection = vec4(1.0, 1.0, 1.0, 0.0);
-const vec4 ambientLight = vec4(0.2, 0.2, 0.2, 1.0);
+const vec4 ambientLight = vec4(0.2, 0.1, 0.2, 1.0);
 const vec4 lightColor = vec4(1.0, 1.0, 1.0, 1.0);
-const vec4 objectColor = vec4(1.0, 0.0, 0.0, 1.0);
+const vec4 objectColor = vec4(0.8, 0.0, 0.8, 1.0);
 
 // varying variables -- passed from vertex shader
 varying vec4 v_position;

@@ -30,11 +30,14 @@ var c_VIEWPORT_WIDTH = 480;
 var c_VIEWPORT_HEIGHT = 270;
 
 // controls
-var g_cameraPosition = new Vector3([0, -1, -10]);
+var g_cameraPosition = new Vector3([0, 0, 10]);
 
 // Configuration
 var materialDirectories = ["./static/materials/base"];
-var meshes = ["./static/meshes/cube.obj"];
+var meshes = [
+	"./static/meshes/cube.obj",
+	"./static/meshes/sphere.obj",
+];
 
 
 async function main() {
@@ -75,12 +78,13 @@ async function main() {
 	buildScene();
 	addEventListeners();
 	loadMeshes();
+	update();
 	drawAll();
 
 	var tick = function () {
 		requestAnimationFrame(tick, g_canvasID);
-		// drawAll();
-		// update();
+		drawAll();
+		update();
 	};
 
 	tick();
@@ -92,10 +96,10 @@ function addEventListeners() {
 
 function keyDownHandler(event) {
 	if (event.key == "ArrowUp") {
-		g_cameraPosition.elements[2] += 0.1;
+		g_cameraPosition.elements[2] -= 0.1;
 	}
 	if (event.key == "ArrowDown") {
-		g_cameraPosition.elements[2] -= 0.1;
+		g_cameraPosition.elements[2] += 0.1;
 	}
 	if (event.key == "ArrowLeft") {
 		g_cameraPosition.elements[0] -= 0.1;
@@ -117,10 +121,10 @@ function buildScene() {
 	cube = createObject(
 		meshName = "cube",
 		materialName = "base",
-		position = g_cameraPosition,
+		position = new Vector3([0, 0, 5]),
 	)
 	g_sceneGraph.addObject(cube);
-
+	g_sceneGraph.setCameraPosition(g_cameraPosition)
 	console.log("Built scene graph");
 
 	// g_sceneGraph.setCameraPosition(new Vector3([1, 1, 0]));
