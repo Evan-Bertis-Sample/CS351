@@ -32,8 +32,8 @@ class Transform {
         // console.log("Local Model Matrix:");
         this.rotation.normalize();
         let rotationMatrix = new Matrix4().setFromQuat(this.rotation.x, this.rotation.y, this.rotation.z, this.rotation.w);
-        console.log("Rotation Matrix:");
-        rotationMatrix.printMe();
+        // console.log("Rotation Matrix:");
+        // rotationMatrix.printMe();
 
         let scaleMatrix = new Matrix4().setScale(this.scale.elements[0], this.scale.elements[1], this.scale.elements[2]);
         // console.log("Scale Matrix:");
@@ -282,7 +282,6 @@ class SceneGraph {
     // Sets the rotation of the camera
     // rotation: a Quaternion representing the rotation of the camera
     setCameraRotation(rotation) {
-        console.log("Setting camera rotation");
         rotation.printMe();
         this.camera.transform.rotation = rotation;
     }
