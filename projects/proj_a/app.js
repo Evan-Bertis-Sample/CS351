@@ -26,12 +26,12 @@ var g_vertexBufferID; // The vertex buffer for the application
 var g_normalBuffer; // The normal buffer for the application
 
 // Constants
-var c_VIEWPORT_WIDTH = 480;
-var c_VIEWPORT_HEIGHT = 270;
+var c_VIEWPORT_WIDTH = 400;
+var c_VIEWPORT_HEIGHT = 400;
 var c_MOVE_SPEED = 0.5;
 
 // controls
-var g_cameraPosition = new Vector3([1, 5, 30]);
+var g_cameraPosition = new Vector3([0, 0, 30]);
 
 // Configuration
 var materialDirectories = ["./static/materials/base"];
@@ -49,6 +49,7 @@ async function main() {
 	// set the viewport to be sized correctly
 	g_canvasID.width = c_VIEWPORT_WIDTH;
 	g_canvasID.height = c_VIEWPORT_HEIGHT;
+	gl.viewport(0, 0, g_canvasID.width, g_canvasID.height);
 
 	// Handle failures
 	if (!gl) {
@@ -72,9 +73,6 @@ async function main() {
 
 	// Clear the color buffer bit
 	gl.clear(gl.COLOR_BUFFER_BIT);
-
-	// Set the view port
-	gl.viewport(0, 0, g_canvasID.width, g_canvasID.height);
 
 	buildScene();
 	addEventListeners();
@@ -119,10 +117,13 @@ function keyDownHandler(event) {
 // builds the initial scene graph
 function buildScene() {
 	g_sceneGraph = new SceneGraph();
+	let cubeRotation = new Quaternion().setFromAxisAngle(1, 1, 0, 45);
+	cubeRotation.printMe();
 	cube = createObject(
 		meshName = "cube",
 		materialName = "base",
-		position = new Vector3([0, 0, 5]),
+		position = new Vector3([0, 0, 0]),
+		rotation = cubeRotation
 	)
 	sphere = createObject(
 		meshName = "sphere",
@@ -180,7 +181,8 @@ function loadMeshes() {
 		interleavedArray.push(g_normalArray[i].elements[3]);
 	}
 
-	let vertexArray = vec4ArrayToFloat32Array(g_vertexArray);
+	// let vertexArray = vec4ArrayToFloat32Array(interleavedArray);
+	let vertexArray = new Float32Array(interleavedArray);
 	g_vertexBufferID = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, g_vertexBufferID);
 	gl.bufferData(gl.ARRAY_BUFFER, vertexArray, gl.STATIC_DRAW);
@@ -268,7 +270,7 @@ function drawNode(node, modelMatrix) {
 	}
 	g_materialRegistry.setMaterial(node.renderInfo.material, gl);
 
-	g_materialRegistry.passUniforms(gl, modelMatrix, g_sceneGraph.viewMatrix, g_sceneGraph.projectionMatrix);
+	g_materialRegistry.passUniforms(gl, modelMatrix, g_sceneGraph.viewMatrix, g_sceneGraph.projectionMatrix, g_sceneGraph.camera.transform.position);
 	// draw the mesh
 	mesh.draw(gl);
 
@@ -293,16 +295,16 @@ function setCamera() {
 	let eye = new Vector3([0, 0, 0]);
 
 	// look at the origin
-	let rotationMatrix = new Matrix4();
-	rotationMatrix.setLookAt(
-		g_cameraPosition.elements[0], g_cameraPosition.elements[1], g_cameraPosition.elements[2],
-		eye.elements[0], eye.elements[1], eye.elements[2],
-		cameraUp.elements[0], cameraUp.elements[1], cameraUp.elements[2]
-	);
+	// let rotationMatrix = new Matrix4();
+	// rotationMatrix.setLookAt(
+	// 	g_cameraPosition.elements[0], g_cameraPosition.elements[1], g_cameraPosition.elements[2],
+	// 	eye.elements[0], eye.elements[1], eye.elements[2],
+	// 	cameraUp.elements[0], cameraUp.elements[1], cameraUp.elements[2]
+	// );
 
-	// test axis angles
-	rotationMatrix = new Matrix4();
-	rotationMatrix.setRotate(-45, 1, 0, 0);
-	g_sceneGraph.setCameraRotationFromMatrix(rotationMatrix);
+	// // test axis angles
+	// rotationMatrix = new Matrix4();
+	// rotationMatrix.setRotate(-45, 1, 0, 0);
+	// g_sceneGraph.setCameraRotationFromMatrix(rotationMatrix);
 }
 

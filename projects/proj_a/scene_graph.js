@@ -323,7 +323,7 @@ class SceneGraph {
 // position: the position of this node -- defaults to [0, 0, 0]
 // scale: the scale of this node -- defaults to [1, 1, 1]
 // rotation: the rotation of this node -- defaults to identity quaternion
-function createObject(meshName = "", materialName = "", position = null, scale = null, rotation = null) {
+function createObject(meshName = "", materialName = "", position = null, rotation = null, scale = null) {
     let renderInfo = new RenderInfo(materialName, meshName);
     let transform = new Transform(position, rotation, scale);
     return new SceneNode(renderInfo, transform);

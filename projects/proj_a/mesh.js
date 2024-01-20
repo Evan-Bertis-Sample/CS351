@@ -45,28 +45,6 @@ class Mesh {
         this.normalIndices = normalIndices;
     }
 
-    // Gets the triangles of this mesh
-    // returns an array of triangles
-    // triangles are represented as an array of 3 Vector4s for vertices, and 3 Vector4s for normals are in the form (vertex, normal)
-    getTriangles() {
-        let triangles = [];
-        for (var i = 0; i < this.vertexIndices.length; i += 3) {
-            let triangle = [];
-            for (var j = 0; j < 3; j++) {
-                let vertex = this.vertices[this.vertexIndices[i + j]];
-                let normal = this.normals[this.vertexIndices[i + j]];
-
-                let vertex4 = new Vector4(vertex.elements[0], vertex.elements[1], vertex.elements[2], 1);
-                triangle.push(vertex4);
-                let normal4 = new Vector4(normal.elements[0], normal.elements[1], normal.elements[2], 0);
-                triangle.push(normal4);
-            }
-            triangles.push(triangle);
-        }
-
-        return triangles;
-    }
-
     // prints the mesh to the console
     print() {
         console.log("Vertices: ");
@@ -133,8 +111,8 @@ class Mesh {
         let vertexCount = this.vertexIndices.length;
         // console.log("Vertex index range: " + this.vertexStartIndex + " - " + (this.vertexStartIndex + vertexCount));
         // draw the mesh
-        gl.drawArrays(gl.LINE_LOOP, this.vertexStartIndex, vertexCount);
-        gl.drawArrays(gl.POINTS, this.vertexStartIndex, vertexCount);
+        // gl.drawArrays(gl.LINE_LOOP, this.vertexStartIndex, vertexCount);
+        // gl.drawArrays(gl.POINTS, this.vertexStartIndex, vertexCount);
         gl.drawArrays(gl.TRIANGLES, this.vertexStartIndex, vertexCount);
     }
 

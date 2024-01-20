@@ -62,6 +62,12 @@ class Material {
             console.log('Failed to get the storage location of u_projectionMatrix');
             return;
         }
+
+        this.uLoc_cameraPosition = gl.getUniformLocation(gl.program, 'u_cameraPosition');
+        if (this.uLoc_cameraPosition < 0) {
+            console.log('Failed to get the storage location of u_cameraPosition');
+            return;
+        }
     }
 }
 
@@ -153,7 +159,7 @@ class MaterialRegistry {
 
     // sets the material parameters for the next object
     // these are all the uniforms that any material should have
-    passUniforms(gl, modelMatrix, viewMatrix, projectionMatrix) {
+    passUniforms(gl, modelMatrix, viewMatrix, projectionMatrix, cameraPosition) {
         let material = this.getMaterial(this.currentlyLoadedMaterial);
         if (material == null) {
             console.log("Can't pass uniforms, material is null");
@@ -181,5 +187,6 @@ class MaterialRegistry {
         gl.uniformMatrix4fv(material.uLoc_modelMatrix, false, modelMatrix.elements);
         gl.uniformMatrix4fv(material.uLoc_viewMatrix, false, viewMatrix.elements);
         gl.uniformMatrix4fv(material.uLoc_projectionMatrix, false, projectionMatrix.elements);
+        gl.uniform3fv(material.uLoc_cameraPosition, cameraPosition.elements);
     }
 }
