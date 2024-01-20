@@ -3,16 +3,17 @@
 //
 
 // A representation of a mesh
-// Stores the vertices, normals, and indices of the mesh
+// Stores the vertices, normals, and vertexIndices of the mesh
 class Mesh {
     // Creates a new Mesh
     // vertices: an array of Vector3s
     // normals: an array of Vector3s
-    // indices: an array of indices that map to the vertices and normals to form triangles -- triangles should be wound counter-clockwise
-    constructor(vertices, normals, indices) {
+    // vertexIndices: an array of vertexIndices that map to the vertices and normals to form triangles -- triangles should be wound counter-clockwise
+    constructor(vertices, normals, vertexIndices, normalIndices) {
         this.vertices = vertices;
         this.normals = normals;
-        this.indices = indices;
+        this.vertexIndices = vertexIndices;
+        this.normalIndices = normalIndices;
 
         // stores the start indices of the mesh in the vertex, normal, and index buffers
         this.vertexStartIndex = -1;
@@ -32,10 +33,16 @@ class Mesh {
         this.normals = normals;
     }
 
-    // Sets the indices of this mesh
-    // indices: an array of indices
-    setIndices(indices) {
-        this.indices = indices;
+    // Sets the vertexIndices of this mesh
+    // vertexIndices: an array of vertexIndices
+    setvertexIndices(vertexIndices) {
+        this.vertexIndices = vertexIndices;
+    }
+
+    // Sets the normalIndices of this mesh
+    // normalIndices: an array of normalIndices
+    setNormalIndices(normalIndices) {
+        this.normalIndices = normalIndices;
     }
 
     // Gets the triangles of this mesh
@@ -43,11 +50,11 @@ class Mesh {
     // triangles are represented as an array of 3 Vector4s for vertices, and 3 Vector4s for normals are in the form (vertex, normal)
     getTriangles() {
         let triangles = [];
-        for (var i = 0; i < this.indices.length; i += 3) {
+        for (var i = 0; i < this.vertexIndices.length; i += 3) {
             let triangle = [];
             for (var j = 0; j < 3; j++) {
-                let vertex = this.vertices[this.indices[i + j]];
-                let normal = this.normals[this.indices[i + j]];
+                let vertex = this.vertices[this.vertexIndices[i + j]];
+                let normal = this.normals[this.vertexIndices[i + j]];
 
                 let vertex4 = new Vector4(vertex.elements[0], vertex.elements[1], vertex.elements[2], 1);
                 triangle.push(vertex4);
@@ -70,17 +77,17 @@ class Mesh {
         for (var i = 0; i < this.normals.length; i++) {
             console.log(this.normals[i]);
         }
-        console.log("Indices: ");
-        for (var i = 0; i < this.indices.length; i++) {
-            console.log(this.indices[i]);
+        console.log("vertexIndices: ");
+        for (var i = 0; i < this.vertexIndices.length; i++) {
+            console.log(this.vertexIndices[i]);
         }
     }
 
     // Loads the mesh using the given gl context
     // vertexBuffer : a list of Vector4s representing the vertices
     // normalBuffer : a list of Vector4s representing the normals
-    // indexBuffer : a list of indices
-    loadObject(vertexBuffer, normalBuffer, indexBuffer)
+    // indexBuffer : a list of vertexIndices
+    loadObject(vertexBuffer, normalBuffer)
     {
         if (this.vertexStartIndex != -1) {
             // already loaded
@@ -88,34 +95,9 @@ class Mesh {
             return;
         }
 
-        // // append the vertices, normals, and indices to the buffers
-        // this.vertexStartIndex = vertexBuffer.length;
-        // this.normalStartIndex = normalBuffer.length;
-        // for (var i = 0; i < this.vertices.length; i++) {
-        //     let posVec = new Vector4([this.vertices[i].elements[0],
-        //                               this.vertices[i].elements[1],
-        //                               this.vertices[i].elements[2],
-        //                               1]);
-        //     vertexBuffer.push(posVec);
-        // }
-
-        // // TODO: fix this
-        // for (var i = 0; i < this.vertices.length; i++) {
-        //     normalBuffer.push(
-        //         new Vector4([1, 0, 0, 0])
-        //     );
-        // }
-
-        // this.indexStartIndex = indexBuffer.length;
-        // for (var i = 0; i < this.indices.length; i++) {
-        //     indexBuffer.push(this.indices[i] + this.vertexStartIndex);
-        // }
-
         this.vertexStartIndex = vertexBuffer.length;
-
-        for (var i = 0; i < this.indices.length; i++) {
-            let vertexIndex = this.indices[i];
-            let normalIndex = this.indices[i];
+        for (var i = 0; i < this.vertexIndices.length; i++) {
+            let vertexIndex = this.vertexIndices[i];
             let vertex = this.vertices[vertexIndex];
 
             let posVec = new Vector4([vertex.elements[0],
@@ -123,16 +105,18 @@ class Mesh {
                                       vertex.elements[2],
                                       1]);
             vertexBuffer.push(posVec);
+        }
 
-            // let normal = this.normals[normalIndex];
-            // normalBuffer.push(
-            //     new Vector4([normal.elements[0],
-            //                  normal.elements[1],
-            //                  normal.elements[2],
-            //                  0])
-            // );
+        this.normalStartIndex = normalBuffer.length;
+        for (var i = 0; i < this.normalIndices.length; i++) {
+            let normalIndex = this.normalIndices[i];
+            let normal = this.normals[normalIndex];
 
-            // indexBuffer.push(vertexBuffer.length - 1);
+            let normalVec = new Vector4([normal.elements[0],
+                                         normal.elements[1],
+                                         normal.elements[2],
+                                         0]);
+            normalBuffer.push(normalVec);
         }
     }
 
@@ -146,7 +130,7 @@ class Mesh {
         }
 
         // console.log("Drawing mesh");
-        let vertexCount = this.indices.length;
+        let vertexCount = this.vertexIndices.length;
         // console.log("Vertex index range: " + this.vertexStartIndex + " - " + (this.vertexStartIndex + vertexCount));
         // draw the mesh
         gl.drawArrays(gl.LINE_LOOP, this.vertexStartIndex, vertexCount);
@@ -225,7 +209,8 @@ class MeshRegistry {
     parseMesh(source) {
         let vertices = [];
         let normals = [];
-        let indices = [];
+        let vertexIndices = [];
+        let normalIndices = [];
 
         let lines = source.split("\n");
 
@@ -254,13 +239,20 @@ class MeshRegistry {
                 let v1 = parseInt(tokens[1].split("/")[0]) - 1;
                 let v2 = parseInt(tokens[2].split("/")[0]) - 1;
                 let v3 = parseInt(tokens[3].split("/")[0]) - 1;
-                indices.push(v1);
-                indices.push(v2);
-                indices.push(v3);
+                vertexIndices.push(v1);
+                vertexIndices.push(v2);
+                vertexIndices.push(v3);
+
+                let n1 = parseInt(tokens[1].split("/")[2]) - 1;
+                let n2 = parseInt(tokens[2].split("/")[2]) - 1;
+                let n3 = parseInt(tokens[3].split("/")[2]) - 1;
+                normalIndices.push(n1);
+                normalIndices.push(n2);
+                normalIndices.push(n3);
             }
         }
 
-        let mesh = new Mesh(vertices, normals, indices);
+        let mesh = new Mesh(vertices, normals, vertexIndices, normalIndices);
         // mesh.print();
         return mesh;
     }

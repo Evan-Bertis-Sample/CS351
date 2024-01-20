@@ -19,19 +19,30 @@ class Material {
         // set the attributes
         var aLoc_position = gl.getAttribLocation(gl.program, 'a_position');
         if (aLoc_position < 0) {
-            console.log('Failed to get the storage location of a_Position');
+            console.log('Failed to get the storage location of a_position');
+            console.log("aLoc_position: " + aLoc_position);
             return;
         }
 
-        // var a_normal = gl.getAttribLocation(gl.program, 'a_normal');
-        // if (a_normal < 0) {
-        //     console.log('Failed to get the storage location of a_normal');
-        //     return;
-        // }
+        var aLoc_normal = gl.getAttribLocation(gl.program, 'a_normal');
+        if (aLoc_normal < 0) {
+            console.log('Failed to get the storage location of a_normal');
+            console.log("aLoc_normal: " + aLoc_normal);
+            return;
+        }
+
+        // the vertex buffer is sorted as follows:
+        // vertex, normal, vertex, normal, etc.
+        // this was loaded initially before loading the shaders
 
         // set the vertex attribute pointer
-        gl.vertexAttribPointer(aLoc_position, 4, gl.FLOAT, false, 0, 0);
+        // vertexAttribPointer(index, size, type, normalized, stride, offset)
+        gl.vertexAttribPointer(aLoc_position, 4, gl.FLOAT, false, 8 * Float32Array.BYTES_PER_ELEMENT, 0);
         gl.enableVertexAttribArray(aLoc_position);
+        
+        // set the normal attribute pointer
+        gl.vertexAttribPointer(aLoc_normal, 4, gl.FLOAT, false, 8 * Float32Array.BYTES_PER_ELEMENT, 4 * Float32Array.BYTES_PER_ELEMENT);
+        gl.enableVertexAttribArray(aLoc_normal);
 
         // get location of the uniform variables
         this.uLoc_modelMatrix = gl.getUniformLocation(gl.program, 'u_modelMatrix');

@@ -24,8 +24,10 @@ var g_indexArray = []; // The index buffer for the application
 // These buffers are sent to the GPU
 var g_vertexBufferID; // The vertex buffer for the application
 var g_normalBuffer; // The normal buffer for the application
-var g_indexBuffer; // The index buffer for the application
 
+// Constants
+var c_VIEWPORT_WIDTH = 480;
+var c_VIEWPORT_HEIGHT = 270;
 
 // controls
 var g_cameraPosition = new Vector3([0, -1, -10]);
@@ -39,6 +41,10 @@ async function main() {
 	// Retrieve the HTML-5 <canvas> element where webGL will draw our pictures
 	g_canvasID = document.getElementById('webgl');
 	gl = g_canvasID.getContext("webgl", { preserveDrawingBuffer: true });
+
+	// set the viewport to be sized correctly
+	g_canvasID.width = c_VIEWPORT_WIDTH;
+	g_canvasID.height = c_VIEWPORT_HEIGHT;
 
 	// Handle failures
 	if (!gl) {
@@ -126,10 +132,48 @@ function loadMeshes() {
 	g_sceneGraph.traverse(loadMeshHelper);
 	// now create the buffers that we will send to the GPU
 	// create the vertex buffer
+	
+	console.log("Loaded Vertex Array: ");
+	console.log(g_vertexArray);
+
+	console.log("Loaded Normal Array: ");
+	console.log(g_normalArray);
+
+	if (g_vertexArray.length == 0) {
+		console.log("Vertex array is empty");
+		return;
+	}
+
+	if (g_normalArray.length == 0) {
+		console.log("Normal array is empty");
+		return;
+	}
+
+	if (g_normalArray.length != g_vertexArray.length) {
+		console.log("Vertex array and normal array are different lengths");
+		return;
+	}
+
+	// interleave the vertex and normal arrays
+	// sorted by vertex, normal, vertex, normal, etc.
+	let interleavedArray = [];
+	for (let i = 0; i < g_vertexArray.length; i++) {
+		interleavedArray.push(g_vertexArray[i].elements[0]);
+		interleavedArray.push(g_vertexArray[i].elements[1]);
+		interleavedArray.push(g_vertexArray[i].elements[2]);
+		interleavedArray.push(g_vertexArray[i].elements[3]);
+
+		interleavedArray.push(g_normalArray[i].elements[0]);
+		interleavedArray.push(g_normalArray[i].elements[1]);
+		interleavedArray.push(g_normalArray[i].elements[2]);
+		interleavedArray.push(g_normalArray[i].elements[3]);
+	}
+
 	let vertexArray = vec4ArrayToFloat32Array(g_vertexArray);
 	g_vertexBufferID = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, g_vertexBufferID);
 	gl.bufferData(gl.ARRAY_BUFFER, vertexArray, gl.STATIC_DRAW);
+
 
 	// create the normal buffer
 	// let normalArray = vec4ArrayToFloat32Array(g_normalArray);
@@ -169,7 +213,7 @@ function loadMeshHelper(node, modelMatrix) {
 	}
 
 	// load the mesh
-	mesh.loadObject(g_vertexArray, g_normalArray, g_indexArray);
+	mesh.loadObject(g_vertexArray, g_normalArray);
 }
 
 function drawAll() {

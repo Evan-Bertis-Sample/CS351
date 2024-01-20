@@ -8,6 +8,10 @@ uniform mat4 u_viewMatrix;
 uniform mat4 u_projectionMatrix;
 uniform mat4 u_modelMatrix;
 
+// varying variables
+varying vec4 v_position;
+varying vec4 v_normal;
+
 // main
 void main()
 {
@@ -15,6 +19,9 @@ void main()
     mat4 mvp = u_projectionMatrix * u_viewMatrix * u_modelMatrix;
     vec4 pos = mvp * a_position;
     pos = pos / pos.w;
-
     gl_Position = pos;
+
+    // Pass the vertex position and normal to the fragment shader
+    v_position = a_position;
+    v_normal = a_normal;
 }
