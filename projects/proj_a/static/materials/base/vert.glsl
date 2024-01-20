@@ -4,17 +4,17 @@
 // Vertex shader inputs
 attribute vec4 a_position;
 attribute vec4 a_normal;
+uniform mat4 u_viewMatrix;
+uniform mat4 u_projectionMatrix;
 uniform mat4 u_modelMatrix;
 
 // main
 void main()
 {
     // Transform the vertex position into screen space
-    vec4 screenPos = u_modelMatrix * a_position;
-    screenPos = screenPos / screenPos.w;
+    mat4 mvp = u_projectionMatrix * u_viewMatrix * u_modelMatrix;
+    vec4 pos = mvp * a_position;
+    pos = pos / pos.w;
 
-    // now convert it into texture space
-    screenPos = screenPos * 0.5 + 0.5;
-    
-    gl_Position = screenPos;
+    gl_Position = pos;
 }

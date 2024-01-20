@@ -149,8 +149,8 @@ class Mesh {
         let vertexCount = this.indices.length;
         // console.log("Vertex index range: " + this.vertexStartIndex + " - " + (this.vertexStartIndex + vertexCount));
         // draw the mesh
-        // gl.drawArrays(gl.LINE_LOOP, this.vertexStartIndex, vertexCount);
-        // gl.drawArrays(gl.POINTS, this.vertexStartIndex, vertexCount);
+        gl.drawArrays(gl.LINE_LOOP, this.vertexStartIndex, vertexCount);
+        gl.drawArrays(gl.POINTS, this.vertexStartIndex, vertexCount);
         gl.drawArrays(gl.TRIANGLES, this.vertexStartIndex, vertexCount);
     }
 

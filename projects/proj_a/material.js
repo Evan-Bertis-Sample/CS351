@@ -39,6 +39,18 @@ class Material {
             console.log('Failed to get the storage location of u_modelMatrix');
             return;
         }
+
+        this.uLoc_viewMatrix = gl.getUniformLocation(gl.program, 'u_viewMatrix');
+        if (this.uLoc_viewMatrix < 0) {
+            console.log('Failed to get the storage location of u_viewMatrix');
+            return;
+        }
+
+        this.uLoc_projectionMatrix = gl.getUniformLocation(gl.program, 'u_projectionMatrix');
+        if (this.uLoc_projectionMatrix < 0) {
+            console.log('Failed to get the storage location of u_projectionMatrix');
+            return;
+        }
     }
 }
 
@@ -130,7 +142,7 @@ class MaterialRegistry {
 
     // sets the material parameters for the next object
     // these are all the uniforms that any material should have
-    passUniforms(gl, modelMatrix) {
+    passUniforms(gl, modelMatrix, viewMatrix, projectionMatrix) {
         let material = this.getMaterial(this.currentlyLoadedMaterial);
         if (material == null) {
             console.log("Can't pass uniforms, material is null");
@@ -141,10 +153,22 @@ class MaterialRegistry {
             console.log("Material Model Matrix is null");
             return;
         }
-        console.log("Passing uniforms for material: " + this.currentlyLoadedMaterial)
-        // modelMatrix.printMe();
 
-        // pass the model matrix
+        if (material.uLoc_viewMatrix < 0)
+        {
+            console.log("Material View Matrix is null");
+            return;
+        }
+
+        if (material.uLoc_projectionMatrix < 0)
+        {
+            console.log("Material Projection Matrix is null");
+            return;
+        }
+
+        console.log("Passing uniforms for material: " + this.currentlyLoadedMaterial)
         gl.uniformMatrix4fv(material.uLoc_modelMatrix, false, modelMatrix.elements);
+        gl.uniformMatrix4fv(material.uLoc_viewMatrix, false, viewMatrix.elements);
+        gl.uniformMatrix4fv(material.uLoc_projectionMatrix, false, projectionMatrix.elements);
     }
 }

@@ -195,6 +195,8 @@ class SceneGraph {
         this.camera = this.root.addChild(new SceneNode(null, new Transform()));
         this.projectionMatrix = new Matrix4();
         this.projectionMatrix.setPerspective(30, 1, 1, 100);
+        this.viewMatrix = new Matrix4();
+        this.viewMatrix.setLookAt(0, 0, 0, 0, 0, -1, 0, 1, 0);
     }
 
     // Traverses the scene graph

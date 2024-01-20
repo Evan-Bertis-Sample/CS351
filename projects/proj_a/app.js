@@ -28,7 +28,7 @@ var g_indexBuffer; // The index buffer for the application
 
 
 // controls
-var g_cameraPosition = new Vector3([0, 0, 0]);
+var g_cameraPosition = new Vector3([0, -1, -10]);
 
 // Configuration
 var materialDirectories = ["./static/materials/base"];
@@ -73,8 +73,8 @@ async function main() {
 
 	var tick = function () {
 		requestAnimationFrame(tick, g_canvasID);
-		drawAll();
-		update();
+		// drawAll();
+		// update();
 	};
 
 	tick();
@@ -213,9 +213,7 @@ function drawNode(node, modelMatrix) {
 	}
 	g_materialRegistry.setMaterial(node.renderInfo.material, gl);
 
-	let projectionMatrix = g_sceneGraph.projectionMatrix;
-	let finalMatrix = projectionMatrix.multiply(modelMatrix);
-	g_materialRegistry.passUniforms(gl, finalMatrix);
+	g_materialRegistry.passUniforms(gl, modelMatrix, g_sceneGraph.viewMatrix, g_sceneGraph.projectionMatrix);
 	// draw the mesh
 	mesh.draw(gl);
 
