@@ -28,6 +28,7 @@ var g_normalBuffer; // The normal buffer for the application
 // Constants
 var c_VIEWPORT_WIDTH = 480;
 var c_VIEWPORT_HEIGHT = 270;
+var c_MOVE_SPEED = 0.5;
 
 // controls
 var g_cameraPosition = new Vector3([0, 0, 10]);
@@ -96,22 +97,22 @@ function addEventListeners() {
 
 function keyDownHandler(event) {
 	if (event.key == "ArrowUp") {
-		g_cameraPosition.elements[2] -= 0.1;
+		g_cameraPosition.elements[2] -= c_MOVE_SPEED;
 	}
 	if (event.key == "ArrowDown") {
-		g_cameraPosition.elements[2] += 0.1;
+		g_cameraPosition.elements[2] += c_MOVE_SPEED;
 	}
 	if (event.key == "ArrowLeft") {
-		g_cameraPosition.elements[0] -= 0.1;
+		g_cameraPosition.elements[0] -= c_MOVE_SPEED;
 	}
 	if (event.key == "ArrowRight") {
-		g_cameraPosition.elements[0] += 0.1;
+		g_cameraPosition.elements[0] += c_MOVE_SPEED;
 	}
 	if (event.key == "w") {
-		g_cameraPosition.elements[1] += 0.1;
+		g_cameraPosition.elements[1] += c_MOVE_SPEED;
 	}
 	if (event.key == "s") {
-		g_cameraPosition.elements[1] -= 0.1;
+		g_cameraPosition.elements[1] -= c_MOVE_SPEED;
 	}
 }
 
@@ -123,7 +124,13 @@ function buildScene() {
 		materialName = "base",
 		position = new Vector3([0, 0, 5]),
 	)
+	sphere = createObject(
+		meshName = "sphere",
+		materialName = "base",
+		position = new Vector3([5, 0, 5]),
+	)
 	g_sceneGraph.addObject(cube);
+	g_sceneGraph.addObject(sphere);
 	g_sceneGraph.setCameraPosition(g_cameraPosition)
 	console.log("Built scene graph");
 
@@ -270,4 +277,12 @@ function drawNode(node, modelMatrix) {
 function update() {
 	g_cameraPosition.printMe();
 	g_sceneGraph.setCameraPosition(g_cameraPosition);
+
+	// look at the origin
+	let origin = new Vector3([0, 0, 0]);
+	let up = new Vector3([0, 1, 0]);
+
+	let rotationMatrix = new Matrix4();
+	rotationMatrix.setLookAt(g_cameraPosition.elements[0], g_cameraPosition.elements[1], g_cameraPosition.elements[2], origin.elements[0], origin.elements[1], origin.elements[2], up.elements[0], up.elements[1], up.elements[2]);
+	g_sceneGraph.setCameraRotationFromMatrix(rotationMatrix);
 }

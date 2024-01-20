@@ -232,6 +232,32 @@ Matrix4.prototype.invert = function() {
 };
 
 /**
+ * Calculate the determinant of matrix. Added by Evan Bertis-Sample
+ * @return determinant
+ */
+Matrix4.prototype.determinant = function() {
+  var s = this.elements;
+
+  var s0 = s[0] * s[5] - s[1] * s[4];
+  var s1 = s[0] * s[6] - s[2] * s[4];
+  var s2 = s[0] * s[7] - s[3] * s[4];
+  var s3 = s[1] * s[6] - s[2] * s[5];
+  var s4 = s[1] * s[7] - s[3] * s[5];
+  var s5 = s[2] * s[7] - s[3] * s[6];
+
+  var c5 = s[10] * s[15] - s[11] * s[14];
+  var c4 = s[9] * s[15] - s[11] * s[13];
+  var c3 = s[9] * s[14] - s[10] * s[13];
+  var c2 = s[8] * s[15] - s[11] * s[12];
+  var c1 = s[8] * s[14] - s[10] * s[12];
+  var c0 = s[8] * s[13] - s[9] * s[12];
+
+  var det = s0 * c5 - s1 * c4 + s2 * c3 + s3 * c2 - s4 * c1 + s5 * c0;
+  // console.log(det);
+  return det;
+};
+
+/**
  * Set the orthographic projection matrix.
  * @param left The coordinate of the left of clipping plane.
  * @param right The coordinate of the right of clipping plane.
@@ -1103,14 +1129,21 @@ Quaternion.prototype = {
 		return this;
 	},
 
-	setFromRotationMatrix: function ( m ) {
+	setFromRotationMatrix: function ( matrix ) {
 //--------------------------------------
 // Adapted from: http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
 
 		function copySign(a, b) {
 			return b < 0 ? -Math.abs(a) : Math.abs(a);
 		}
-		var absQ = Math.pow(m.determinant(), 1.0 / 3.0);
+
+    let m = {
+      n11: matrix.elements[0], n12: matrix.elements[4], n13: matrix.elements[8],  n14: matrix.elements[12],
+      n21: matrix.elements[1], n22: matrix.elements[5], n23: matrix.elements[9],  n24: matrix.elements[13],
+      n31: matrix.elements[2], n32: matrix.elements[6], n33: matrix.elements[10], n34: matrix.elements[14],
+      n41: matrix.elements[3], n42: matrix.elements[7], n43: matrix.elements[11], n44: matrix.elements[15]
+    }
+		var absQ = Math.pow(matrix.determinant(), 1.0 / 3.0);
 		this.w = Math.sqrt( Math.max( 0, absQ + m.n11 + m.n22 + m.n33 ) ) / 2;
 		this.x = Math.sqrt( Math.max( 0, absQ + m.n11 - m.n22 - m.n33 ) ) / 2;
 		this.y = Math.sqrt( Math.max( 0, absQ - m.n11 + m.n22 - m.n33 ) ) / 2;

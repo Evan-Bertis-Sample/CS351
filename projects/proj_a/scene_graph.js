@@ -32,8 +32,8 @@ class Transform {
         // console.log("Local Model Matrix:");
         this.rotation.normalize();
         let rotationMatrix = new Matrix4().setFromQuat(this.rotation.x, this.rotation.y, this.rotation.z, this.rotation.w);
-        // console.log("Rotation Matrix:");
-        // rotationMatrix.printMe();
+        console.log("Rotation Matrix:");
+        rotationMatrix.printMe();
 
         let scaleMatrix = new Matrix4().setScale(this.scale.elements[0], this.scale.elements[1], this.scale.elements[2]);
         // console.log("Scale Matrix:");
@@ -64,20 +64,20 @@ class Transform {
     // yaw: the yaw of the rotation in degrees
     // roll: the roll of the rotation in degrees
     setRotationFromEulerAngles(pitch, yaw, roll) {
-        this.rotation.setRotationFromEulerAngles(pitch, yaw, roll);
+        this.rotation.setFromEuler(pitch, yaw, roll);
     }
 
     // Sets the rotation of this transform from a rotation matrix
     // rotationMatrix: a 4x4 rotation matrix
     setRotationFromMatrix(rotationMatrix) {
-        this.rotation.setRotationFromMatrix(rotationMatrix);
+        this.rotation.setFromRotationMatrix(rotationMatrix);
     }
 
     // Sets the roation of this transform from an axis-angle representation
     // axis: a Vector3 representing the axis of rotation
     // angle: the angle of rotation in degrees
     setRotationFromAxisAngle(axis, angle) {
-        this.rotation.setRotationFromAxisAngle(axis.x, axis.y, axis.z, angle);
+        this.rotation.setFromAxisAngle(axis.x, axis.y, axis.z, angle);
     }
 
 }
@@ -282,6 +282,8 @@ class SceneGraph {
     // Sets the rotation of the camera
     // rotation: a Quaternion representing the rotation of the camera
     setCameraRotation(rotation) {
+        console.log("Setting camera rotation");
+        rotation.printMe();
         this.camera.transform.rotation = rotation;
     }
 
@@ -290,20 +292,26 @@ class SceneGraph {
     // yaw: the yaw of the rotation in degrees
     // roll: the roll of the rotation in degrees
     setCameraRotationFromEulerAngles(pitch, yaw, roll) {
-        this.camera.transform.setRotationFromEulerAngles(pitch, yaw, roll);
+        let rotation = new Quaternion();
+        rotation.setFromEuler(pitch, yaw, roll);
+        this.setCameraRotation(rotation);
     }
 
     // Sets the rotation of the camera from a rotation matrix
     // rotationMatrix: a 4x4 rotation matrix
     setCameraRotationFromMatrix(rotationMatrix) {
-        this.camera.transform.setRotationFromMatrix(rotationMatrix);
+        let rotation = new Quaternion();
+        rotation.setFromRotationMatrix(rotationMatrix);
+        this.setCameraRotation(rotation);
     }
 
     // Sets the roation of the camera from an axis-angle representation
     // axis: a Vector3 representing the axis of rotation
     // angle: the angle of rotation in degrees
     setCameraRotationFromAxisAngle(axis, angle) {
-        this.camera.transform.setRotationFromAxisAngle(axis, angle);
+        let rotation = new Quaternion();
+        rotation.setFromAxisAngle(axis.x, axis.y, axis.z, angle);
+        this.setCameraRotation(rotation);
     }
 }
 
