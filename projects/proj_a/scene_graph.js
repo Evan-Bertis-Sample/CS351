@@ -44,7 +44,7 @@ class Transform {
         // translationMatrix.printMe();
 
         // scale, then rotate, then translate
-        return translationMatrix.multiply(rotationMatrix.multiply(scaleMatrix));
+        return scaleMatrix.multiply(rotationMatrix).multiply(translationMatrix);
     }
 
     // Sets the position of this transform
@@ -296,7 +296,6 @@ class SceneGraph {
         this.setCameraRotation(rotation);
     }
 
-    // Sets the rotation of the camera from a rotation matrix
     // rotationMatrix: a 4x4 rotation matrix
     setCameraRotationFromMatrix(rotationMatrix) {
         let rotation = new Quaternion();

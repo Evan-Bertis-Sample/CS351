@@ -295,16 +295,16 @@ function setCamera() {
 	let eye = new Vector3([0, 0, 0]);
 
 	// look at the origin
-	// let rotationMatrix = new Matrix4();
-	// rotationMatrix.setLookAt(
-	// 	g_cameraPosition.elements[0], g_cameraPosition.elements[1], g_cameraPosition.elements[2],
-	// 	eye.elements[0], eye.elements[1], eye.elements[2],
-	// 	cameraUp.elements[0], cameraUp.elements[1], cameraUp.elements[2]
-	// );
+	let rotationMatrix = new Matrix4();
+	rotationMatrix.setLookAt(
+		g_cameraPosition.elements[0], g_cameraPosition.elements[1], g_cameraPosition.elements[2],
+		eye.elements[0], eye.elements[1], eye.elements[2],
+		cameraUp.elements[0], cameraUp.elements[1], cameraUp.elements[2]
+	);
 
-	// // test axis angles
+	// test axis angles
 	// rotationMatrix = new Matrix4();
 	// rotationMatrix.setRotate(-45, 1, 0, 0);
-	// g_sceneGraph.setCameraRotationFromMatrix(rotationMatrix);
+	g_sceneGraph.setCameraRotationFromMatrix(rotationMatrix);
 }
 
