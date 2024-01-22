@@ -34,7 +34,7 @@ void main()
     vec4 viewDirection = normalize(vec4(-u_cameraPosition, 1.0) - v_position);
     float specular = pow(max(dot(reflectionDirection, viewDirection), 0.0), 16.0);
 
-    diffuse = nStep(diffuse, 4.0) * cellShadingWeight + diffuse * (1.0 - cellShadingWeight);
+    diffuse = nStep(diffuse, 5.0) * cellShadingWeight + diffuse * (1.0 - cellShadingWeight);
     specular = nStep(specular, 3.0) * cellShadingWeight + specular * (1.0 - cellShadingWeight);
 
 

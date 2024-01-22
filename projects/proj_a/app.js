@@ -8,7 +8,7 @@
 
 
 // Global Variables for the application
-var gl; // WebGL rendering context
+var g_gl; // WebGL rendering context
 var g_canvasID; // HTML-5 'canvas' element ID#
 
 var g_sceneGraph; // The scene graph for the application
@@ -25,74 +25,12 @@ var g_indexArray = []; // The index buffer for the application
 var g_vertexBufferID; // The vertex buffer for the application
 var g_normalBuffer; // The normal buffer for the application
 
-// Constants
-var c_VIEWPORT_WIDTH = 400;
-var c_VIEWPORT_HEIGHT = 400;
-var c_MOVE_SPEED = 0.5;
-
 // controls
 var g_cameraPosition = new Vector3([0, 0, 30]);
 
-// Configuration
-var materialDirectories = [
-	new MaterialDescriptor(
-		"gray",
-		"static/materials/base", 
-		[
-			new MaterialParameter("u_color", new Vector4([0.65, 0.65, 0.65, 1.0])),
-		]
-	),
-	new MaterialDescriptor(
-		"red",
-		"static/materials/base", 
-		[
-			new MaterialParameter("u_color", new Vector4([1.0, 0.0, 0.0, 1.0])),
-		]
-	),
-];
-
-var meshes = [
-	"./static/meshes/cube.obj",
-	"./static/meshes/sphere.obj",
-];
-
 
 async function main() {
-	// Retrieve the HTML-5 <canvas> element where webGL will draw our pictures
-	g_canvasID = document.getElementById('webgl');
-	gl = g_canvasID.getContext("webgl", { preserveDrawingBuffer: true });
-
-	// set the viewport to be sized correctly
-	g_canvasID.width = c_VIEWPORT_WIDTH;
-	g_canvasID.height = c_VIEWPORT_HEIGHT;
-	gl.viewport(0, 0, g_canvasID.width, g_canvasID.height);
-
-	// Handle failures
-	if (!gl) {
-		console.log('Failed to get the rendering context for WebGL. Bye!');
-		return;
-	}
-
-	// Load the materials
-	g_materialRegistry = new MaterialRegistry(materialDirectories);
-	await g_materialRegistry.loadMaterials();
-
-	// Load the meshes
-	g_meshRegistry = new MeshRegistry();
-	await g_meshRegistry.loadMeshes(meshes);
-
-	// Specify the color for clearing <canvas>
-	gl.clearColor(1, 1, 1, 1);
-
-	// Enable the depth test
-	gl.enable(gl.DEPTH_TEST);
-
-	// Clear the color buffer bit
-	gl.clear(gl.COLOR_BUFFER_BIT);
-	g_materialRegistry.print();
-	buildScene();
-	addEventListeners();
-	loadMeshes();
+	await initialize();
 	update();
 	drawAll();
 
@@ -103,6 +41,38 @@ async function main() {
 	};
 
 	tick();
+}
+
+// Initializes WebGL and the scene
+// Grabs the global context and sets the viewport
+// Loads the materials and meshes
+// Builds the scene graph
+// Initializes the input
+async function initialize() {
+	// Retrieve the HTML-5 <canvas> element where webGL will draw our pictures
+	g_canvasID = document.getElementById('webgl');
+	g_gl = g_canvasID.getContext("webgl", { preserveDrawingBuffer: true });
+	// Handle failures
+	if (!g_gl) {
+		console.log('Failed to get the rendering context for WebGL. Bye!');
+		return;
+	}
+	// set the viewport to be sized correctly
+	g_canvasID.width = c_VIEWPORT_WIDTH;
+	g_canvasID.height = c_VIEWPORT_HEIGHT;
+	g_gl.viewport(0, 0, g_canvasID.width, g_canvasID.height);
+	g_gl.clearColor(1, 1, 1, 1);
+	g_gl.enable(g_gl.DEPTH_TEST);
+	g_gl.clear(g_gl.COLOR_BUFFER_BIT);
+	// Load the materials
+	g_materialRegistry = new MaterialRegistry(c_MATERIALS);
+	await g_materialRegistry.loadMaterials();
+	// Load the meshes
+	g_meshRegistry = new MeshRegistry();
+	await g_meshRegistry.loadMeshes(c_MESHES);
+	buildScene();
+	loadMeshes();
+	addEventListeners();
 }
 
 function addEventListeners() {
@@ -130,30 +100,7 @@ function keyDownHandler(event) {
 	}
 }
 
-// builds the initial scene graph
-function buildScene() {
-	g_sceneGraph = new SceneGraph();
-	let cubeRotation = new Quaternion().setFromAxisAngle(1, 1, 0, 45);
-	cubeRotation.printMe();
-	cube = createObject(
-		meshName = "cube",
-		materialName = "gray",
-		position = new Vector3([0, 0, 0]),
-		rotation = cubeRotation
-	)
-	sphere = createObject(
-		meshName = "sphere",
-		materialName = "red",
-		position = new Vector3([0, 0, -5]),
-	)
-	g_sceneGraph.addObject(cube);
-	g_sceneGraph.addObject(sphere);
-	setCamera();
-	console.log("Built scene graph");
 
-	// g_sceneGraph.setCameraPosition(new Vector3([1, 1, 0]));
-	g_sceneGraph.print();
-}
 
 function loadMeshes() {
 	// load the meshes into the buffers
@@ -199,20 +146,9 @@ function loadMeshes() {
 
 	// let vertexArray = vec4ArrayToFloat32Array(interleavedArray);
 	let vertexArray = new Float32Array(interleavedArray);
-	g_vertexBufferID = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, g_vertexBufferID);
-	gl.bufferData(gl.ARRAY_BUFFER, vertexArray, gl.STATIC_DRAW);
-}
-
-function vec4ArrayToFloat32Array(vecArray) {
-	let floatArray = new Float32Array(vecArray.length * 4);
-	for (let i = 0; i < vecArray.length; i++) {
-		floatArray[i * 3] = vecArray[i].elements[0];
-		floatArray[i * 3 + 1] = vecArray[i].elements[1];
-		floatArray[i * 3 + 2] = vecArray[i].elements[2];
-		floatArray[i * 3 + 3] = vecArray[i].elements[3];
-	}
-	return floatArray;
+	g_vertexBufferID = g_gl.createBuffer();
+	g_gl.bindBuffer(g_gl.ARRAY_BUFFER, g_vertexBufferID);
+	g_gl.bufferData(g_gl.ARRAY_BUFFER, vertexArray, g_gl.STATIC_DRAW);
 }
 
 function loadMeshHelper(node, modelMatrix) {
@@ -234,8 +170,7 @@ function loadMeshHelper(node, modelMatrix) {
 
 function drawAll() {
 	// Clear <canvas>
-	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
+	g_gl.clear(g_gl.COLOR_BUFFER_BIT | g_gl.DEPTH_BUFFER_BIT);
 	// Draw the scene graph
 	g_sceneGraph.traverse(drawNode);
 }
@@ -271,10 +206,10 @@ function drawNode(node, modelMatrix) {
 		console.log("Material is null");
 		return;
 	}
-	g_materialRegistry.setMaterial(node.renderInfo.material, gl);
-	g_materialRegistry.passUniforms(gl, modelMatrix, g_sceneGraph.viewMatrix, g_sceneGraph.projectionMatrix, g_sceneGraph.camera.transform.position);
+	g_materialRegistry.setMaterial(node.renderInfo.material, g_gl);
+	g_materialRegistry.passUniforms(g_gl, modelMatrix, g_sceneGraph.viewMatrix, g_sceneGraph.projectionMatrix, g_sceneGraph.camera.transform.position);
 	// draw the mesh
-	mesh.draw(gl);
+	mesh.draw(g_gl);
 
 }
 
