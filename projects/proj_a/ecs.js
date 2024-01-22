@@ -185,3 +185,20 @@ class BobComponent extends Component {
         this.transform.position.elements[1] = offset;
     }
 }
+
+// rotate component
+// makes an object rotate about an axis
+class RotateComponent extends Component {
+    constructor(axis = new Vector3([0, 1, 0]), speed = 1) {
+        super();
+        this.axis = axis;
+        this.speed = speed;
+    }
+
+    // Updates the component
+    // deltaTime : the time since the last frame
+    update(deltaTime) {
+        let rotation = new Quaternion().setFromAxisAngle(this.axis.elements[0], this.axis.elements[1], this.axis.elements[2], this.speed * deltaTime);
+        this.transform.rotation = rotation.multiplySelf(this.transform.rotation);
+    }
+}

@@ -16,19 +16,20 @@ function buildScene() {
 		materialName = "gray",
 		components = [
 			new BobComponent(1, 0.01),
+			new RotateComponent(new Vector3([0, 1, 0]), 0.1),
 		],
 	)
 
 	let sphereEntity = g_ecs.createEntity(
 		entityName = "sphere",
-		parent = null,
+		parent = cubeEntity,
 		position = new Vector3([0, 0, -5]),
 		rotation = new Quaternion(),
 		scale = new Vector3([1, 1, 1]),
 		meshName = "sphere",
 		materialName = "red",
 		components = [
-
+			new BobComponent(-1.5, 0.01),
 		],
 	)
 

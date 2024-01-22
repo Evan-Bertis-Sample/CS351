@@ -153,14 +153,14 @@ function loadMeshes() {
 
 function loadMeshHelper(node, modelMatrix) {
 	if (node.renderInfo.mesh == "") {
-		console.log("Skipping node with no mesh");
+		// console.log("Skipping node with no mesh");
 		return;
 	}
 
 	// get the mesh
 	let mesh = g_meshRegistry.getMesh(node.renderInfo.mesh);
 	if (mesh == null) {
-		console.log("Mesh is null");
+		// console.log("Mesh is null");
 		return;
 	}
 
