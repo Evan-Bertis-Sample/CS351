@@ -217,9 +217,10 @@ class SceneGraph {
         let modelMatrix = parentModelMatrix.multiply(localModelMatrix);
         // console.log("Node: " + node.renderInfo.mesh);
         // modelMatrix.printMe();
-        callback(node, modelMatrix);
+        let modelMatrixCopy = new Matrix4().set(modelMatrix)
+        callback(node, modelMatrixCopy);
         for (var i = 0; i < node.children.length; i++) {
-            this._traverseHelper(node.children[i], callback, modelMatrix);
+            this._traverseHelper(node.children[i], callback, modelMatrixCopy);
         }
     }
 

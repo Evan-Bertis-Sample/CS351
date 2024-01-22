@@ -36,10 +36,10 @@ var g_cameraPosition = new Vector3([0, 0, 30]);
 // Configuration
 var materialDirectories = [
 	new MaterialDescriptor(
-		"base",
+		"gray",
 		"static/materials/base", 
 		[
-			new MaterialParameter("u_color", new Vector4([0.2, 0.2, 0.2, 1.0])),
+			new MaterialParameter("u_color", new Vector4([0.65, 0.65, 0.65, 1.0])),
 		]
 	),
 	new MaterialDescriptor(
@@ -98,8 +98,8 @@ async function main() {
 
 	var tick = function () {
 		requestAnimationFrame(tick, g_canvasID);
-		// drawAll();
-		// update();
+		drawAll();
+		update();
 	};
 
 	tick();
@@ -137,7 +137,7 @@ function buildScene() {
 	cubeRotation.printMe();
 	cube = createObject(
 		meshName = "cube",
-		materialName = "base",
+		materialName = "gray",
 		position = new Vector3([0, 0, 0]),
 		rotation = cubeRotation
 	)
@@ -146,8 +146,8 @@ function buildScene() {
 		materialName = "red",
 		position = new Vector3([0, 0, -5]),
 	)
-	g_sceneGraph.addObject(sphere);
 	g_sceneGraph.addObject(cube);
+	g_sceneGraph.addObject(sphere);
 	setCamera();
 	console.log("Built scene graph");
 
@@ -272,7 +272,6 @@ function drawNode(node, modelMatrix) {
 		return;
 	}
 	g_materialRegistry.setMaterial(node.renderInfo.material, gl);
-
 	g_materialRegistry.passUniforms(gl, modelMatrix, g_sceneGraph.viewMatrix, g_sceneGraph.projectionMatrix, g_sceneGraph.camera.transform.position);
 	// draw the mesh
 	mesh.draw(gl);

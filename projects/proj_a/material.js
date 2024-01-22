@@ -55,7 +55,7 @@ class ShaderSet {
     }
 
     loadShader(gl) {
-        console.log("Loading shader: " + this.name);
+        // console.log("Loading shader: " + this.name);
         initShaders(gl, this.vertexShaderSource, this.fragmentShaderSource);
         // set the attributes
         var aLoc_position = gl.getAttribLocation(gl.program, 'a_position');
@@ -160,8 +160,7 @@ class MaterialRegistry {
         this.currentlyLoadedShader = "";
     }
 
-    print()
-    {
+    print() {
         console.log("Printing materials");
         for (let [key, value] of this.materials) {
             console.log(key)
@@ -238,7 +237,7 @@ class MaterialRegistry {
                     // add the shader to the registry
                     let shader = new ShaderSet(shaderName, vertSource, fragSource, paramNames);
                     console.log(shader);
-                    this.shaders.set(shaderName, shader);
+                    this.addShader(shader);
                 }
                 catch (error) {
                     console.log("Failed to load material: " + materialName);
@@ -260,6 +259,13 @@ class MaterialRegistry {
         return this.materials.get(name);
     }
 
+    addShader(shader) {
+        this.shaders.set(shader.name, shader);
+    }
+    getShader(name) {
+        return this.shaders.get(name);
+    }
+
     // sets the material to use for the next object
     // name: the name of the material
     setMaterial(name, gl) {
@@ -274,19 +280,22 @@ class MaterialRegistry {
             return;
         }
 
-        if (material.shaderName == this.currentlyLoadedShader) {
-            return; // don't load the shader again -- we can just switch the uniforms
+        // load the shader
+        let shader = this.shaders.get(material.shaderName);
+        if (material.shaderName != this.currentlyLoadedMaterial) {
+            console.log("Loading shader: " + material.shaderName);
+            if (shader == null) {
+                console.log("Can't set material, shader is null");
+                return;
+            }
+            shader.loadShader(gl);
+            this.currentlyLoadedShader = material.shaderName;
+        }
+        else
+        {
+            console.log("Skipping shader loading");
         }
 
-        this.currentlyLoadedShader = material.shaderName;
-        // load the shader
-        console.log("Loading shader: " + material.shaderName);
-        let shader = this.shaders.get(material.shaderName);
-        if (shader == null) {
-            console.log("Can't set material, shader is null");
-            return;
-        }
-        shader.loadShader(gl);
         material.loadParameters(gl, shader);
     }
 
@@ -294,29 +303,48 @@ class MaterialRegistry {
     // these are all the uniforms that any material should have
     passUniforms(gl, modelMatrix, viewMatrix, projectionMatrix, cameraPosition) {
         let material = this.getMaterial(this.currentlyLoadedMaterial);
+        console.log(material);
         if (material == null) {
             console.log("Can't pass uniforms, material is null");
             return;
         }
-        if (material.uLoc_modelMatrix < 0) {
+
+        let shader = this.getShader(this.currentlyLoadedShader);
+        console.log(shader);
+        if (shader == null) {
+            console.log("Can't read shader, shader is null");
+            return;
+        }
+
+        let uLoc_modelMatrix = shader.uLoc_modelMatrix;
+        let uLoc_viewMatrix = shader.uLoc_viewMatrix;
+        let uLoc_projectionMatrix = shader.uLoc_projectionMatrix;
+        let uLoc_cameraPosition = shader.uLoc_cameraPosition;
+
+        if (uLoc_modelMatrix < 0) {
             console.log("Material Model Matrix is null");
             return;
         }
 
-        if (material.uLoc_viewMatrix < 0) {
+        if (uLoc_viewMatrix < 0) {
             console.log("Material View Matrix is null");
             return;
         }
 
-        if (material.uLoc_projectionMatrix < 0) {
+        if (uLoc_projectionMatrix < 0) {
             console.log("Material Projection Matrix is null");
             return;
         }
 
+        if (uLoc_cameraPosition < 0) {
+            console.log("Camera Position is null");
+            return;
+        }
+
         console.log("Passing uniforms for material: " + this.currentlyLoadedMaterial)
-        gl.uniformMatrix4fv(material.uLoc_modelMatrix, false, modelMatrix.elements);
-        gl.uniformMatrix4fv(material.uLoc_viewMatrix, false, viewMatrix.elements);
-        gl.uniformMatrix4fv(material.uLoc_projectionMatrix, false, projectionMatrix.elements);
-        gl.uniform3fv(material.uLoc_cameraPosition, cameraPosition.elements);
+        gl.uniformMatrix4fv(uLoc_modelMatrix, false, modelMatrix.elements);
+        gl.uniformMatrix4fv(uLoc_viewMatrix, false, viewMatrix.elements);
+        gl.uniformMatrix4fv(uLoc_projectionMatrix, false, projectionMatrix.elements);
+        gl.uniform3fv(uLoc_cameraPosition, cameraPosition.elements);
     }
 }
