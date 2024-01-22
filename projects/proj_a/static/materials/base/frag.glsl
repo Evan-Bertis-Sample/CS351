@@ -22,6 +22,7 @@ float nStep(float x, float numSteps)
 
 void main()
 {
+    vec4 color = vec4(1.0, 0.0, 0.0, 1.0);
     // normalize the normal vector
     vec4 normal = normalize(v_normal);
     vec4 lightingDirection = normalize(lightPosition - v_position);

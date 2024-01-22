@@ -41,21 +41,16 @@ class MaterialDescriptor {
     }
 }
 
-class Material {
-    // name: the name of the material
-    // vertexShaderSource: the source code for the vertex shader
-    // fragmentShaderSource: the source code for the fragment shader
-    // params: an array of MaterialParameter objects
-    constructor(name, vertexShaderSource, fragmentShaderSource, params = new Array()) {
+class ShaderSet {
+    constructor(name, vertexShaderSource = "", fragmentShaderSource = "", paramNames = new Array()) {
         this.name = name;
         this.vertexShaderSource = vertexShaderSource;
         this.fragmentShaderSource = fragmentShaderSource;
-        this.params = params;
+        this.paramNames = paramNames;
         this.uLoc_modelMatrix = -1;
         this.uLoc_viewMatrix = -1;
         this.uLoc_projectionMatrix = -1;
         this.uLoc_cameraPosition = -1;
-
         this.uLoc_params = new Map();
     }
 
@@ -84,7 +79,7 @@ class Material {
         // vertexAttribPointer(index, size, type, normalized, stride, offset)
         gl.vertexAttribPointer(aLoc_position, 4, gl.FLOAT, false, 8 * Float32Array.BYTES_PER_ELEMENT, 0);
         gl.enableVertexAttribArray(aLoc_position);
-        
+
         // set the normal attribute pointer
         gl.vertexAttribPointer(aLoc_normal, 4, gl.FLOAT, false, 8 * Float32Array.BYTES_PER_ELEMENT, 4 * Float32Array.BYTES_PER_ELEMENT);
         gl.enableVertexAttribArray(aLoc_normal);
@@ -115,20 +110,20 @@ class Material {
         }
 
         // now find the locations of the shader parameters
-        for (let i = 0; i < this.params.length; i++) {
-            let param = this.params[i];
-            let location = gl.getUniformLocation(gl.program, param.name);
+        for (let i = 0; i < this.paramNames.length; i++) {
+            let paramName = this.paramNames[i];
+            let location = gl.getUniformLocation(gl.program, paramName);
             if (location < 0) {
-                console.log('Failed to get the storage location of ' + param.name);
+                console.log('Failed to get the storage location of ' + paramName);
                 return;
             }
-            this.uLoc_params.set(param.name, location);
+            this.uLoc_params.set(paramName, location);
         }
     }
 
-    loadParameters(gl) {
-        for (let i = 0; i < this.params.length; i++) {
-            let param = this.params[i];
+    loadParameters(gl, params) {
+        for (let i = 0; i < this.paramNames.length; i++) {
+            let param = params[i];
             console.log("Loading parameter " + param.name);
             let location = this.uLoc_params.get(param.name);
             if (location < 0) {
@@ -140,11 +135,44 @@ class Material {
     }
 }
 
+class Material {
+    // name: the name of the material
+    // shaderName: the name of the shader used
+    // params: an array of MaterialParameter objects
+    constructor(name, shaderName, params = new Array()) {
+        this.name = name;
+        this.shaderName = shaderName;
+        this.params = params;
+    }
+
+    // loads the material into the shader
+    loadParameters(gl, shader) {
+        shader.loadParameters(gl, this.params);
+    }
+}
+
 class MaterialRegistry {
     constructor(materialDescriptors = new Array()) {
         this.materials = new Map();
+        this.shaders = new Map();
         this.materialDescriptors = materialDescriptors;
         this.currentlyLoadedMaterial = "";
+        this.currentlyLoadedShader = "";
+    }
+
+    print()
+    {
+        console.log("Printing materials");
+        for (let [key, value] of this.materials) {
+            console.log(key)
+            console.log(value)
+        }
+
+        console.log("Printing shaders");
+        for (let [key, value] of this.shaders) {
+            console.log(key)
+            console.log(value)
+        }
     }
 
     // loads all the materials from the shader directory
@@ -158,51 +186,69 @@ class MaterialRegistry {
     //          frag.glsl
     //      ...
     // If the shader directory is not laid out like this, then the materials will not be loaded correctly
-    async loadMaterials()
-    {
+    async loadMaterials() {
         // Get all the materials in the shader directory
         // using FileReader
         var materialDescriptors = this.materialDescriptors;
         console.log("Found " + materialDescriptors.length + " materials");
         console.log(materialDescriptors);
         // For each material directory, load it into the shader registry
-        for (var i = 0; i < materialDescriptors.length; i++)
-        {
-            // load the material
-            var materialLocation = materialDescriptors[i].shaderDirectory;
-            let vertexShaderPath = materialLocation + "/vert.glsl";
-            let fragmentShaderPath = materialLocation + "/frag.glsl";
+        for (var i = 0; i < materialDescriptors.length; i++) {
+            // parse materialLocation to get the name of the shader
+            let shaderLocation = materialDescriptors[i].shaderDirectory;
+            let shaderName = shaderLocation.split("/").pop(); // get the last element
             let materialName = materialDescriptors[i].name;
-
-            // check if these files exist using fetch
-            try {
-                console.log("Loading material: " + materialName);
-                const vertResponse = await fetch(vertexShaderPath);
-                const fragResponse = await fetch(fragmentShaderPath);
-
-                if (!vertResponse.ok) {
-                    throw new Error('Failed to load vertex shader: ' + vertexShaderPath);
-                }
-                if (!fragResponse.ok) {
-                    throw new Error('Failed to load fragment shader: ' + fragmentShaderPath);
-                }
-                // load the material
-                // get the shader source from the resonse
-                const vertSource = await vertResponse.text();
-                const fragSource = await fragResponse.text();
-
-                console.log("Loaded material: " + materialName);
-                console.log(vertSource)
-                console.log(fragSource)
-
-                // add the material to the registry
-                var material = new Material(materialName, vertSource, fragSource, materialDescriptors[i].params);
-                this.addMaterial(material);
-            }
-            catch (error) {
+            if (shaderName == "") {
                 console.log("Failed to load material: " + materialName);
-                console.log(error);
+                console.log("Shader name is empty");
+                continue;
             }
+
+            // load the shader because it hasn't been loaded yet
+            if (!this.shaders.has(shaderName)) {
+                // load the shader from the path
+                let vertexShaderPath = shaderLocation + "/vert.glsl";
+                let fragmentShaderPath = shaderLocation + "/frag.glsl";
+
+                // check if these files exist using fetch
+                try {
+                    console.log("Loading shader: " + shaderName);
+                    const vertResponse = await fetch(vertexShaderPath);
+                    const fragResponse = await fetch(fragmentShaderPath);
+
+                    if (!vertResponse.ok) {
+                        throw new Error('Failed to load vertex shader: ' + vertexShaderPath);
+                    }
+                    if (!fragResponse.ok) {
+                        throw new Error('Failed to load fragment shader: ' + fragmentShaderPath);
+                    }
+                    // load the material
+                    // get the shader source from the resonse
+                    const vertSource = await vertResponse.text();
+                    const fragSource = await fragResponse.text();
+
+                    // console.log(vertSource)
+                    // console.log(fragSource)
+
+                    let paramNames = new Array();
+                    for (let j = 0; j < materialDescriptors[i].params.length; j++) {
+                        paramNames.push(materialDescriptors[i].params[j].name);
+                    }
+
+                    // add the shader to the registry
+                    let shader = new ShaderSet(shaderName, vertSource, fragSource, paramNames);
+                    console.log(shader);
+                    this.shaders.set(shaderName, shader);
+                }
+                catch (error) {
+                    console.log("Failed to load material: " + materialName);
+                    console.log(error);
+                }
+            }
+
+            // add the material to the registry
+            var material = new Material(materialName, shaderName, materialDescriptors[i].params);
+            this.addMaterial(material);
         }
     }
 
@@ -223,7 +269,25 @@ class MaterialRegistry {
 
         this.currentlyLoadedMaterial = name;
         let material = this.getMaterial(name);
-        material.loadShader(gl);
+        if (material == null) {
+            console.log("Can't set material, material is null");
+            return;
+        }
+
+        if (material.shaderName == this.currentlyLoadedShader) {
+            return; // don't load the shader again -- we can just switch the uniforms
+        }
+
+        this.currentlyLoadedShader = material.shaderName;
+        // load the shader
+        console.log("Loading shader: " + material.shaderName);
+        let shader = this.shaders.get(material.shaderName);
+        if (shader == null) {
+            console.log("Can't set material, shader is null");
+            return;
+        }
+        shader.loadShader(gl);
+        material.loadParameters(gl, shader);
     }
 
     // sets the material parameters for the next object
@@ -234,20 +298,17 @@ class MaterialRegistry {
             console.log("Can't pass uniforms, material is null");
             return;
         }
-        if (material.uLoc_modelMatrix < 0)
-        {
+        if (material.uLoc_modelMatrix < 0) {
             console.log("Material Model Matrix is null");
             return;
         }
 
-        if (material.uLoc_viewMatrix < 0)
-        {
+        if (material.uLoc_viewMatrix < 0) {
             console.log("Material View Matrix is null");
             return;
         }
 
-        if (material.uLoc_projectionMatrix < 0)
-        {
+        if (material.uLoc_projectionMatrix < 0) {
             console.log("Material Projection Matrix is null");
             return;
         }
@@ -257,6 +318,5 @@ class MaterialRegistry {
         gl.uniformMatrix4fv(material.uLoc_viewMatrix, false, viewMatrix.elements);
         gl.uniformMatrix4fv(material.uLoc_projectionMatrix, false, projectionMatrix.elements);
         gl.uniform3fv(material.uLoc_cameraPosition, cameraPosition.elements);
-        material.loadParameters(gl);
     }
 }

@@ -89,7 +89,7 @@ async function main() {
 
 	// Clear the color buffer bit
 	gl.clear(gl.COLOR_BUFFER_BIT);
-
+	g_materialRegistry.print();
 	buildScene();
 	addEventListeners();
 	loadMeshes();
@@ -98,8 +98,8 @@ async function main() {
 
 	var tick = function () {
 		requestAnimationFrame(tick, g_canvasID);
-		drawAll();
-		update();
+		// drawAll();
+		// update();
 	};
 
 	tick();
@@ -146,8 +146,8 @@ function buildScene() {
 		materialName = "red",
 		position = new Vector3([0, 0, -5]),
 	)
-	g_sceneGraph.addObject(cube);
 	g_sceneGraph.addObject(sphere);
+	g_sceneGraph.addObject(cube);
 	setCamera();
 	console.log("Built scene graph");
 
