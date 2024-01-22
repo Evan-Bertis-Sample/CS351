@@ -15,6 +15,7 @@ var g_sceneGraph; // The scene graph for the application
 var g_materialRegistry; // The material registry for the application
 var g_meshRegistry; // The mesh registry for the application
 var g_inputManager; // The input manager for the application
+var g_ecs; // The entity component system for the application
 
 // These buffers aren't actually sent to the GPU
 // Rather, they are used to store the vertices, normals, and indices, then used create the buffers
@@ -41,11 +42,14 @@ async function main() {
 
 	// update loop
 	g_timeElapsed = 0;
+	g_ecs.start();
+	
 	var tick = function () {
 		let newTime = Date.now();
 		g_deltaTime = newTime - g_timeElapsed;
 		g_timeElapsed = newTime;
 		g_inputManager.update();
+		g_ecs.update(g_deltaTime);
 		requestAnimationFrame(tick, g_canvasID);
 		drawAll();
 		update();
@@ -89,8 +93,8 @@ async function initialize() {
 
 	// add the camera controls
 	let cameraCallback = function (axisValue) {
-		console.log("Camera callback");
-		axisValue.printMe();
+		// console.log("Camera callback");
+		// axisValue.printMe();
 		g_cameraPosition.elements[0] += axisValue.elements[0];
 		g_cameraPosition.elements[1] += axisValue.elements[1];
 		g_cameraPosition.elements[2] += axisValue.elements[2];
@@ -214,7 +218,7 @@ function update() {
 }
 
 function setCamera() {
-	g_cameraPosition.printMe();
+	// g_cameraPosition.printMe();
 	g_sceneGraph.setCameraPosition(g_cameraPosition);
 
 	let cameraDirection = new Vector3([-g_cameraPosition.elements[0], -g_cameraPosition.elements[1], -g_cameraPosition.elements[2]]);
