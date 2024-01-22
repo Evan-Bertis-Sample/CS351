@@ -5,9 +5,10 @@ precision mediump float;
 const vec4 lightPosition = vec4(1, 10, 10, 1.0);
 const vec4 ambientLight = vec4(0.1, 0.1, 0.1, 1.0);
 const vec4 lightColor = vec4(1.2, 1.0, 1.0, 1.0);
-const vec4 objectColor = vec4(0.7, 0.3, 1.0, 1.0);
+const float cellShadingWeight = 0.4;
 
 uniform vec3 u_cameraPosition;
+uniform vec4 u_color;
 
 // varying variables -- passed from vertex shader
 varying vec4 v_position;
@@ -32,8 +33,8 @@ void main()
     vec4 viewDirection = normalize(vec4(-u_cameraPosition, 1.0) - v_position);
     float specular = pow(max(dot(reflectionDirection, viewDirection), 0.0), 16.0);
 
-    diffuse = nStep(diffuse, 4.0);
-    specular = nStep(specular, 3.0);
+    diffuse = nStep(diffuse, 4.0) * cellShadingWeight + diffuse * (1.0 - cellShadingWeight);
+    specular = nStep(specular, 3.0) * cellShadingWeight + specular * (1.0 - cellShadingWeight);
 
 
     // calculate the diffuse and specular components
@@ -41,6 +42,6 @@ void main()
     specular = specular * 0.8 + 0.2;
 
     // calculate the final color
-    vec4 finalColor = (ambientLight * objectColor) + (lightColor * objectColor * diffuse) + (lightColor * specular);
+    vec4 finalColor = (ambientLight * u_color) + (lightColor * u_color * diffuse) + (lightColor * specular);
     gl_FragColor = finalColor;
 }

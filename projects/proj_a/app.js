@@ -34,7 +34,23 @@ var c_MOVE_SPEED = 0.5;
 var g_cameraPosition = new Vector3([0, 0, 30]);
 
 // Configuration
-var materialDirectories = ["./static/materials/base"];
+var materialDirectories = [
+	new MaterialDescriptor(
+		"base",
+		"static/materials/base", 
+		[
+			new MaterialParameter("u_color", new Vector4([0.2, 0.2, 0.2, 1.0])),
+		]
+	),
+	new MaterialDescriptor(
+		"red",
+		"static/materials/base", 
+		[
+			new MaterialParameter("u_color", new Vector4([1.0, 0.0, 0.0, 1.0])),
+		]
+	),
+];
+
 var meshes = [
 	"./static/meshes/cube.obj",
 	"./static/meshes/sphere.obj",
@@ -127,8 +143,8 @@ function buildScene() {
 	)
 	sphere = createObject(
 		meshName = "sphere",
-		materialName = "base",
-		position = new Vector3([5, 0, 5]),
+		materialName = "red",
+		position = new Vector3([0, 0, -5]),
 	)
 	g_sceneGraph.addObject(cube);
 	g_sceneGraph.addObject(sphere);
@@ -186,19 +202,6 @@ function loadMeshes() {
 	g_vertexBufferID = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, g_vertexBufferID);
 	gl.bufferData(gl.ARRAY_BUFFER, vertexArray, gl.STATIC_DRAW);
-
-
-	// create the normal buffer
-	// let normalArray = vec4ArrayToFloat32Array(g_normalArray);
-	// g_normalBuffer = gl.createBuffer();
-	// gl.bindBuffer(gl.ARRAY_BUFFER, g_normalBuffer);
-	// gl.bufferData(gl.ARRAY_BUFFER, normalArray, gl.STATIC_DRAW);
-
-	// create the index buffer
-	// let indexArray = new Uint16Array(g_indexArray);
-	// g_indexBuffer = gl.createBuffer();
-	// gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, g_indexBuffer);
-	// gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indexArray, gl.STATIC_DRAW);
 }
 
 function vec4ArrayToFloat32Array(vecArray) {

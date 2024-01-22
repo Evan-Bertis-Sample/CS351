@@ -326,4 +326,4 @@ function createObject(meshName = "", materialName = "", position = null, rotatio
     let renderInfo = new RenderInfo(materialName, meshName);
     let transform = new Transform(position, rotation, scale);
     return new SceneNode(renderInfo, transform);
-}
+}     
