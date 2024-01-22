@@ -3,9 +3,9 @@
 // this includes the material descriptors, and meshes used
 
 // Constants
-var c_VIEWPORT_WIDTH = 400;
-var c_VIEWPORT_HEIGHT = 400;
-var c_MOVE_SPEED = 0.5;
+var c_VIEWPORT_WIDTH = 480;
+var c_VIEWPORT_HEIGHT = 270;
+var c_MOVE_SPEED = 0.01;
 
 // Rendering Configuration
 var c_MATERIALS = [
@@ -33,3 +33,12 @@ var c_MESHES = [
 var c_CONTROLS = {
 	MOVEMENT_AXIS_SET: MovementAxisSets.WASD_KEYS,
 }
+
+// camera configuration
+var c_CAMERA_STARTING_POSITION = new Vector3([0, 15, 15]);
+var c_CAMERA_STARTING_ROTATION = new Quaternion().setFromAxisAngle(1, 0, 0, 45);
+var c_CAMERA_SETTINGS = {
+	fov: 45,
+	near: 0.1,
+	far: 100,
+};

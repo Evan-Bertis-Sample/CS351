@@ -37,7 +37,6 @@ var g_cameraPosition = new Vector3([0, 0, 30]);
 
 async function main() {
 	await initialize();
-	update();
 	drawAll();
 
 	// update loop
@@ -52,7 +51,6 @@ async function main() {
 		g_ecs.update(g_deltaTime);
 		requestAnimationFrame(tick, g_canvasID);
 		drawAll();
-		update();
 	};
 
 	tick();
@@ -90,17 +88,6 @@ async function initialize() {
 	// initialize the input manager
 	g_inputManager = new InputManager();
 	g_inputManager.attach();
-
-	// add the camera controls
-	let cameraCallback = function (axisValue) {
-		// console.log("Camera callback");
-		// axisValue.printMe();
-		g_cameraPosition.elements[0] += axisValue.elements[0];
-		g_cameraPosition.elements[1] += axisValue.elements[1];
-		g_cameraPosition.elements[2] += axisValue.elements[2];
-	}
-
-	g_inputManager.attachAxisCallback(c_CONTROLS.MOVEMENT_AXIS_SET, cameraCallback);
 }
 
 function loadMeshes() {
@@ -212,36 +199,3 @@ function drawNode(node, modelMatrix) {
 	mesh.draw(g_gl);
 
 }
-
-function update() {
-	setCamera();
-}
-
-function setCamera() {
-	// g_cameraPosition.printMe();
-	g_sceneGraph.setCameraPosition(g_cameraPosition);
-
-	let cameraDirection = new Vector3([-g_cameraPosition.elements[0], -g_cameraPosition.elements[1], -g_cameraPosition.elements[2]]);
-
-	// calculate the up vector
-	let up = new Vector3([0, 1, 0]);
-	let cameraRight = cameraDirection.cross(up);
-	let cameraUp = cameraRight.cross(cameraDirection);
-	cameraUp = cameraUp.normalize();
-
-	let eye = new Vector3([0, 0, 0]);
-
-	// look at the origin
-	let rotationMatrix = new Matrix4();
-	rotationMatrix.setLookAt(
-		g_cameraPosition.elements[0], g_cameraPosition.elements[1], g_cameraPosition.elements[2],
-		eye.elements[0], eye.elements[1], eye.elements[2],
-		cameraUp.elements[0], cameraUp.elements[1], cameraUp.elements[2]
-	);
-
-	// test axis angles
-	// rotationMatrix = new Matrix4();
-	// rotationMatrix.setRotate(-45, 1, 0, 0);
-	g_sceneGraph.setCameraRotationFromMatrix(rotationMatrix);
-}
-

@@ -91,6 +91,9 @@ class ECS {
     constructor(sceneGraph) {
         this.sceneGraph = sceneGraph;
         this.entities = {};
+
+        // add the camera to the entity list
+        this.addEntity("camera", new Entity("camera", this.sceneGraph.camera));
     }
 
     // Creates a new entity
@@ -149,6 +152,12 @@ class ECS {
         this.entities[name] = entity;
     }
 
+    // Gets an entity from the ECS
+    // name : the name of the entity
+    getEntity(name) {
+        return this.entities[name];
+    }
+
     // Starts the ECS
     start() {
         for (let key in this.entities) {
@@ -200,5 +209,36 @@ class RotateComponent extends Component {
     update(deltaTime) {
         let rotation = new Quaternion().setFromAxisAngle(this.axis.elements[0], this.axis.elements[1], this.axis.elements[2], this.speed * deltaTime);
         this.transform.rotation = rotation.multiplySelf(this.transform.rotation);
+    }
+}   
+
+class CameraControllerComponent extends Component {
+    constructor(axisSet = MovementAxisSets.WASD_KEYS_KEYS, speed = 1) {
+        super();
+        this.axisSet = axisSet;
+        this.speed = speed;
+    }
+
+    // Updates the component
+    // deltaTime : the time since the last frame
+    update(deltaTime) {
+        let axis = g_inputManager.getAxis(this.axisSet);
+        // the axis is a vector3 with the direction of movement at x,y
+        // we want to make it a vector3 with the direction of movement at x,z
+        axis.elements[2] = axis.elements[1];
+        axis.elements[1] = 0;
+        let moveAmount = deltaTime * this.speed;
+        let oldPosition = this.transform.position;
+        let newPosition = new Vector3(
+            [
+                // must negate the movement because the camera is the parent of the scene graph
+                // so moving the camera forward is actually moving the scene graph backwards
+                oldPosition.elements[0] - axis.elements[0] * moveAmount,
+                oldPosition.elements[1] - axis.elements[1] * moveAmount,
+                oldPosition.elements[2] + axis.elements[2] * moveAmount,
+            ]
+        )
+
+        this.transform.position = newPosition;
     }
 }

@@ -6,6 +6,18 @@ function buildScene() {
 	g_sceneGraph = new SceneGraph();
 	g_ecs = new ECS(g_sceneGraph);
 
+	let cameraEntity = g_ecs.getEntity("camera");
+	if (cameraEntity == null) {
+		console.log("Camera entity is null");
+		return;
+	}
+
+	g_sceneGraph.setCameraPosition(c_CAMERA_STARTING_POSITION);
+	g_sceneGraph.setCameraRotation(c_CAMERA_STARTING_ROTATION);
+	cameraEntity.attachComponent(
+		new CameraControllerComponent(c_CONTROLS.MOVEMENT_AXIS_SET, c_MOVE_SPEED)
+	);
+
 	let cubeEntity = g_ecs.createEntity(
 		entityName = "cube",
 		parent = null,
