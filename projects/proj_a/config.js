@@ -29,3 +29,7 @@ var c_MESHES = [
 	"./static/meshes/cube.obj",
 	"./static/meshes/sphere.obj",
 ];
+
+var c_CONTROLS = {
+	MOVEMENT_AXIS_SET: MovementAxisSets.WASD_KEYS,
+}

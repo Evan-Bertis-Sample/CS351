@@ -283,7 +283,7 @@ class SceneGraph {
     // Sets the rotation of the camera
     // rotation: a Quaternion representing the rotation of the camera
     setCameraRotation(rotation) {
-        rotation.printMe();
+        // rotation.printMe();
         this.camera.transform.rotation = rotation;
     }
 

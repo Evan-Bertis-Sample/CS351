@@ -14,6 +14,7 @@ var g_canvasID; // HTML-5 'canvas' element ID#
 var g_sceneGraph; // The scene graph for the application
 var g_materialRegistry; // The material registry for the application
 var g_meshRegistry; // The mesh registry for the application
+var g_inputManager; // The input manager for the application
 
 // These buffers aren't actually sent to the GPU
 // Rather, they are used to store the vertices, normals, and indices, then used create the buffers
@@ -25,6 +26,10 @@ var g_indexArray = []; // The index buffer for the application
 var g_vertexBufferID; // The vertex buffer for the application
 var g_normalBuffer; // The normal buffer for the application
 
+// update loop
+var g_timeElapsed = 0;
+var g_deltaTime = 0;
+
 // controls
 var g_cameraPosition = new Vector3([0, 0, 30]);
 
@@ -34,7 +39,13 @@ async function main() {
 	update();
 	drawAll();
 
+	// update loop
+	g_timeElapsed = 0;
 	var tick = function () {
+		let newTime = Date.now();
+		g_deltaTime = newTime - g_timeElapsed;
+		g_timeElapsed = newTime;
+		g_inputManager.update();
 		requestAnimationFrame(tick, g_canvasID);
 		drawAll();
 		update();
@@ -72,42 +83,27 @@ async function initialize() {
 	await g_meshRegistry.loadMeshes(c_MESHES);
 	buildScene();
 	loadMeshes();
-	addEventListeners();
+	// initialize the input manager
+	g_inputManager = new InputManager();
+	g_inputManager.attach();
+
+	// add the camera controls
+	let cameraCallback = function (axisValue) {
+		console.log("Camera callback");
+		axisValue.printMe();
+		g_cameraPosition.elements[0] += axisValue.elements[0];
+		g_cameraPosition.elements[1] += axisValue.elements[1];
+		g_cameraPosition.elements[2] += axisValue.elements[2];
+	}
+
+	g_inputManager.attachAxisCallback(c_CONTROLS.MOVEMENT_AXIS_SET, cameraCallback);
 }
-
-function addEventListeners() {
-	document.addEventListener('keydown', keyDownHandler);
-}
-
-function keyDownHandler(event) {
-	if (event.key == "ArrowUp") {
-		g_cameraPosition.elements[2] -= c_MOVE_SPEED;
-	}
-	if (event.key == "ArrowDown") {
-		g_cameraPosition.elements[2] += c_MOVE_SPEED;
-	}
-	if (event.key == "ArrowLeft") {
-		g_cameraPosition.elements[0] -= c_MOVE_SPEED;
-	}
-	if (event.key == "ArrowRight") {
-		g_cameraPosition.elements[0] += c_MOVE_SPEED;
-	}
-	if (event.key == "w") {
-		g_cameraPosition.elements[1] += c_MOVE_SPEED;
-	}
-	if (event.key == "s") {
-		g_cameraPosition.elements[1] -= c_MOVE_SPEED;
-	}
-}
-
-
 
 function loadMeshes() {
 	// load the meshes into the buffers
 	g_sceneGraph.traverse(loadMeshHelper);
 	// now create the buffers that we will send to the GPU
 	// create the vertex buffer
-
 	console.log("Loaded Vertex Array: ");
 	console.log(g_vertexArray);
 

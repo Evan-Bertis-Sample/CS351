@@ -124,7 +124,7 @@ class ShaderSet {
     loadParameters(gl, params) {
         for (let i = 0; i < this.paramNames.length; i++) {
             let param = params[i];
-            console.log("Loading parameter " + param.name);
+            // console.log("Loading parameter " + param.name);
             let location = this.uLoc_params.get(param.name);
             if (location < 0) {
                 console.log('Failed to get the storage location of ' + param.name);
@@ -283,7 +283,7 @@ class MaterialRegistry {
         // load the shader
         let shader = this.shaders.get(material.shaderName);
         if (material.shaderName != this.currentlyLoadedMaterial) {
-            console.log("Loading shader: " + material.shaderName);
+            // console.log("Loading shader: " + material.shaderName);
             if (shader == null) {
                 console.log("Can't set material, shader is null");
                 return;
@@ -303,14 +303,14 @@ class MaterialRegistry {
     // these are all the uniforms that any material should have
     passUniforms(gl, modelMatrix, viewMatrix, projectionMatrix, cameraPosition) {
         let material = this.getMaterial(this.currentlyLoadedMaterial);
-        console.log(material);
+        // console.log(material);
         if (material == null) {
             console.log("Can't pass uniforms, material is null");
             return;
         }
 
         let shader = this.getShader(this.currentlyLoadedShader);
-        console.log(shader);
+        // console.log(shader);
         if (shader == null) {
             console.log("Can't read shader, shader is null");
             return;
@@ -341,7 +341,7 @@ class MaterialRegistry {
             return;
         }
 
-        console.log("Passing uniforms for material: " + this.currentlyLoadedMaterial)
+        // console.log("Passing uniforms for material: " + this.currentlyLoadedMaterial)
         gl.uniformMatrix4fv(uLoc_modelMatrix, false, modelMatrix.elements);
         gl.uniformMatrix4fv(uLoc_viewMatrix, false, viewMatrix.elements);
         gl.uniformMatrix4fv(uLoc_projectionMatrix, false, projectionMatrix.elements);
