@@ -3,8 +3,8 @@ precision mediump float;
 
 // constants
 const vec4 directionalLight = vec4(1, 1, 2, 0);
-const vec4 ambientLight = vec4(0.1, 0.1, 0.1, 1.0);
-const vec4 lightColor = vec4(1.2, 1.0, 1.0, 1.0);
+const vec4 ambientLightColor = vec4(0.31, 0.32, 0.37, 1.0);
+const vec4 lightColor = vec4(0.94, 0.94, 0.91, 1.0);
 const float cellShadingWeight = 0.4;
 
 uniform vec3 u_cameraPosition;
@@ -41,6 +41,6 @@ void main() {
     specular = specular * specular;
 
     // calculate the final color
-    vec4 finalColor = (ambientLight * u_color) + (lightColor * u_color * diffuse) + (lightColor * specular);
+    vec4 finalColor = (ambientLightColor * u_color) + (lightColor * u_color * diffuse) + (lightColor * specular);
     gl_FragColor = finalColor;
 }

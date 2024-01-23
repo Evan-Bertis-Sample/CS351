@@ -25,6 +25,27 @@ var c_MATERIALS = [
 		]
 	),
 	new MaterialDescriptor(
+		"robot_inners",
+		"static/materials/base", 
+		[
+			new MaterialParameter("u_color", new Vector4([0.5, 0.5, 0.5, 1.0])),
+		]
+	),
+	new MaterialDescriptor(
+		"robot_outers",
+		"static/materials/base", 
+		[
+			new MaterialParameter("u_color", new Vector4([0.7, 0.7, 0.7, 1.0])),
+		]
+	),
+	new MaterialDescriptor(
+		"robot_veins",
+		"static/materials/base", 
+		[
+			new MaterialParameter("u_color", new Vector4([0.8, 0.3, 0.6, 1.0])),
+		]
+	),
+	new MaterialDescriptor(
 		"skybox",
 		"static/materials/skybox", 
 		[
@@ -38,6 +59,10 @@ var c_MESHES = [
 	"./static/meshes/invert_cube.obj",
 	"./static/meshes/sphere.obj",
 	"./static/meshes/invert_sphere.obj",
+	"./static/meshes/robot.obj",
+	"./static/meshes/robot_cube_inners.obj",
+	"./static/meshes/robot_cube_outers.obj",
+	"./static/meshes/robot_cube_veins.obj",
 ];
 
 var c_CONTROLS = {

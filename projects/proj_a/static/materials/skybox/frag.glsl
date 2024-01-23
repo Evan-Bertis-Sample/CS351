@@ -2,8 +2,8 @@
 precision mediump float;
 
 // constants
-const vec4 darkSkyBlue = vec4(0.0, 0.42, .80, 1.0);
-const vec4 lightSkyBlue = vec4(0.529, 0.808, 0.922, 1.0);
+const vec4 darkSkyColor = vec4(0.2, 0.26, 0.37, 1.0);
+const vec4 lightSkyColor = vec4(0.25, 0.39, 0.52, 1.0);
 const float mixingZoneSize = 15.0;
 const float bottom = -50.0;
 const float numSteps = 5.0;
@@ -25,6 +25,6 @@ void main() {
     float mixFactor = clamp((v_position.y - bottom) / mixingZoneSize, 0.0, 1.0);
     float stepped = nStep(mixFactor, numSteps);
     mixFactor = mix(mixFactor, stepped, stepInfluence);
-    vec4 color = mix(darkSkyBlue, lightSkyBlue, mixFactor);
+    vec4 color = mix(darkSkyColor, lightSkyColor, mixFactor);
     gl_FragColor = color;
 }

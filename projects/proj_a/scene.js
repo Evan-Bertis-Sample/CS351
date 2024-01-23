@@ -20,23 +20,57 @@ function buildScene() {
 			c_CONTROLS.ROTATION_AXIS_SET, c_CAMERA_SENSITIVITY)
 	);
 
-	let cubeEntity = g_ecs.createEntity(
-		entityName = "cube",
+	// build the robot
+	let robotBaseEntity = g_ecs.createEntity(
+		entityName = "Robot Parent",
 		parent = null,
 		position = new Vector3([0, 0, 0]),
 		rotation = new Quaternion().setFromAxisAngle(0, 1, 0, 45),
 		scale = new Vector3([1, 1, 1]),
-		meshName = "cube",
-		materialName = "gray",
+		meshName = "",
+		materialName = "",
 		components = [
 			new BobComponent(1, 0.01),
 			new RotateComponent(new Vector3([0, 1, 0]), 0.1),
 		],
 	)
 
+	let robotInnersEntity = g_ecs.createEntity(
+		entityName = "robot_inners",
+		parent = robotBaseEntity,
+		position = new Vector3([0, 0, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([1, 1, 1]),
+		meshName = "robot_cube_inners",
+		materialName = "robot_inners",
+		components = [],
+	)
+
+	let robotOutersEntity = g_ecs.createEntity(
+		entityName = "robot_outers",
+		parent = robotBaseEntity,
+		position = new Vector3([0, 0, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([1, 1, 1]),
+		meshName = "robot_cube_outers",
+		materialName = "robot_outers",
+		components = [],
+	)
+
+	let robotVeinsEntity = g_ecs.createEntity(
+		entityName = "robot_veins",
+		parent = robotBaseEntity,
+		position = new Vector3([0, 0, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([1, 1, 1]),
+		meshName = "robot_cube_veins",
+		materialName = "robot_veins",
+		components = [],
+	)
+
 	let sphereEntity = g_ecs.createEntity(
 		entityName = "sphere",
-		parent = cubeEntity,
+		parent = robotBaseEntity,
 		position = new Vector3([0, 0, -5]),
 		rotation = new Quaternion(),
 		scale = new Vector3([1, 1, 1]),
