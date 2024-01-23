@@ -15,9 +15,9 @@ function buildScene() {
 	g_sceneGraph.setCameraPosition(c_CAMERA_STARTING_POSITION);
 	g_sceneGraph.setCameraRotation(c_CAMERA_STARTING_ROTATION);
 	cameraEntity.attachComponent(
-		new CameraControllerComponent(
-			c_CONTROLS.MOVEMENT_AXIS_SET, c_MOVE_SPEED,
-			c_CONTROLS.ROTATION_AXIS_SET, c_CAMERA_SENSITIVITY)
+		new CameraController(
+			"Robot Parent", c_CAMERA_STARTING_POSITION, 0.01, 1
+		)
 	);
 
 	// build the robot
@@ -25,13 +25,16 @@ function buildScene() {
 		entityName = "Robot Parent",
 		parent = null,
 		position = new Vector3([0, 0, 0]),
-		rotation = new Quaternion().setFromAxisAngle(0, 1, 0, 45),
+		rotation = new Quaternion(),
 		scale = new Vector3([1, 1, 1]),
 		meshName = "",
 		materialName = "",
 		components = [
 			new BobComponent(0.2, 0.005),
-			new RotateComponent(new Vector3([0, 1, 0]), 0.1),
+			// new RotateComponent(new Vector3([0, 1, 0]), 0.1),
+			new PlayerController(
+				c_CONTROLS.MOVEMENT_AXIS_SET, c_PLAYER_MOVE_SPEED, c_PLAYER_ROT_SPEED, new Quaternion().setFromAxisAngle(0, 1, 0, 45)
+			)
 		],
 	)
 
@@ -68,12 +71,33 @@ function buildScene() {
 		components = [],
 	)
 
+	// spawn robot legs
+	let numLegs = 4;
+	let legDistance = 2.0;
+	for (let i = 0; i < numLegs; i++)
+	{
+		let theta = (i / numLegs) * 2 * Math.PI;
+		let legPosition = new Vector3([Math.cos(theta) * legDistance, 0, Math.sin(theta) * legDistance]);
+		let legRotation = new Quaternion().setFromAxisAngle(0, 1, 0, theta * 180 / Math.PI);
+		// create the leg
+		g_ecs.createEntity(
+			entityName = "robot_leg_" + i,
+			parent = robotBaseEntity,
+			position = legPosition,
+			rotation = legRotation,
+			scale = new Vector3([0.5, 0.5, 0.5]),
+			meshName = "sphere",
+			materialName = "robot_inners",
+			components = [],
+		)
+	}
+
 	let floorBaseEntity = g_ecs.createEntity(
 		entityName = "floor",
 		parent = null,
 		position = new Vector3([0, -1.5, 0]),
 		rotation = new Quaternion(),
-		scale = new Vector3([20, 20, 20]),
+		scale = new Vector3([30, 30, 30]),
 		meshName = "",
 		materialName = "",
 		components = [],

@@ -3,8 +3,8 @@ precision mediump float;
 
 // constants
 const vec4 directionalLight = vec4(1, 1, 2, 0);
-const vec4 ambientLightColor = vec4(0.31, 0.32, 0.37, 1.0);
-const vec4 lightColor = vec4(0.94, 0.94, 0.91, 1.0);
+const vec4 ambientLightColor = vec4(0.44, 0.45, 0.49, 1.0);
+const vec4 lightColor = vec4(0.73, 0.82, 0.83, 1.0);
 const float cellShadingWeight = 0.4;
 
 uniform vec3 u_cameraPosition;

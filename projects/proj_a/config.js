@@ -5,8 +5,8 @@
 // Constants
 var c_VIEWPORT_WIDTH = 1920;
 var c_VIEWPORT_HEIGHT = 1080;
-var c_MOVE_SPEED = 0.01;
-var c_CAMERA_SENSITIVITY = 0.05;
+var c_PLAYER_MOVE_SPEED = 0.01;
+var c_PLAYER_ROT_SPEED = 0.005;
 
 // Rendering Configuration
 var c_MATERIALS = [
@@ -49,14 +49,14 @@ var c_MATERIALS = [
 		"floor_grout",
 		"static/materials/base", 
 		[
-			new MaterialParameter("u_color", new Vector4([0.3, 0.3, 0.3, 1.0])),
+			new MaterialParameter("u_color", new Vector4([0.85, 0.85, 0.85, 1.0])),
 		]
 	),
 	new MaterialDescriptor(
 		"floor_tiles",
 		"static/materials/base", 
 		[
-			new MaterialParameter("u_color", new Vector4([0.5, 0.5, 0.5, 1.0])),
+			new MaterialParameter("u_color", new Vector4([0.9, 0.9, 0.9, 1.0])),
 		]
 	),
 	new MaterialDescriptor(
@@ -87,7 +87,7 @@ var c_CONTROLS = {
 }
 
 // camera configuration
-var c_CAMERA_STARTING_POSITION = new Vector3([0, 10, 10]);
+var c_CAMERA_STARTING_POSITION = new Vector3([0, 15, 12]);
 var c_CAMERA_STARTING_ROTATION = new Quaternion().setFromAxisAngle(1, 0, 0, 45);
 var c_CAMERA_SETTINGS = {
 	fov: 45,

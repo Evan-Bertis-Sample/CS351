@@ -217,19 +217,25 @@ class RotateComponent extends Component {
     }
 }   
 
-class CameraControllerComponent extends Component {
-    constructor(movementAxisSet = AxisSets.WASD_KEYS_KEYS, movementSpeed = 1, roationAxisSet = AxisSets.MOUSE_MOVEMENT, rotationSpeed = 1) {
+// Component used for debugging...
+class PlayerController extends Component {
+    constructor(movementAxisSet = AxisSets.WASD_KEYS_KEYS, movementSpeed = 1, rotationSpeed = 1, originalRotation = new Quaternion()) {
         super();
         this.movementAxisSet = movementAxisSet;
         this.movementSpeed = movementSpeed;
-        this.rotationAxisSet = roationAxisSet;
         this.rotationSpeed = rotationSpeed;
+        this.originalRotation = originalRotation;
     }
 
     // Updates the component
     // deltaTime : the time since the last frame
     update(deltaTime) {
         let axis = g_inputManager.getAxis(this.movementAxisSet);
+
+        // if the axis is zero, don't do anything
+        if (axis.elements[0] == 0 && axis.elements[1] == 0) {
+            return;
+        }
         // the axis is a vector3 with the direction of movement at x,y
         // we want to make it a vector3 with the direction of movement at x,z
         axis.elements[2] = axis.elements[1];
@@ -247,29 +253,32 @@ class CameraControllerComponent extends Component {
         )
         this.transform.position = newPosition;
 
-
-        // // now handle rotation
-        // let rotationAxis = g_inputManager.getAxis(this.rotationAxisSet);
-        // // if the mouse hasn't moved, don't rotate
-        // if (rotationAxis.elements[0] == 0 || rotationAxis.elements[1] == 0) {
-        //     return;
-        // }
-        // let rotationAmount = deltaTime * this.rotationSpeed;
-        // let oldRotation = this.transform.rotation;
-        // rotationAxis = rotationAxis.normalize();
-        // let newRotation = new Quaternion().setFromAxisAngle(rotationAxis.elements[1], rotationAxis.elements[0], 0, rotationAmount);
-        // let defaultRotation = c_CAMERA_STARTING_ROTATION;
-        // // newRotation = newRotation.multiplySelf(defaultRotation);
-        // newRotation = newRotation.multiplySelf(oldRotation);
-        // this.transform.rotation = newRotation;
+        // rotates towards the movement direction
+        // make a look at matrix
+        let lookAtMatrix = new Matrix4().setLookAt(
+            newPosition.elements[0], newPosition.elements[1], newPosition.elements[2],
+            oldPosition.elements[0], oldPosition.elements[1], oldPosition.elements[2],
+            0, 1, 0
+        )
+        lookAtMatrix.printMe();
+        // create a quaternion from the look at matrix
+        let rotation = new Quaternion().setFromRotationMatrix(lookAtMatrix);
+        rotation = rotation.multiplySelf(this.originalRotation);
+        // slerp between the current rotation and the new rotation
+        let output = new Quaternion();
+        Quaternion.slerp(this.transform.rotation, rotation, output, this.rotationSpeed * deltaTime);
+        this.transform.rotation = output;
     }
 }
 
-class FollowEntityComponent extends Component {
-    constructor(entityName = "", offset = new Vector3([0, 0, 0])) {
+class CameraController extends Component {
+    constructor(entityName = "", offset = new Vector3([0, 0, 0]), lerpSpeed = 0.1, deadZone = 0.1) {
         super();
         this.entityName = entityName;
         this.offset = offset;
+        this.lerpSpeed = lerpSpeed;
+        this.deadZone = deadZone;
+        this.cameraVelocity = new Vector3([0, 0, 0]);
     }
 
     // Updates the component
@@ -287,6 +296,35 @@ class FollowEntityComponent extends Component {
             return;
         }
 
+        // check if the entity is within the deadzone
+        let difference = new Vector3(
+            [
+                entityPosition.elements[0] - this.transform.position.elements[0] + this.offset.elements[0],
+                entityPosition.elements[1] - this.transform.position.elements[1] + this.offset.elements[1],
+                entityPosition.elements[2] - this.transform.position.elements[2] + this.offset.elements[2],
+            ]
+        )
+
+        const mag = (v) => Math.sqrt(v.elements[0] * v.elements[0] + v.elements[1] * v.elements[1] + v.elements[2] * v.elements[2]);
+        if (mag(difference) < this.deadZone) {
+            console.log("Within deadzone");
+            // still add the velocity
+            let newPosition = new Vector3(
+                [
+                    this.transform.position.elements[0] + this.cameraVelocity.elements[0] * deltaTime,
+                    this.transform.position.elements[1] + this.cameraVelocity.elements[1] * deltaTime,
+                    this.transform.position.elements[2] + this.cameraVelocity.elements[2] * deltaTime,
+                ]
+            )
+            this.transform.position = newPosition;
+
+            // dampen the velocity
+            this.cameraVelocity.elements[0] *= 0.9;
+            this.cameraVelocity.elements[1] *= 0.9;
+            this.cameraVelocity.elements[2] *= 0.9;
+            return;
+        }
+
         let newPosition = new Vector3(
             [
                 entityPosition.elements[0] + this.offset.elements[0],
@@ -295,7 +333,28 @@ class FollowEntityComponent extends Component {
             ]
         )
 
-        this.transform.position = newPosition;
+        const lerp = (a, b, t) => (1 - t) * a + t * b;
+
+        // lerp between the current position and the new position
+        let currentPosition = this.transform.position;
+        let lerpAmount = this.lerpSpeed * deltaTime;
+        let lerpedPosition = new Vector3(
+            [
+                lerp(currentPosition.elements[0], newPosition.elements[0], lerpAmount),
+                this.transform.position.elements[1],
+                lerp(currentPosition.elements[2], newPosition.elements[2], lerpAmount),
+            ]
+        )
+
+        this.cameraVelocity = new Vector3(
+            [
+                (lerpedPosition.elements[0] - currentPosition.elements[0]) / deltaTime,
+                (lerpedPosition.elements[1] - currentPosition.elements[1]) / deltaTime,
+                (lerpedPosition.elements[2] - currentPosition.elements[2]) / deltaTime,
+            ]
+        )
+
+        this.transform.position = lerpedPosition;
     }
 }
 
@@ -313,7 +372,7 @@ class FollowCameraComponent extends Component {
             console.log("Warning: camera position is null");
             return;
         }
-        console.log("Camera position: " + cameraPosition.elements[0] + ", " + cameraPosition.elements[1] + ", " + cameraPosition.elements[2]);
+        // console.log("Camera position: " + cameraPosition.elements[0] + ", " + cameraPosition.elements[1] + ", " + cameraPosition.elements[2]);
         
         let newPosition = new Vector3(
             [
@@ -322,7 +381,7 @@ class FollowCameraComponent extends Component {
                 cameraPosition.elements[2] + this.offset.elements[2],
             ]
         )
-        console.log("New position: " + newPosition.elements[0] + ", " + newPosition.elements[1] + ", " + newPosition.elements[2]);
+        // console.log("New position: " + newPosition.elements[0] + ", " + newPosition.elements[1] + ", " + newPosition.elements[2]);
         this.transform.position = newPosition;
 
         let cameraRotation = g_sceneGraph.getCameraRotation();
