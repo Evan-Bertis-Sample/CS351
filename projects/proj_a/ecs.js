@@ -260,7 +260,7 @@ class PlayerController extends Component {
             oldPosition.elements[0], oldPosition.elements[1], oldPosition.elements[2],
             0, 1, 0
         )
-        lookAtMatrix.printMe();
+        // lookAtMatrix.printMe();
         // create a quaternion from the look at matrix
         let rotation = new Quaternion().setFromRotationMatrix(lookAtMatrix);
         rotation = rotation.multiplySelf(this.originalRotation);
@@ -307,7 +307,7 @@ class CameraController extends Component {
 
         const mag = (v) => Math.sqrt(v.elements[0] * v.elements[0] + v.elements[1] * v.elements[1] + v.elements[2] * v.elements[2]);
         if (mag(difference) < this.deadZone) {
-            console.log("Within deadzone");
+            // console.log("Within deadzone");
             // still add the velocity
             let newPosition = new Vector3(
                 [
@@ -392,4 +392,91 @@ class FollowCameraComponent extends Component {
 
         // this.transform.rotation = cameraRotation;
     }
+}
+
+class RobotLegCompoent extends Component {
+    // Constructor
+    constructor(upperLegEntityID, lowerLegEntityID, groundY, speed = 1, footPositionMarkerEntityID = null) {
+        super();
+        this.upperLegEntityID = upperLegEntityID;
+        this.lowerLegEntityID = lowerLegEntityID;
+        this.footPositionMarkerID = footPositionMarkerEntityID;
+        this.groundY = groundY;
+        this.speed = speed;
+        this.time = 0;
+        this.upperLegEntity = null;
+        this.lowerLegEntity = null;
+    }
+
+    // Start is called before the first frame update
+    start() {
+        this.upperLegEntity = g_ecs.getEntity(this.upperLegEntityID);
+        this.lowerLegEntity = g_ecs.getEntity(this.lowerLegEntityID);
+        this.footPositionMarkerEntity = g_ecs.getEntity(this.footPositionMarkerID);
+        this.footPlacementPosition = this.calculateIdealFootPlacementPosition();
+        this.footVelocity = new Vector3([0, 0, 0]);
+    }
+
+    // Updates the component
+    // deltaTime : the time since the last frame
+    update(deltaTime) {
+        // update the foot placement position
+        let idealFootPosition = this.calculateIdealFootPlacementPosition();
+        const mag = (v) => Math.sqrt(v.elements[0] * v.elements[0] + v.elements[1] * v.elements[1] + v.elements[2] * v.elements[2]);
+        const add = (a, b) => new Vector3([a.elements[0] + b.elements[0], a.elements[1] + b.elements[1], a.elements[2] + b.elements[2]]);
+        const subtract = (a, b) => new Vector3([a.elements[0] - b.elements[0], a.elements[1] - b.elements[1], a.elements[2] - b.elements[2]]);
+        const lerp = (a, b, t) => (1 - t) * a + t * b;
+        const lerpVector = (a, b, t) => new Vector3([lerp(a.elements[0], b.elements[0], t), lerp(a.elements[1], b.elements[1], t), lerp(a.elements[2], b.elements[2], t)]);
+        const multiply = (a, b) => new Vector3([a.elements[0] * b, a.elements[1] * b, a.elements[2] * b]);
+        let difference = subtract(idealFootPosition, this.footPlacementPosition);
+        let distance = mag(difference);
+
+        if (distance > 0.01)
+        {
+            // snap to the ideal position
+            let lerpedPosition = lerpVector(this.footPlacementPosition, idealFootPosition, 0.8);
+            this.footVelocity = new Vector3(
+                [
+                    (lerpedPosition.elements[0] - this.footPlacementPosition.elements[0]) / deltaTime,
+                    (lerpedPosition.elements[1] - this.footPlacementPosition.elements[1]) / deltaTime,
+                    (lerpedPosition.elements[2] - this.footPlacementPosition.elements[2]) / deltaTime,
+                ]
+            )
+            this.footPlacementPosition = lerpedPosition;
+        }
+        else {
+            // carry the velocity
+            let newPosition = add(this.footPlacementPosition, multiply(this.footVelocity, deltaTime));
+            // dampen the velocity
+            this.footVelocity = multiply(this.footVelocity, 0.5);  
+            this.footPlacementPosition = newPosition;
+        }
+
+        if (this.footPositionMarkerEntity != null) {
+            this.footPositionMarkerEntity.getTransform().position = this.footPlacementPosition;
+        }
+
+        this.time += deltaTime;
+        let offset = Math.sin(this.time * this.speed) * 0.5 + 0.5;
+        let upperLegRotation = new Quaternion().setFromAxisAngle(1, 0, 0, offset * 90);
+        this.upperLegEntity.getTransform().rotation = upperLegRotation;
+        let lowerLegRotation = new Quaternion().setFromAxisAngle(1, 0, 0, -offset * 90);
+        this.lowerLegEntity.getTransform().rotation = lowerLegRotation;
+    }
+
+    calculateIdealFootPlacementPosition() {
+        // representation of the foot placement position
+        let upperLegWorldPosition = this.upperLegEntity.node.transform.getWorldPosition();
+        upperLegWorldPosition.printMe();
+        let idealPosition = new Vector3(
+            [
+                upperLegWorldPosition.elements[0],
+                this.groundY,
+                upperLegWorldPosition.elements[2],
+            ]
+        );
+
+        return idealPosition;
+    }
+
 }

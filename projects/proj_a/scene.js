@@ -79,51 +79,66 @@ function buildScene() {
 		let theta = (i / numLegs) * 2 * Math.PI;
 		let legPosition = new Vector3([Math.cos(theta) * legDistance, 0, Math.sin(theta) * legDistance]);
 		let legRotation = new Quaternion().setFromAxisAngle(0, 1, 0, theta * 180 / Math.PI);
+		let legUpperID = "robot_leg_" + i + "_upper";
+		let legLowerID = "robot_leg_" + i + "_lower";
+		let footPositionMarkerEntityID = "robot_leg_" + i + "_foot_position_marker"; // used to mark the position of the foot for debugging
 		// create the leg
-		g_ecs.createEntity(
+		let legBaseEntity = g_ecs.createEntity(
 			entityName = "robot_leg_" + i,
 			parent = robotBaseEntity,
 			position = legPosition,
 			rotation = legRotation,
 			scale = new Vector3([0.5, 0.5, 0.5]),
+			meshName = "",
+			materialName = "",
+			components = [
+				new RobotLegCompoent(
+					legUpperID, 
+					legLowerID, 
+					-2,
+					1, 
+					footPositionMarkerEntityID)
+			],
+		)
+
+		// create the upper leg
+		let upperLeg = g_ecs.createEntity(
+			entityName = legUpperID,
+			parent = legBaseEntity,
+			position = new Vector3([0, 0.1, 0]),
+			rotation = new Quaternion(),
+			scale = new Vector3([0.5, 0.5, 0.5]),
 			meshName = "sphere",
 			materialName = "robot_inners",
 			components = [],
 		)
+
+		// create the lower leg
+		let lowerLeg = g_ecs.createEntity(
+			entityName = legLowerID,
+			parent = legBaseEntity,
+			position = new Vector3([0, -1, 0]),
+			rotation = new Quaternion(),
+			scale = new Vector3([0.5, 0.5, 0.5]),
+			meshName = "sphere",
+			materialName = "robot_inners",
+			components = [],
+		)
+
+		// create the foot position marker
+		let footPositionMarker = g_ecs.createEntity(
+			entityName = footPositionMarkerEntityID,
+			parent = null,
+			position = new Vector3([0, 0, 0]),
+			rotation = new Quaternion(),
+			scale = new Vector3([0.1, 0.1, 0.1]),
+			meshName = "sphere",
+			materialName = "red",
+			components = [],
+		)
 	}
 
-	let floorBaseEntity = g_ecs.createEntity(
-		entityName = "floor",
-		parent = null,
-		position = new Vector3([0, -1.5, 0]),
-		rotation = new Quaternion(),
-		scale = new Vector3([30, 30, 30]),
-		meshName = "",
-		materialName = "",
-		components = [],
-	)
-
-	let floorGroutEntity = g_ecs.createEntity(
-		entityName = "floor_grout",
-		parent = floorBaseEntity,
-		position = new Vector3([0, 0, 0]),
-		rotation = new Quaternion(),
-		scale = new Vector3([1, 1, 1]),
-		meshName = "floor_grout",
-		materialName = "floor_grout",
-		components = [],
-	)
-
-	let floorTilesEntity = g_ecs.createEntity(
-		entityName = "floor_tiles",
-		parent = floorBaseEntity,
-		position = new Vector3([0, 0, 0]),
-		rotation = new Quaternion(),
-		scale = new Vector3([1, 1, 1]),
-		meshName = "floor_tiles",
-		materialName = "floor_tiles",
-		components = [],
-	)
+	// buildEnviornment();
 
 	let skyboxEntity = g_ecs.createEntity(
 		entityName = "skybox",
@@ -140,4 +155,39 @@ function buildScene() {
 	)
 
 	g_sceneGraph.print();
+}
+
+function buildEnviornment() {
+	let floorBaseEntity = g_ecs.createEntity(
+		entityName = "floor",
+		parent = null,
+		position = new Vector3([0, -1.5, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([30, 30, 30]),
+		meshName = "",
+		materialName = "",
+		components = []
+	);
+
+	let floorGroutEntity = g_ecs.createEntity(
+		entityName = "floor_grout",
+		parent = floorBaseEntity,
+		position = new Vector3([0, 0, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([1, 1, 1]),
+		meshName = "floor_grout",
+		materialName = "floor_grout",
+		components = []
+	);
+
+	let floorTilesEntity = g_ecs.createEntity(
+		entityName = "floor_tiles",
+		parent = floorBaseEntity,
+		position = new Vector3([0, 0, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([1, 1, 1]),
+		meshName = "floor_tiles",
+		materialName = "floor_tiles",
+		components = []
+	);
 }

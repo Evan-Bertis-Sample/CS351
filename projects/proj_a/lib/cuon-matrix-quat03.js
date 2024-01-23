@@ -866,6 +866,164 @@ Vector3.prototype.cross = function(opt_src) {
   return ans; 
 };
 
+/** Evan Bertis-Sample 2024.23.01
+ * Extensions to the Vector3 class to support literally basic operations
+ */
+
+/** VECTOR SELF MANIPULATION METHODS */
+
+/**
+ * Adds a vector to the current vector
+ * @param vec The vector to add
+ * @return this
+*/
+Vector3.prototype.addSelf = function(vec) {
+  var v = this.elements;
+  v[0] += vec[0];
+  v[1] += vec[1];
+  v[2] += vec[2];
+  return this;
+}
+
+/**
+ * Subtracts a vector from the current vector
+ * @param vec The vector to subtract
+ * @return this
+ */
+Vector3.prototype.subSelf = function(vec) {
+  var v = this.elements;
+  v[0] -= vec[0];
+  v[1] -= vec[1];
+  v[2] -= vec[2];
+  return this;
+}
+
+/**
+ * Multiplies the current vector by a scalar
+ * @param scalar The scalar to multiply by
+ * @return this
+ * */
+Vector3.prototype.mulSelf = function(scalar) {
+  var v = this.elements;
+  v[0] *= scalar;
+  v[1] *= scalar;
+  v[2] *= scalar;
+  return this;
+}
+
+/**
+ * Divides the current vector by a scalar
+ * @param scalar The scalar to divide by
+ * @return this
+ * */
+Vector3.prototype.divSelf = function(scalar) {
+  var v = this.elements;
+  v[0] /= scalar;
+  v[1] /= scalar;
+  v[2] /= scalar;
+  return this;
+}
+
+/**
+ * Returns the squared distance between the current vector and another vector
+ * @param vec The other vector
+ * @return The squared distance between the current vector and another vector
+ * */
+Vector3.prototype.distanceToSq = function(vec) {
+  var v = this.elements;
+  var x = v[0] - vec[0];
+  var y = v[1] - vec[1];
+  var z = v[2] - vec[2];
+  return x*x + y*y + z*z;
+}
+
+/** VECTOR NON-SELF-MANIPULATION METHODS */
+/**
+ * Adds a vector to this vector and returns a new vector
+ * @param vec The vector to add
+ * @return A new Vector3
+ */
+Vector3.prototype.add = function(vec) {
+  var v = this.elements;
+  return new Vector3([v[0] + vec[0], v[1] + vec[1], v[2] + vec[2]]);
+}
+
+/**
+ * Subtracts a vector from this vector and returns a new vector
+ * @param vec The vector to subtract
+ * @return A new Vector3
+ */
+Vector3.prototype.sub = function(vec) {
+  var v = this.elements;
+  return new Vector3([v[0] - vec[0], v[1] - vec[1], v[2] - vec[2]]);
+}
+
+/**
+ * Multiplies this vector by a scalar and returns a new vector
+ * @param scalar The scalar to multiply by
+ * @return A new Vector3
+ */
+Vector3.prototype.mul = function(scalar) {
+  var v = this.elements;
+  return new Vector3([v[0] * scalar, v[1] * scalar, v[2] * scalar]);
+}
+
+/**
+ * Divides this vector by a scalar and returns a new vector
+ * @param scalar The scalar to divide by
+ * @return A new Vector3
+ */
+Vector3.prototype.div = function(scalar) {
+  var v = this.elements;
+  return new Vector3([v[0] / scalar, v[1] / scalar, v[2] / scalar]);
+}
+
+/**
+ * Returns the length of the current vector
+ * @return The length of the current vector
+ * */
+Vector3.prototype.length = function() {
+  var v = this.elements;
+  return Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+}
+
+/**
+ * Returns the squared length of the current vector
+ * @return The squared length of the current vector
+ * */
+Vector3.prototype.lengthSq = function() {
+  var v = this.elements;
+  return v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
+}
+
+/**
+ * Returns the distance between the current vector and another vector
+ * @param vec The other vector
+ * @return The distance between the current vector and another vector
+ * */
+Vector3.prototype.distanceTo = function(vec) {
+  var v = this.elements;
+  var x = v[0] - vec[0];
+  var y = v[1] - vec[1];
+  var z = v[2] - vec[2];
+  return Math.sqrt(x*x + y*y + z*z);
+}
+
+/**
+ * Linearly interpolates between this vector and another vector
+ * @param vec The vector to interpolate towards
+ * @param t The interpolation factor between 0 and 1
+ * @return A new Vector3
+ */
+Vector3.prototype.lerp = function(vec, t) {
+  var v = this.elements;
+  return new Vector3([
+    v[0] + (vec[0] - v[0]) * t,
+    v[1] + (vec[1] - v[1]) * t,
+    v[2] + (vec[2] - v[2]) * t
+  ]);
+}
+
 /** J. Tumblin 2018.02.01
   * Print contents of Vector3 on console.
   * If you write:  

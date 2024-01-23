@@ -9,7 +9,7 @@ class Transform {
     // position: a Vector3 representing the position of the transform
     // rotation: a Quaternion representing the rotation of the transform
     // scale: a Vector3 representing the scale of the transform
-    constructor(position = null, rotation = null, scale = null) {
+    constructor(position = null, rotation = null, scale = null, parent) {
         if (position == null) {
             position = new Vector3([0, 0, 0]);
         }
@@ -25,6 +25,18 @@ class Transform {
         this.position = position;
         this.rotation = rotation;
         this.scale = scale;
+        this.parent = parent;
+    }
+
+    getWorldModelMatrix() {
+        let modelMatrix = this.getLocalModelMatrix();
+        if (this.parent == null) {
+            console.log("No parent");
+            return modelMatrix;
+        }
+
+        let parentModelMatrix = this.parent.getWorldModelMatrix();
+        return parentModelMatrix.multiply(modelMatrix);
     }
 
     // Returns the model matrix for this transform
@@ -83,6 +95,15 @@ class Transform {
     setRotationFromAxisAngle(axis, angle) {
         this.rotation.setFromAxisAngle(axis.x, axis.y, axis.z, angle);
     }
+
+    // Gets the world position of this transform
+    getWorldPosition() {
+        // get the model matrix
+        let modelMatrix = this.getWorldModelMatrix();
+        // get the world position
+        let worldPosition = modelMatrix.multiplyVector4(new Vector4([0, 0, 0, 1]));
+        return worldPosition;
+    }
 }
 
 // A representation of a GameObject in the scene graph
@@ -135,6 +156,13 @@ class SceneNode {
         this.parent = null;
     }
 
+    // Sets the parent of this SceneNode
+    // parent: the parent to use for this SceneNode
+    setParent(parent) {
+        this.parent = parent;
+        this.transform.parent = parent.transform;
+    }
+
     // Sets the render info of this SceneNode
     // renderInfo: the RenderInfo to use for rendering this node
     setRenderInfo(renderInfo) {
@@ -161,7 +189,7 @@ class SceneNode {
     // child: the child to add to this SceneNode
     // returns the child so you can nest addChildren calls
     addChild(child) {
-        child.parent = this;
+        child.setParent(this);
         this.children.push(child);
         return child;
     }
