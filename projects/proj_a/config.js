@@ -42,7 +42,21 @@ var c_MATERIALS = [
 		"robot_veins",
 		"static/materials/base", 
 		[
-			new MaterialParameter("u_color", new Vector4([0.8, 0.3, 0.6, 1.0])),
+			new MaterialParameter("u_color", new Vector4([0.8, 0.4, 0.6, 1.0])),
+		]
+	),
+	new MaterialDescriptor(
+		"floor_grout",
+		"static/materials/base", 
+		[
+			new MaterialParameter("u_color", new Vector4([0.3, 0.3, 0.3, 1.0])),
+		]
+	),
+	new MaterialDescriptor(
+		"floor_tiles",
+		"static/materials/base", 
+		[
+			new MaterialParameter("u_color", new Vector4([0.5, 0.5, 0.5, 1.0])),
 		]
 	),
 	new MaterialDescriptor(
@@ -63,6 +77,8 @@ var c_MESHES = [
 	"./static/meshes/robot_cube_inners.obj",
 	"./static/meshes/robot_cube_outers.obj",
 	"./static/meshes/robot_cube_veins.obj",
+	"./static/meshes/floor_grout.obj",
+	"./static/meshes/floor_tiles.obj"
 ];
 
 var c_CONTROLS = {

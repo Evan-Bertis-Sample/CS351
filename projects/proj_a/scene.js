@@ -30,7 +30,7 @@ function buildScene() {
 		meshName = "",
 		materialName = "",
 		components = [
-			new BobComponent(1, 0.01),
+			new BobComponent(0.2, 0.005),
 			new RotateComponent(new Vector3([0, 1, 0]), 0.1),
 		],
 	)
@@ -68,17 +68,37 @@ function buildScene() {
 		components = [],
 	)
 
-	let sphereEntity = g_ecs.createEntity(
-		entityName = "sphere",
-		parent = robotBaseEntity,
-		position = new Vector3([0, 0, -5]),
+	let floorBaseEntity = g_ecs.createEntity(
+		entityName = "floor",
+		parent = null,
+		position = new Vector3([0, -1.5, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([20, 20, 20]),
+		meshName = "",
+		materialName = "",
+		components = [],
+	)
+
+	let floorGroutEntity = g_ecs.createEntity(
+		entityName = "floor_grout",
+		parent = floorBaseEntity,
+		position = new Vector3([0, 0, 0]),
 		rotation = new Quaternion(),
 		scale = new Vector3([1, 1, 1]),
-		meshName = "sphere",
-		materialName = "red",
-		components = [
-			new BobComponent(-1.5, 0.01),
-		],
+		meshName = "floor_grout",
+		materialName = "floor_grout",
+		components = [],
+	)
+
+	let floorTilesEntity = g_ecs.createEntity(
+		entityName = "floor_tiles",
+		parent = floorBaseEntity,
+		position = new Vector3([0, 0, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([1, 1, 1]),
+		meshName = "floor_tiles",
+		materialName = "floor_tiles",
+		components = [],
 	)
 
 	let skyboxEntity = g_ecs.createEntity(

@@ -18,6 +18,14 @@ void main()
     // Transform the vertex position into screen space
     mat4 mvp = u_projectionMatrix * u_viewMatrix * u_modelMatrix;
     vec4 pos = mvp * a_position;
+
+    // check that the vertex is in front of the camera
+    if (pos.z < 0.0)
+    {
+        // if not, set the vertex position to the origin
+        pos = vec4(0.0, 0.0, 0.0, 0.0);
+    }
+    
     pos = pos / pos.w;
     gl_Position = pos;
 
