@@ -56,7 +56,7 @@ var c_MATERIALS = [
 		"floor_tiles",
 		"static/materials/base", 
 		[
-			new MaterialParameter("u_color", new Vector4([0.9, 0.9, 0.9, 1.0])),
+			new MaterialParameter("u_color", new Vector4([0.7, 0.7, 0.7, 1.0])),
 		]
 	),
 	new MaterialDescriptor(

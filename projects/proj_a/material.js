@@ -185,7 +185,7 @@ class MaterialRegistry {
     //          frag.glsl
     //      ...
     // If the shader directory is not laid out like this, then the materials will not be loaded correctly
-    async loadMaterials() {
+    loadMaterials() {
         // Get all the materials in the shader directory
         // using FileReader
         var materialDescriptors = this.materialDescriptors;
@@ -212,22 +212,11 @@ class MaterialRegistry {
                 // check if these files exist using fetch
                 try {
                     console.log("Loading shader: " + shaderName);
-                    const vertResponse = await fetch(vertexShaderPath);
-                    const fragResponse = await fetch(fragmentShaderPath);
+                    const vertSource = loadFile(vertexShaderPath);
+                    const fragSource = loadFile(fragmentShaderPath);
 
-                    if (!vertResponse.ok) {
-                        throw new Error('Failed to load vertex shader: ' + vertexShaderPath);
-                    }
-                    if (!fragResponse.ok) {
-                        throw new Error('Failed to load fragment shader: ' + fragmentShaderPath);
-                    }
-                    // load the material
-                    // get the shader source from the resonse
-                    const vertSource = await vertResponse.text();
-                    const fragSource = await fragResponse.text();
-
-                    // console.log(vertSource)
-                    // console.log(fragSource)
+                    console.log(vertSource)
+                    console.log(fragSource)
 
                     let paramNames = new Array();
                     for (let j = 0; j < materialDescriptors[i].params.length; j++) {

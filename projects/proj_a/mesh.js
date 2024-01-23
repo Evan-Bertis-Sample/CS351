@@ -142,9 +142,9 @@ class MeshRegistry {
 
     // Loads a collection of meshes from an array of file paths, and adds them to the registry
     // filePaths: an array of file paths
-    async loadMeshes(filePaths) {
+    loadMeshes(filePaths) {
         for (var i = 0; i < filePaths.length; i++) {
-            await this.loadMesh(filePaths[i]);
+            this.loadMesh(filePaths[i]);
         }
     }
 
@@ -154,15 +154,13 @@ class MeshRegistry {
     async loadMesh(filePath) {
         // check if this file exists using fetch
         try {
-            const response = await fetch(filePath);
+            let source = loadFile(filePath);
 
-            if (!response.ok) {
-                throw new Error('Failed to load mesh: ' + filePath);
+            if (source == null) {
+                console.log("Failed to load mesh: " + filePath);
+                return;
             }
-            // load the mesh
-            // get the mesh source from the resonse
-            const source = await response.text();
-            // parse the mesh
+
             let mesh = this.parseMesh(source);
 
             // get the name of the mesh
@@ -231,7 +229,8 @@ class MeshRegistry {
         }
 
         let mesh = new Mesh(vertices, normals, vertexIndices, normalIndices);
-        // mesh.print();
+        console.log("Loaded mesh: ");
+        console.log(mesh);
         return mesh;
     }
 }
