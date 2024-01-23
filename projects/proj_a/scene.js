@@ -15,7 +15,9 @@ function buildScene() {
 	g_sceneGraph.setCameraPosition(c_CAMERA_STARTING_POSITION);
 	g_sceneGraph.setCameraRotation(c_CAMERA_STARTING_ROTATION);
 	cameraEntity.attachComponent(
-		new CameraControllerComponent(c_CONTROLS.MOVEMENT_AXIS_SET, c_MOVE_SPEED)
+		new CameraControllerComponent(
+			c_CONTROLS.MOVEMENT_AXIS_SET, c_MOVE_SPEED,
+			c_CONTROLS.ROTATION_AXIS_SET, c_CAMERA_SENSITIVITY)
 	);
 
 	let cubeEntity = g_ecs.createEntity(
@@ -42,6 +44,20 @@ function buildScene() {
 		materialName = "red",
 		components = [
 			new BobComponent(-1.5, 0.01),
+		],
+	)
+
+	let skyboxEntity = g_ecs.createEntity(
+		entityName = "skybox",
+		parent = null,
+		position = new Vector3([0, 0, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([c_CAMERA_SETTINGS.far / 2, c_CAMERA_SETTINGS.far / 2, c_CAMERA_SETTINGS.far / 2]),
+		// scale = new Vector3([1, 1, 1]),
+		meshName = "invert_sphere",
+		materialName = "skybox",
+		components = [
+			new FollowCameraComponent(new Vector3([0, -2, -2])),
 		],
 	)
 

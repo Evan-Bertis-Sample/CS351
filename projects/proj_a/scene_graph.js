@@ -44,7 +44,11 @@ class Transform {
         // translationMatrix.printMe();
 
         // scale, then rotate, then translate
-        return scaleMatrix.multiply(rotationMatrix).multiply(translationMatrix);
+        // translationMatrix * rotationMatrix * scaleMatrix
+        let modelMatrix = translationMatrix.multiply(rotationMatrix.multiply(scaleMatrix));
+        // console.log("Model Matrix:");
+        // modelMatrix.printMe();
+        return modelMatrix;
     }
 
     // Sets the position of this transform
@@ -79,7 +83,6 @@ class Transform {
     setRotationFromAxisAngle(axis, angle) {
         this.rotation.setFromAxisAngle(axis.x, axis.y, axis.z, angle);
     }
-
 }
 
 // A representation of a GameObject in the scene graph
@@ -201,7 +204,26 @@ class SceneGraph {
             c_CAMERA_SETTINGS.far
         );
         this.viewMatrix = new Matrix4();
-        this.viewMatrix.setLookAt(0, 0, 0, 0, 0, -1, 0, 1, 0);
+    }
+
+    // Gets the view matrix of the scene graph
+    // returns the view matrix
+    getViewMatrix() {
+        // using the camera node, get the view matrix
+        let position = this.camera.transform.position;
+        let rotation = this.camera.transform.rotation;
+
+        // construct the view matrix
+        let viewMatrix = new Matrix4();
+        viewMatrix.setFromQuat(rotation.x, rotation.y, rotation.z, rotation.w);
+        viewMatrix.translate(-position.elements[0], -position.elements[1], -position.elements[2]);
+        return viewMatrix;
+    }
+
+    // gets the projection matrix of the scene graph
+    // returns the projection matrix
+    getProjectionMatrix() {
+        return this.projectionMatrix;
     }
 
     // Traverses the scene graph
@@ -235,7 +257,7 @@ class SceneGraph {
     // object : the scenenode to add to the scene
     // returns the SceneNode
     addObjects(children) {
-        this.camera.addChildren(children);
+        this.root.addChildren(children);
         return this;
     }
 
@@ -244,7 +266,7 @@ class SceneGraph {
     // child: the child to add to the scene
     // returns the child so you can nest addChildren calls
     addObject(child) {
-        this.camera.addChild(child);
+        this.root.addChild(child);
         return child;
     }
 
@@ -283,7 +305,7 @@ class SceneGraph {
     // position: a Vector3 representing the position of the camera
     setCameraPosition(position) {
         // reverse the position
-        this.camera.transform.position = new Vector3([-position.elements[0], -position.elements[1], -position.elements[2]]);
+        this.camera.transform.position = position;
     }
 
     // Sets the rotation of the camera
@@ -317,6 +339,25 @@ class SceneGraph {
         let rotation = new Quaternion();
         rotation.setFromAxisAngle(axis.x, axis.y, axis.z, angle);
         this.setCameraRotation(rotation);
+    }
+
+    // Gets the camera position
+    // returns a Vector3 representing the camera position
+    getCameraPosition() {
+        return this.camera.transform.position;
+    }
+
+    // Gets the camera rotation
+    // returns a Quaternion representing the camera rotation
+    getCameraRotation() {
+        // inverse the rotation
+        let rotation = new Quaternion();
+        rotation.x = this.camera.transform.rotation.x;
+        rotation.y = this.camera.transform.rotation.y;
+        rotation.z = this.camera.transform.rotation.z;
+        rotation.w = this.camera.transform.rotation.w;
+        rotation.inverse();
+        return rotation;
     }
 }
 

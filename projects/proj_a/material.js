@@ -282,8 +282,8 @@ class MaterialRegistry {
 
         // load the shader
         let shader = this.shaders.get(material.shaderName);
-        if (material.shaderName != this.currentlyLoadedMaterial) {
-            // console.log("Loading shader: " + material.shaderName);
+        if (material.shaderName != this.currentlyLoadedShader) {
+            // console.log("Switching to shader: " + material.shaderName);
             if (shader == null) {
                 console.log("Can't set material, shader is null");
                 return;
@@ -293,7 +293,7 @@ class MaterialRegistry {
         }
         else
         {
-            console.log("Skipping shader loading");
+            // console.log("Skipping shader loading");
         }
 
         material.loadParameters(gl, shader);
@@ -309,7 +309,7 @@ class MaterialRegistry {
             return;
         }
 
-        let shader = this.getShader(this.currentlyLoadedShader);
+        let shader = this.getShader(material.shaderName);
         // console.log(shader);
         if (shader == null) {
             console.log("Can't read shader, shader is null");

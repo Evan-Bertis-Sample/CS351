@@ -9,9 +9,11 @@ const ButtonState = {
     UP: 3,
 };
 
-const MovementAxisSets = {
+const AxisSets = {
     ARROW_KEYS: 0,
     WASD_KEYS: 1,
+    MOUSE_MOVEMENT: 2,
+    MOUSE_POSITION: 3,
 }
 
 
@@ -19,6 +21,7 @@ class InputManager {
     constructor() {
         this.keyStates = {};
         this.mousePos = new Vector3([0, 0, 0]);
+        this.mouseChange = new Vector3([0, 0, 0]);
         // Callbacks are a function that takes the new state of the button
         this.buttonCallbacks = {};
         this.axisCallbacks = {};
@@ -55,6 +58,9 @@ class InputManager {
 
     // Handles mouse move events
     mouseMoveHandler(event) {
+        // update the mouse position and the mouse change
+        this.mouseChange.elements[0] = event.movementX;
+        this.mouseChange.elements[1] = event.movementY;
         this.mousePos.elements[0] = event.clientX;
         this.mousePos.elements[1] = event.clientY;
     }
@@ -96,6 +102,11 @@ class InputManager {
         return this.mousePos;
     }
 
+    // Returns the mouse change
+    getMouseChange() {
+        return this.mouseChange;
+    }
+
     // Updates the input manager
     update() {
         // update the key states
@@ -129,7 +140,7 @@ class InputManager {
     // axisSet : the set of axes to use
     getAxis(axisSet) {
         let axis = new Vector3([0, 0, 0]);
-        if (axisSet == MovementAxisSets.ARROW_KEYS) {
+        if (axisSet == AxisSets.ARROW_KEYS) {
             if (this.getKeyState("ArrowUp") == ButtonState.DOWN) {
                 axis.elements[1] += 1;
             }
@@ -143,7 +154,7 @@ class InputManager {
                 axis.elements[0] += 1;
             }
         }
-        else if (axisSet == MovementAxisSets.WASD_KEYS) {
+        else if (axisSet == AxisSets.WASD_KEYS) {
             if (this.getKeyState("w") == ButtonState.DOWN) {
                 axis.elements[1] += 1;
             }
@@ -156,6 +167,12 @@ class InputManager {
             if (this.getKeyState("d") == ButtonState.DOWN) {
                 axis.elements[0] += 1;
             }
+        }
+        else if (axisSet == AxisSets.MOUSE_MOVEMENT) {
+            axis = this.getMouseChange();
+        }
+        else if (axisSet == AxisSets.MOUSE_POSITION) {
+            axis = this.getMousePos();
         }
 
         return axis;

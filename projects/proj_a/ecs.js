@@ -39,6 +39,11 @@ class Entity {
         this.components = [];
     }
 
+    // Gets the transform of the entity
+    getTransform() {
+        return this.node.transform;
+    }
+
     // Attaches a component to this entity
     // component : the component to attach
     attachComponent(component) {
@@ -213,32 +218,119 @@ class RotateComponent extends Component {
 }   
 
 class CameraControllerComponent extends Component {
-    constructor(axisSet = MovementAxisSets.WASD_KEYS_KEYS, speed = 1) {
+    constructor(movementAxisSet = AxisSets.WASD_KEYS_KEYS, movementSpeed = 1, roationAxisSet = AxisSets.MOUSE_MOVEMENT, rotationSpeed = 1) {
         super();
-        this.axisSet = axisSet;
-        this.speed = speed;
+        this.movementAxisSet = movementAxisSet;
+        this.movementSpeed = movementSpeed;
+        this.rotationAxisSet = roationAxisSet;
+        this.rotationSpeed = rotationSpeed;
     }
 
     // Updates the component
     // deltaTime : the time since the last frame
     update(deltaTime) {
-        let axis = g_inputManager.getAxis(this.axisSet);
+        let axis = g_inputManager.getAxis(this.movementAxisSet);
         // the axis is a vector3 with the direction of movement at x,y
         // we want to make it a vector3 with the direction of movement at x,z
         axis.elements[2] = axis.elements[1];
         axis.elements[1] = 0;
-        let moveAmount = deltaTime * this.speed;
+        let moveAmount = deltaTime * this.movementSpeed;
         let oldPosition = this.transform.position;
         let newPosition = new Vector3(
             [
                 // must negate the movement because the camera is the parent of the scene graph
                 // so moving the camera forward is actually moving the scene graph backwards
-                oldPosition.elements[0] - axis.elements[0] * moveAmount,
-                oldPosition.elements[1] - axis.elements[1] * moveAmount,
-                oldPosition.elements[2] + axis.elements[2] * moveAmount,
+                oldPosition.elements[0] + axis.elements[0] * moveAmount,
+                oldPosition.elements[1] + axis.elements[1] * moveAmount,
+                oldPosition.elements[2] - axis.elements[2] * moveAmount,
+            ]
+        )
+        this.transform.position = newPosition;
+
+
+        // // now handle rotation
+        // let rotationAxis = g_inputManager.getAxis(this.rotationAxisSet);
+        // // if the mouse hasn't moved, don't rotate
+        // if (rotationAxis.elements[0] == 0 || rotationAxis.elements[1] == 0) {
+        //     return;
+        // }
+        // let rotationAmount = deltaTime * this.rotationSpeed;
+        // let oldRotation = this.transform.rotation;
+        // rotationAxis = rotationAxis.normalize();
+        // let newRotation = new Quaternion().setFromAxisAngle(rotationAxis.elements[1], rotationAxis.elements[0], 0, rotationAmount);
+        // let defaultRotation = c_CAMERA_STARTING_ROTATION;
+        // // newRotation = newRotation.multiplySelf(defaultRotation);
+        // newRotation = newRotation.multiplySelf(oldRotation);
+        // this.transform.rotation = newRotation;
+    }
+}
+
+class FollowEntityComponent extends Component {
+    constructor(entityName = "", offset = new Vector3([0, 0, 0])) {
+        super();
+        this.entityName = entityName;
+        this.offset = offset;
+    }
+
+    // Updates the component
+    // deltaTime : the time since the last frame
+    update(deltaTime) {
+        let entity = g_ecs.getEntity(this.entityName);
+        if (entity == null) {
+            console.log("Warning: entity is null");
+            return;
+        }
+
+        let entityPosition = entity.getTransform().position;
+        if (entityPosition == null) {
+            console.log("Warning: entity position is null");
+            return;
+        }
+
+        let newPosition = new Vector3(
+            [
+                entityPosition.elements[0] + this.offset.elements[0],
+                entityPosition.elements[1] + this.offset.elements[1],
+                entityPosition.elements[2] + this.offset.elements[2],
             ]
         )
 
         this.transform.position = newPosition;
+    }
+}
+
+class FollowCameraComponent extends Component {
+    constructor(offset = new Vector3([0, 0, 0])) {
+        super();
+        this.offset = offset;
+    }
+
+    // Updates the component
+    // deltaTime : the time since the last frame
+    update(deltaTime) {
+        let cameraPosition = g_sceneGraph.getCameraPosition();
+        if (cameraPosition == null) {
+            console.log("Warning: camera position is null");
+            return;
+        }
+        console.log("Camera position: " + cameraPosition.elements[0] + ", " + cameraPosition.elements[1] + ", " + cameraPosition.elements[2]);
+        
+        let newPosition = new Vector3(
+            [
+                cameraPosition.elements[0] + this.offset.elements[0],
+                cameraPosition.elements[1] + this.offset.elements[1],
+                cameraPosition.elements[2] + this.offset.elements[2],
+            ]
+        )
+        console.log("New position: " + newPosition.elements[0] + ", " + newPosition.elements[1] + ", " + newPosition.elements[2]);
+        this.transform.position = newPosition;
+
+        let cameraRotation = g_sceneGraph.getCameraRotation();
+        if (cameraRotation == null) {
+            console.log("Warning: camera rotation is null");
+            return;
+        }
+
+        // this.transform.rotation = cameraRotation;
     }
 }

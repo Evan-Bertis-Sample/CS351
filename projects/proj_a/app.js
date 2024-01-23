@@ -77,9 +77,12 @@ async function initialize() {
 	g_gl.clearColor(1, 1, 1, 1);
 	g_gl.enable(g_gl.DEPTH_TEST);
 	g_gl.clear(g_gl.COLOR_BUFFER_BIT);
+	// cull
+	g_gl.enable(g_gl.CULL_FACE);
 	// Load the materials
 	g_materialRegistry = new MaterialRegistry(c_MATERIALS);
 	await g_materialRegistry.loadMaterials();
+	console.log(g_materialRegistry);
 	// Load the meshes
 	g_meshRegistry = new MeshRegistry();
 	await g_meshRegistry.loadMeshes(c_MESHES);
@@ -194,7 +197,7 @@ function drawNode(node, modelMatrix) {
 		return;
 	}
 	g_materialRegistry.setMaterial(node.renderInfo.material, g_gl);
-	g_materialRegistry.passUniforms(g_gl, modelMatrix, g_sceneGraph.viewMatrix, g_sceneGraph.projectionMatrix, g_sceneGraph.camera.transform.position);
+	g_materialRegistry.passUniforms(g_gl, modelMatrix, g_sceneGraph.getViewMatrix(), g_sceneGraph.getProjectionMatrix(), g_sceneGraph.getCameraPosition());
 	// draw the mesh
 	mesh.draw(g_gl);
 

@@ -2,7 +2,7 @@
 precision mediump float;
 
 // constants
-const vec4 directionalLight = vec4(1, 1, 1, 0);
+const vec4 directionalLight = vec4(1, 1, 2, 0);
 const vec4 ambientLight = vec4(0.1, 0.1, 0.1, 1.0);
 const vec4 lightColor = vec4(1.2, 1.0, 1.0, 1.0);
 const float cellShadingWeight = 0.4;
@@ -27,7 +27,7 @@ void main() {
 
     // calculate the specular component
     vec4 reflectionDirection = reflect(-lightingDirection, normal);
-    vec4 viewDirection = normalize(vec4(-u_cameraPosition, 1.0) - v_position);
+    vec4 viewDirection = normalize(vec4(u_cameraPosition, 1.0) - v_position);
     float specular = pow(max(dot(reflectionDirection, viewDirection), 0.0), 16.0);
 
     diffuse = nStep(diffuse, 5.0) * cellShadingWeight + diffuse * (1.0 - cellShadingWeight);
