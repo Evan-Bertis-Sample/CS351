@@ -457,11 +457,11 @@ class RobotLegOrchestratorComponent extends Component {
             }
         }
 
-        // if (this.timeSinceLastSwitch > this.minSwitchTime) {
-        //     this.setLegStates(ACTIVE_LEG_SET.ALL);
-        //     this.timeSinceLastSwitch = 0;
-        //     return;
-        // }
+        if (this.timeSinceLastSwitch > this.minSwitchTime) {
+            this.setLegStates(ACTIVE_LEG_SET.ALL);
+            this.timeSinceLastSwitch = 0;
+            return;
+        }
 
         // now if all the legs are done moving, switch the active leg set
         if (isMoving == false) {
@@ -558,6 +558,7 @@ class RobotLegCompoent extends Component {
         this.footIdealPosition = this.calculateIdealFootPlacementPosition();
         this.footActualPosition = this.footIdealPosition;
         this.kneePosition = this.calculateKneePosition();
+        this.pelvisPosition = this.pelvisEntity.node.transform.getWorldPosition();
 
         this.moving = false;
         this.movementProgress = 0;
@@ -573,6 +574,7 @@ class RobotLegCompoent extends Component {
         let idealFootPosition = this.calculateIdealFootPlacementPosition();
         this.footIdealPosition = idealFootPosition;
         let idealKneePosition = this.calculateKneePosition();
+        this.pelvisPosition = this.pelvisEntity.node.transform.getWorldPosition();
 
         this.kneePosition = idealKneePosition;
         this.previousKneePosition = this.kneePosition;
@@ -693,7 +695,7 @@ class RobotLegCompoent extends Component {
         // if these aren't met, the knee is placed at the halfway point between the pelvis and the foot
         // this is the default position
 
-        // return this.ikSolveApproach(pelvisWorldPosition, footWorldPosition, kneeTargetWorldPosition);
+        return this.ikSolveDep(pelvisWorldPosition, footWorldPosition, kneeTargetWorldPosition);
         return this.ikSolve(pelvisWorldPosition, footWorldPosition, kneeTargetWorldPosition, this.upperLegLength, this.lowerLegLength);
 
     }
@@ -780,5 +782,71 @@ class RobotLegCompoent extends Component {
         kneePosition = kneePosition.add(influenceVec);
         return kneePosition;
     }
+}
 
+const SEGMENT_TYPE = {
+    UPPER_LEG: 0,
+    LOWER_LEG: 1,
+}
+
+class RobotLegSegmentComponent extends Component
+{
+    constructor(legControllerEntityID, segmentType)
+    {
+        super();
+        this.legControllerEntityID = legControllerEntityID;
+        this.legControllerEntity = null;
+        this.legControllerComponent = null;
+        this.segmentType = segmentType;
+    }
+
+    start()
+    {
+        this.legControllerEntity = g_ecs.getEntity(this.legControllerEntityID);
+        if (this.legControllerEntity == null)
+        {
+            console.log("Unable to get leg controller entity");
+            return;
+        }
+        
+        this.legControllerComponent = this.legControllerEntity.getComponent(RobotLegCompoent);
+        if (this.legControllerComponent == null)
+        {
+            console.log("Unable to get leg controller component");
+            return;
+        }
+    }
+
+    update(deltaTime)
+    {
+        if (this.legControllerComponent == null)
+        {
+            return;
+        }
+
+        // get the position of the origin of the segment
+        // if the segment is the upper leg, the origin is the pelvis
+        // and the knee is the target
+        // if the segment is the lower leg, the origin is the knee
+        // and the foot is the target
+        let originPosition = new Vector3();
+        let targetPosition = new Vector3();
+        if (this.segmentType == SEGMENT_TYPE.UPPER_LEG)
+        {
+            originPosition = this.legControllerComponent.pelvisPosition;
+            targetPosition = this.legControllerComponent.kneePosition;
+        }
+        else if (this.segmentType == SEGMENT_TYPE.LOWER_LEG)
+        {
+            originPosition = this.legControllerComponent.kneePosition;
+            targetPosition = this.legControllerComponent.footActualPosition;
+        }
+
+        // rotate the segment to point towards the target from the origin
+        let direction = targetPosition.sub(originPosition);
+        let rotation = new Quaternion().setFromUnitVectors(new Vector3([0, 1, 0]), direction.normalize());
+        // slerp between the current rotation and the new rotation
+        this.transform.rotation = rotation;
+        this.transform.position = originPosition;
+    }
 }

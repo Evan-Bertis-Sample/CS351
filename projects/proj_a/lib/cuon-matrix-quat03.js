@@ -1320,6 +1320,43 @@ Quaternion.prototype = {
 		return this;
 	},
 
+  // Added by Evan Bertis-Sample 2024.24.01
+  setFromUnitVectors: function ( vFrom, vTo ) {
+    // ensure vectors are normalized
+    let v1 = new Vector3(vFrom.elements).normalize();
+    let v2 = new Vector3(vTo.elements).normalize();
+
+    let EPS = 0.000001;
+    let r = v1.dot(v2) + 1;
+
+    if (r < EPS) {
+      // v1 and v2 are parallel, find an ortangonal vector to v1
+      r = 0;
+      if (Math.abs(v1.elements[0]) > Math.abs(v1.elements[1])) {
+        this.x = -v1.elements[2];
+        this.y = -v1.elements[1];
+        this.z = 0;
+        this.w = r;
+      }
+      else
+      {
+        this.x = 0;
+        this.y = -v1.elements[2];
+        this.z = -v1.elements[0];
+        this.w = r;
+      }
+    }
+    else {
+      let cross = v1.cross(v2);
+      this.x = cross.elements[0];
+      this.y = cross.elements[1];
+      this.z = cross.elements[2];
+      this.w = r;
+    }
+
+    return this.normalize();
+  },
+
 	calculateW : function () {
 //--------------------------------------
 		this.w = - Math.sqrt( Math.abs( 

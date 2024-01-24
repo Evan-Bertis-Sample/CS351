@@ -98,7 +98,7 @@ function buildScene() {
 		let kneeActualMarkerID = "robot_leg_" + i + "_knee_actual_marker"; // used to mark the position of the foot for debugging
 
 		let footPosOffset = legPosition.mul(2);
-		let segmentLength = 0.9;
+		let segmentLength = 0.8;
 		// create the leg
 		let legBaseEntity = g_ecs.createEntity(
 			entityName = "robot_leg_" + i,
@@ -129,36 +129,46 @@ function buildScene() {
 		// create the upper leg
 		let upperLeg = g_ecs.createEntity(
 			entityName = legUpperID,
-			parent = legBaseEntity,
+			parent = null,
 			position = new Vector3([0, 0.1, 0]),
 			rotation = new Quaternion(),
-			scale = new Vector3([0.5, 0.5, 0.5]),
-			meshName = "",
+			scale = new Vector3([0.15, 0.5, 0.15]),
+			meshName = "cube",
 			materialName = "robot_inners",
-			components = [],
+			components = [
+				new RobotLegSegmentComponent(
+					legBaseEntity.name,
+					SEGMENT_TYPE.UPPER_LEG,
+				)
+			],
 		)
 
 		// create the lower leg
 		let lowerLeg = g_ecs.createEntity(
 			entityName = legLowerID,
-			parent = legBaseEntity,
+			parent = null,
 			position = new Vector3([0, -1, 0]),
 			rotation = new Quaternion(),
-			scale = new Vector3([0.5, 0.5, 0.5]),
-			meshName = "",
+			scale = new Vector3([0.15, 0.5, 0.15]),
+			meshName = "cube",
 			materialName = "robot_inners",
-			components = [],
+			components = [
+				new RobotLegSegmentComponent(
+					legBaseEntity.name,
+					SEGMENT_TYPE.LOWER_LEG,
+				)
+			],
 		)
 
 		// create the knee
-		let kneePos = legPosition.mul(0.1).add(new Vector3([0, 1, 0]));
+		let kneePos = legPosition.mul(0.5).add(new Vector3([0, -0.1, 0]));
 		let knee = g_ecs.createEntity(
 			entityName = kneeID,
 			parent = legBaseEntity,
 			position = kneePos,
 			rotation = new Quaternion(),
 			scale = new Vector3([0.1, 0.1, 0.1]),
-			meshName = "",
+			meshName = "sphere",
 			materialName = "red",
 			components = [],
 		)
@@ -182,7 +192,7 @@ function buildScene() {
 			position = new Vector3([0, 0, 0]),
 			rotation = new Quaternion(),
 			scale = new Vector3([0.1, 0.1, 0.1]),
-			meshName = "",
+			meshName = "sphere",
 			materialName = "red",
 			components = [],
 		)
