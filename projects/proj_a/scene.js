@@ -33,7 +33,7 @@ function buildScene() {
 			new BobComponent(0.2, 0.005),
 			// new RotateComponent(new Vector3([0, 1, 0]), 0.1),
 			new PlayerController(
-				c_CONTROLS.MOVEMENT_AXIS_SET, c_PLAYER_MOVE_SPEED, c_PLAYER_ROT_SPEED, new Quaternion().setFromAxisAngle(0, 1, 0, 45)
+				c_CONTROLS.MOVEMENT_AXIS_SET, c_PLAYER_MOVE_SPEED, c_PLAYER_ROT_SPEED, 20, new Quaternion().setFromAxisAngle(0, 1, 0, 45)
 			)
 		],
 	)

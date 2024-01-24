@@ -31,7 +31,7 @@ class Transform {
     getWorldModelMatrix() {
         let modelMatrix = this.getLocalModelMatrix();
         if (this.parent == null) {
-            console.log("No parent");
+            // console.log("No parent");
             return modelMatrix;
         }
 
