@@ -388,6 +388,126 @@ class FollowCameraComponent extends Component {
     }
 }
 
+
+const ACTIVE_LEG_SET = {
+    EVEN : 0,
+    ODD : 1,
+    ALL: 2,
+    NONE: 3,
+}
+
+class RobotLegOrchestratorComponent extends Component {
+    // Constructor
+    constructor(legIDs)
+    {
+        super();
+        this.legIDs = legIDs;
+        this.legs = new Array();
+        this.legComponents = new Array();
+        this.activeLegSet = ACTIVE_LEG_SET.EVEN;
+        this.timeSinceLastSwitch = 0;
+        this.minSwitchTime = 2;
+    }
+
+    // Start is called before the first frame update
+    start() {
+        for (let i = 0; i < this.legIDs.length; i++) {
+            let leg = g_ecs.getEntity(this.legIDs[i]);
+            if (leg == null) {
+                console.log("Warning: leg is null");
+                continue;
+            }
+            this.legs.push(leg);
+            let legComponent = leg.getComponent(RobotLegCompoent);
+            if (legComponent == null) {
+                console.log("Warning: leg component is null");
+                continue;
+            }
+            this.legComponents.push(legComponent);
+        }
+        
+        this.activeLegSet = ACTIVE_LEG_SET.EVEN;
+        this.setLegStates(this.activeLegSet);
+    }
+
+    // Updates the component
+    // deltaTime : the time since the last frame
+    update(deltaTime) {
+        // console.log("Active leg set: " + this.activeLegSet);
+        // console.log("Time since last switch: " + this.timeSinceLastSwitch)
+        let checkIndex = 0;
+        if (this.activeLegSet == ACTIVE_LEG_SET.EVEN || this.activeLegSet == ACTIVE_LEG_SET.ALL) {
+            checkIndex = 0;
+        }
+        else if (this.activeLegSet == ACTIVE_LEG_SET.ODD || this.activeLegSet == ACTIVE_LEG_SET.NONE) {
+            checkIndex = 1;
+        }
+
+        // check if the legs in the active set is moving
+        let isMoving = false;
+        for (let i = 0; i < this.legComponents.length; i++) {
+            if (i % 2 != checkIndex) {
+                continue;
+            }
+
+            if (this.legComponents[i].moving == true) {
+                isMoving = true;
+                break;
+            }
+        }
+
+        // if (this.timeSinceLastSwitch > this.minSwitchTime) {
+        //     this.setLegStates(ACTIVE_LEG_SET.ALL);
+        //     this.timeSinceLastSwitch = 0;
+        //     return;
+        // }
+
+        // now if all the legs are done moving, switch the active leg set
+        if (isMoving == false) {
+            if (this.activeLegSet == ACTIVE_LEG_SET.EVEN) {
+                this.activeLegSet = ACTIVE_LEG_SET.ODD;
+            }
+            else if (this.activeLegSet == ACTIVE_LEG_SET.ODD) {
+                this.activeLegSet = ACTIVE_LEG_SET.EVEN;
+            }
+            else if (this.activeLegSet == ACTIVE_LEG_SET.ALL) {
+                this.activeLegSet = ACTIVE_LEG_SET.EVEN;
+            }
+            else if (this.activeLegSet == ACTIVE_LEG_SET.NONE) {
+                this.activeLegSet = ACTIVE_LEG_SET.ODD;
+            }
+            this.setLegStates(this.activeLegSet);
+            this.timeSinceLastSwitch = 0;
+        }
+        else {
+            this.timeSinceLastSwitch += deltaTime;
+        }
+    }
+
+    setLegStates(state)
+    {
+        const isValidState = (index) => {
+            if (state == ACTIVE_LEG_SET.EVEN) {
+                return index % 2 == 0;
+            }
+            else if (state == ACTIVE_LEG_SET.ODD) {
+                return index % 2 == 1;
+            }
+            else if (state == ACTIVE_LEG_SET.ALL) {
+                return true;
+            }
+            else if (state == ACTIVE_LEG_SET.NONE) {
+                return false;
+            }
+        }
+
+        for (let i = 0; i < this.legComponents.length; i++) {
+            console.log("Setting leg " + i + " to " + isValidState(i));
+            this.legComponents[i].allowStep = isValidState(i);
+        }
+    }
+}
+
 class RobotLegCompoent extends Component {
     // Constructor
     constructor(upperLegEntityID, lowerLegEntityID, groundY, speed = 1, idealMarkerEntityID = null, actualMarkerEntityID = null) {
@@ -402,8 +522,9 @@ class RobotLegCompoent extends Component {
         this.upperLegEntity = null;
         this.lowerLegEntity = null;
 
-        this.stepDistance = 0.1;
+        this.stepDistance = 0.01;
         this.stepSpeed = 10;
+        this.allowStep = true;
     }
 
     // Start is called before the first frame update
@@ -424,9 +545,16 @@ class RobotLegCompoent extends Component {
     // Updates the component
     // deltaTime : the time since the last frame
     update(deltaTime) {
+
         // update the foot placement position
         let idealFootPosition = this.calculateIdealFootPlacementPosition();
         this.idealPosition = idealFootPosition;
+
+        if (this.allowStep == false) {
+            console.log("Not allowing step");
+            this.updateGizmos();
+            return;
+        }
 
         // slowly move the end position to the ideal position
         // this.endingFootRaisePosition = this.endingFootRaisePosition.lerp(idealFootPosition, deltaTime * this.stepSpeed);
@@ -466,7 +594,7 @@ class RobotLegCompoent extends Component {
             if (this.movementProgress < 0) {
                 this.movementProgress = 0;
             }
-            console.log("Movement progress: " + this.movementProgress);
+            // console.log("Movement progress: " + this.movementProgress);
             this.actualPosition = this.parabolicLerp(this.startingFootRaisePosition, this.endingFootRaisePosition, 1, this.movementProgress);
         }
     

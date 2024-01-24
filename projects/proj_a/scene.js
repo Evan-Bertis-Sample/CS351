@@ -16,7 +16,7 @@ function buildScene() {
 	g_sceneGraph.setCameraRotation(c_CAMERA_STARTING_ROTATION);
 	cameraEntity.attachComponent(
 		new CameraController(
-			"Robot Parent", c_CAMERA_STARTING_POSITION, 0.01, 1
+			"Robot Parent", c_CAMERA_STARTING_POSITION, 10, 1
 		)
 	);
 
@@ -34,7 +34,15 @@ function buildScene() {
 			// new RotateComponent(new Vector3([0, 1, 0]), 0.1),
 			new PlayerController(
 				c_CONTROLS.MOVEMENT_AXIS_SET, c_PLAYER_MOVE_SPEED, c_PLAYER_ROT_SPEED, 20, new Quaternion().setFromAxisAngle(0, 1, 0, 45)
-			)
+			),
+			new RobotLegOrchestratorComponent(
+				[
+					"robot_leg_0",
+					"robot_leg_1",
+					"robot_leg_2",
+					"robot_leg_3",
+				]
+			),
 		],
 	)
 
@@ -74,8 +82,7 @@ function buildScene() {
 	// spawn robot legs
 	let numLegs = 4;
 	let legDistance = 2.0;
-	for (let i = 0; i < numLegs; i++)
-	{
+	for (let i = 0; i < numLegs; i++) {
 		let theta = (i / numLegs) * 2 * Math.PI;
 		let legPosition = new Vector3([Math.cos(theta) * legDistance, 0, Math.sin(theta) * legDistance]);
 		let legRotation = new Quaternion().setFromAxisAngle(0, 1, 0, theta * 180 / Math.PI);
@@ -94,10 +101,10 @@ function buildScene() {
 			materialName = "",
 			components = [
 				new RobotLegCompoent(
-					legUpperID, 
-					legLowerID, 
+					legUpperID,
+					legLowerID,
 					-2,
-					1, 
+					1,
 					idealMarkerID,
 					actualMarkerID
 				)
@@ -153,7 +160,7 @@ function buildScene() {
 		)
 	}
 
-	// buildEnviornment();
+	buildEnviornment();
 
 	let skyboxEntity = g_ecs.createEntity(
 		entityName = "skybox",
