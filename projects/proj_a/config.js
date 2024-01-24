@@ -8,6 +8,9 @@ var c_VIEWPORT_HEIGHT = 1080/4;
 var c_PLAYER_MOVE_SPEED = 5;
 var c_PLAYER_ROT_SPEED = 10;
 
+// Debugging
+var g_USE_FETCH = true;
+
 // Rendering Configuration
 var c_MATERIALS = [
 	new MaterialDescriptor(

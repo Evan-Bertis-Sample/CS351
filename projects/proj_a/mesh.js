@@ -142,9 +142,9 @@ class MeshRegistry {
 
     // Loads a collection of meshes from an array of file paths, and adds them to the registry
     // filePaths: an array of file paths
-    loadMeshes(filePaths) {
+    async loadMeshes(filePaths) {
         for (var i = 0; i < filePaths.length; i++) {
-            this.loadMesh(filePaths[i]);
+            await this.loadMesh(filePaths[i]);
         }
     }
 
@@ -154,7 +154,7 @@ class MeshRegistry {
     async loadMesh(filePath) {
         // check if this file exists using fetch
         try {
-            let source = loadFile(filePath);
+            let source = await loadFile(filePath);
 
             if (source == null) {
                 console.log("Failed to load mesh: " + filePath);

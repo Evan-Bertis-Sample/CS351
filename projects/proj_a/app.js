@@ -35,8 +35,8 @@ var g_deltaTime = 0;
 var g_cameraPosition = new Vector3([0, 0, 30]);
 
 
-function main() {
-	initialize();
+async function main() {
+	await initialize();
 	drawAll();
 
 	// update loop
@@ -61,7 +61,7 @@ function main() {
 // Loads the materials and meshes
 // Builds the scene graph
 // Initializes the input
-function initialize() {
+async function initialize() {
 	// Retrieve the HTML-5 <canvas> element where webGL will draw our pictures
 	g_canvasID = document.getElementById('webgl');
 	g_gl = g_canvasID.getContext("webgl", { preserveDrawingBuffer: true, antialias: false });
@@ -81,11 +81,11 @@ function initialize() {
 	g_gl.enable(g_gl.CULL_FACE);
 	// Load the materials
 	g_materialRegistry = new MaterialRegistry(c_MATERIALS);
-	g_materialRegistry.loadMaterials();
+	await g_materialRegistry.loadMaterials();
 	console.log(g_materialRegistry);
 	// Load the meshes
 	g_meshRegistry = new MeshRegistry();
-	g_meshRegistry.loadMeshes(c_MESHES);
+	await g_meshRegistry.loadMeshes(c_MESHES);
 	buildScene();
 	loadMeshes();
 	// initialize the input manager

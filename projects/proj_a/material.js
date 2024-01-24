@@ -185,7 +185,7 @@ class MaterialRegistry {
     //          frag.glsl
     //      ...
     // If the shader directory is not laid out like this, then the materials will not be loaded correctly
-    loadMaterials() {
+    async loadMaterials() {
         // Get all the materials in the shader directory
         // using FileReader
         var materialDescriptors = this.materialDescriptors;
@@ -212,8 +212,8 @@ class MaterialRegistry {
                 // check if these files exist using fetch
                 try {
                     console.log("Loading shader: " + shaderName);
-                    const vertSource = loadFile(vertexShaderPath);
-                    const fragSource = loadFile(fragmentShaderPath);
+                    const vertSource = await loadFile(vertexShaderPath);
+                    const fragSource = await loadFile(fragmentShaderPath);
 
                     console.log(vertSource)
                     console.log(fragSource)
