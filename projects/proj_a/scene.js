@@ -214,60 +214,6 @@ function buildScene() {
 
 	buildEnviornment();
 
-	// create an orbiting ball
-	let ballParent = g_ecs.createEntity(
-		entityName = "ball_parent",
-		parent = null,
-		position = new Vector3([0, 5, 0]),
-		rotation = new Quaternion(),
-		scale = new Vector3([1, 1, 1]),
-		meshName = "",
-		materialName = "",
-		components = [
-			new RotateComponent(new Vector3([0, 1, 0]), 50),
-		],
-	)
-
-	let ball = g_ecs.createEntity(
-		entityName = "ball",
-		parent = ballParent,
-		position = new Vector3([10, 0, 0]),
-		rotation = new Quaternion(),
-		scale = new Vector3([1, 1, 1]),
-		meshName = "sphere",
-		materialName = "red",
-		components = [
-			new RotateComponent(new Vector3([0, 1, 0]), 100),
-		],
-	)
-
-	// create a ball that orbits the first ball
-	let ball2 = g_ecs.createEntity(
-		entityName = "ball2_parent",
-		parent = ball,
-		position = new Vector3([4, 0, 0]),
-		rotation = new Quaternion(),
-		scale = new Vector3([0.25, 0.25, 0.25]),
-		meshName = "sphere",
-		materialName = "blue",
-		components = [
-			new RotateComponent(new Vector3([1, 0, 0]), 150),
-		],
-	)
-
-	// create a ball that orbits the second ball
-	let ball3 = g_ecs.createEntity(
-		entityName = "ball3_parent",
-		parent = ball2,
-		position = new Vector3([0, 3, 0]),
-		rotation = new Quaternion(),
-		scale = new Vector3([0.2, 0.2, 0.2]),
-		meshName = "sphere",
-		materialName = "green",
-		components = [
-		],
-	)
-
 	let skyboxEntity = g_ecs.createEntity(
 		entityName = "skybox",
 		parent = null,
@@ -318,4 +264,75 @@ function buildEnviornment() {
 		materialName = "floor_tiles",
 		components = []
 	);
+
+	// create an orbiting ball
+	let ballParent = g_ecs.createEntity(
+		entityName = "ball_parent",
+		parent = null,
+		position = new Vector3([0, 5, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([1, 1, 1]),
+		meshName = "",
+		materialName = "",
+		components = [
+			new RotateComponent(new Vector3([0, 1, 0]), 50),
+			new BobComponent(1, 5),
+		],
+	)
+
+	let ball = g_ecs.createEntity(
+		entityName = "ball",
+		parent = ballParent,
+		position = new Vector3([10, 0, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([1, 1, 1]),
+		meshName = "sphere",
+		materialName = "red",
+		components = [
+			new RotateComponent(new Vector3([0, 1, 0]), 100),
+		],
+	)
+
+	// create a ball that orbits the first ball
+	let ball2 = g_ecs.createEntity(
+		entityName = "ball2_parent",
+		parent = ball,
+		position = new Vector3([4, 0, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([0.25, 0.25, 0.25]),
+		meshName = "sphere",
+		materialName = "blue",
+		components = [
+			new RotateComponent(new Vector3([1, 0, 0]), 150),
+		],
+	)
+
+	// create a cube that orbits the first ball
+	let cubeParent = g_ecs.createEntity(
+		entityName = "cube_parent",
+		parent = ball,
+		position = new Vector3([0, 0, 3]),
+		rotation = new Quaternion(),
+		scale = new Vector3([0.5, 0.5, 0.5]),
+		meshName = "cube",
+		materialName = "gray",
+		components = [
+			new RotateComponent(new Vector3([1, 1, 1]), 150),
+			new BobComponent(0.5, 2),
+		],
+	)
+
+	// create a ball that orbits the second ball
+	let ball3 = g_ecs.createEntity(
+		entityName = "ball3_parent",
+		parent = ball2,
+		position = new Vector3([0, 3, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([0.2, 0.2, 0.2]),
+		meshName = "sphere",
+		materialName = "green",
+		components = [
+		],
+	)
+
 }

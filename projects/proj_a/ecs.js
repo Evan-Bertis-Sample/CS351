@@ -188,12 +188,17 @@ class BobComponent extends Component {
         this.time = 0;
     }
 
+    start()
+    {
+        this.startY = this.transform.position.elements[1];
+    }
+
     // Updates the component
     // deltaTime : the time since the last frame
     update(deltaTime) {
         this.time += deltaTime;
         let offset = Math.sin(this.time * this.frequency) * this.amplitude;
-        this.transform.position.elements[1] = offset;
+        this.transform.position.elements[1] = this.startY + offset;
     }
 }
 

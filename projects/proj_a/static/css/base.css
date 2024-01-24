@@ -30,6 +30,7 @@ body {
     flex-direction: column;
     gap: 0.5rem;
     overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 canvas {
@@ -37,7 +38,7 @@ canvas {
     margin-right: auto;
     width: 100%;
     height: auto;
-    max-height: 70vh;
+    max-height: 65vh;
     aspect-ratio: 16/9;
     object-fit: contain;
     overflow: hidden;
@@ -95,6 +96,13 @@ h3 {
 h4 {
     font-size: 1rem;
     font-weight: 600;
+    margin: 0;
+    padding: 0;
+}
+
+p {
+    font-size: 1rem;
+    font-weight: 400;
     margin: 0;
     padding: 0;
 }
