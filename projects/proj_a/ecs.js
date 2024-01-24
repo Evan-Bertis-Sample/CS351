@@ -581,8 +581,11 @@ class RobotLegCompoent extends Component {
         this.previousKneePosition = this.kneePosition;
 
         let idealDistance = idealFootPosition.distanceTo(this.footActualPosition);
+        let footToPelvis = this.pelvisPosition.sub(this.footActualPosition);
+        let footToPelvisLength = footToPelvis.length();
+        let legLength = this.upperLegLength + this.lowerLegLength;
 
-        if (this.allowStep == false && this.moving == false) {
+        if (this.allowStep == false && this.moving == false && footToPelvisLength < legLength) {
             this.updateGizmos();
             return;
         }

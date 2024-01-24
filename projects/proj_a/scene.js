@@ -30,7 +30,7 @@ function buildScene() {
 		meshName = "",
 		materialName = "",
 		components = [
-			new BobComponent(0.2, 0.005),
+			new BobComponent(0.2, 10),
 			// new RotateComponent(new Vector3([0, 1, 0]), 0.1),
 			new PlayerController(
 				c_CONTROLS.MOVEMENT_AXIS_SET, c_PLAYER_MOVE_SPEED, c_PLAYER_ROT_SPEED, 20, new Quaternion().setFromAxisAngle(0, 1, 0, 45)
@@ -97,9 +97,10 @@ function buildScene() {
 		let footActualMarkerID = "robot_leg_" + i + "_foot_actual_marker"; // used to mark the position of the foot for debugging
 		let kneeActualMarkerID = "robot_leg_" + i + "_knee_actual_marker"; // used to mark the position of the foot for debugging
 
-		let footPosOffset = legPosition.mul(0.75);
-		let segmentLength = 2.5;
-		let segmentOffset = 0.3;
+		let footPosOffset = legPosition.mul(0.35);
+		let segmentLength = 1.5;
+		let segmentSize = 0.25;
+		let segmentOffset = segmentLength / 2;
 		// create the leg
 		let legBaseEntity = g_ecs.createEntity(
 			entityName = "robot_leg_" + i,
@@ -133,7 +134,7 @@ function buildScene() {
 			parent = null,
 			position = new Vector3([0, 0.1, 0]),
 			rotation = new Quaternion(),
-			scale = new Vector3([0.15, 0.5, 0.15]),
+			scale = new Vector3([segmentSize, segmentLength/2, segmentSize]),
 			meshName = "cube",
 			materialName = "robot_inners",
 			components = [
@@ -151,9 +152,9 @@ function buildScene() {
 			parent = null,
 			position = new Vector3([0, -1, 0]),
 			rotation = new Quaternion(),
-			scale = new Vector3([0.15, 0.5, 0.15]),
+			scale = new Vector3([segmentSize, segmentLength/2, segmentSize]),
 			meshName = "cube",
-			materialName = "robot_inners",
+			materialName = "robot_outers",
 			components = [
 				new RobotLegSegmentComponent(
 					legBaseEntity.name,
@@ -176,14 +177,14 @@ function buildScene() {
 		)
 
 		// create the knee
-		let kneePos = legPosition.mul(0.5).add(new Vector3([0, -0.1, 0]));
+		let kneePos = legPosition.mul(.75).add(new Vector3([0, -0.1, 0]));
 		let knee = g_ecs.createEntity(
 			entityName = kneeID,
 			parent = pelvis,
 			position = kneePos,
 			rotation = new Quaternion(),
 			scale = new Vector3([0.1, 0.1, 0.1]),
-			meshName = "sphere",
+			meshName = "",
 			materialName = "red",
 			components = [],
 		)
@@ -195,7 +196,7 @@ function buildScene() {
 			position = new Vector3([0, 0, 0]),
 			rotation = new Quaternion(),
 			scale = new Vector3([0.1, 0.1, 0.1]),
-			meshName = "sphere",
+			meshName = "",
 			materialName = "red",
 			components = [],
 		)
@@ -206,9 +207,9 @@ function buildScene() {
 			parent = null,
 			position = new Vector3([0, 0, 0]),
 			rotation = new Quaternion(),
-			scale = new Vector3([0.1, 0.1, 0.1]),
+			scale = new Vector3([segmentSize, segmentSize, segmentSize]),
 			meshName = "sphere",
-			materialName = "gray",
+			materialName = "robot_outers",
 			components = [],
 		)
 
@@ -218,9 +219,9 @@ function buildScene() {
 			parent = null,
 			position = new Vector3([0, 0, 0]),
 			rotation = new Quaternion(),
-			scale = new Vector3([0.1, 0.1, 0.1]),
+			scale = new Vector3([segmentSize, segmentSize, segmentSize]),
 			meshName = "sphere",
-			materialName = "green",
+			materialName = "robot_outers",
 			components = [],
 		)
 	}
