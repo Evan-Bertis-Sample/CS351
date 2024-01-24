@@ -64,7 +64,7 @@ function main() {
 function initialize() {
 	// Retrieve the HTML-5 <canvas> element where webGL will draw our pictures
 	g_canvasID = document.getElementById('webgl');
-	g_gl = g_canvasID.getContext("webgl", { preserveDrawingBuffer: true });
+	g_gl = g_canvasID.getContext("webgl", { preserveDrawingBuffer: true, antialias: false });
 	// Handle failures
 	if (!g_gl) {
 		console.log('Failed to get the rendering context for WebGL. Bye!');

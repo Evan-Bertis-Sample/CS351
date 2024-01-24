@@ -3,8 +3,8 @@
 // this includes the material descriptors, and meshes used
 
 // Constants
-var c_VIEWPORT_WIDTH = 1920;
-var c_VIEWPORT_HEIGHT = 1080;
+var c_VIEWPORT_WIDTH = 1920/4;
+var c_VIEWPORT_HEIGHT = 1080/4;
 var c_PLAYER_MOVE_SPEED = 5;
 var c_PLAYER_ROT_SPEED = 10;
 

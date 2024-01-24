@@ -10,7 +10,7 @@
     --shadow-color: #00000033;
     --navbar-width: 5rem;
     --notion-content-width: 60%;
-    --transition-speed: 0.25s;
+    --transition-speed: 600ms;
 }
 
 body {
