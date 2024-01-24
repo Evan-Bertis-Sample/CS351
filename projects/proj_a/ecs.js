@@ -569,12 +569,6 @@ class RobotLegCompoent extends Component {
         this.footIdealPosition = idealFootPosition;
         let idealKneePosition = this.calculateKneePosition();
 
-        // check if the new knee position is too far away from the old knee position
-        // this is to prevent the knee from moving too fast, and also a hacky bug fix
-        let kneeDistance = idealKneePosition.distanceTo(this.previousKneePosition);
-        console.log("Knee distance: " + kneeDistance);
-
-
         this.kneePosition = idealKneePosition;
         this.previousKneePosition = this.kneePosition;
 
@@ -751,11 +745,11 @@ class RobotLegCompoent extends Component {
 
         // Calculate the distance from the hip to the foot
         let hipToFootDistance = hipToFootVec.length();
-        console.log("Hip to foot distance: " + hipToFootDistance);
+        // console.log("Hip to foot distance: " + hipToFootDistance);
 
         // Check if the leg can reach the foot
         if (hipToFootDistance > upperLegLength + lowerLegLength) {
-            console.error("The leg cannot reach the target foot position.");
+            // console.error("The leg cannot reach the target foot position.");
             // return the midpoint between the pelvis and the foot
             return pelvis.add(hipToFootVec.mul(0.5));
         }

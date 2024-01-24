@@ -10,6 +10,7 @@
     --shadow-color: #00000033;
     --navbar-width: 5rem;
     --notion-content-width: 60%;
+    --transition-speed: 0.25s;
 }
 
 body {
@@ -106,4 +107,17 @@ a {
 
 a:hover {
     color: var(--accent-soft);
+}
+
+.image-button {
+    height: 3.5rem;
+    width: auto;
+    border: none;
+    background-color: transparent;
+    transition: transform 0.2s ease-in-out;
+    transform: scale(.8);
+}
+
+.image-button:hover {
+    transform: scale(1);
 }

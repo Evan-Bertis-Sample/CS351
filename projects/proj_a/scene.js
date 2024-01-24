@@ -212,7 +212,7 @@ function buildScene() {
 		)
 	}
 
-	// buildEnviornment();
+	buildEnviornment();
 
 	// create an orbiting ball
 	let ballParent = g_ecs.createEntity(
@@ -289,9 +289,9 @@ function buildEnviornment() {
 	let floorBaseEntity = g_ecs.createEntity(
 		entityName = "floor",
 		parent = null,
-		position = new Vector3([0, -1.5, 0]),
+		position = new Vector3([0, -2.5, 0]),
 		rotation = new Quaternion(),
-		scale = new Vector3([30, 30, 30]),
+		scale = new Vector3([40, 40, 40]),
 		meshName = "",
 		materialName = "",
 		components = []
