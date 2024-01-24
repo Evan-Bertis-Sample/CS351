@@ -36,7 +36,9 @@ class Transform {
         }
 
         let parentModelMatrix = this.parent.getWorldModelMatrix();
-        return parentModelMatrix.multiply(modelMatrix);
+        let parentModelMatrixCopy = new Matrix4().set(parentModelMatrix);
+        let worldModelMatrix = parentModelMatrixCopy.multiply(modelMatrix);
+        return worldModelMatrix;
     }
 
     // Returns the model matrix for this transform
@@ -102,7 +104,20 @@ class Transform {
         let modelMatrix = this.getWorldModelMatrix();
         // get the world position
         let worldPosition = modelMatrix.multiplyVector4(new Vector4([0, 0, 0, 1]));
+
+        // convert to a Vector3
+        worldPosition = new Vector3([worldPosition.elements[0], worldPosition.elements[1], worldPosition.elements[2]]);
         return worldPosition;
+    }
+
+    // Gets the world rotation of this transform
+    getWorldRotation() {
+        // get the model matrix
+        let modelMatrix = this.getWorldModelMatrix();
+        // get the world rotation
+        let worldRotation = new Quaternion();
+        worldRotation.setFromRotationMatrix(modelMatrix);
+        return worldRotation;
     }
 }
 

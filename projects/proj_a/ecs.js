@@ -9,8 +9,7 @@
 class Component {
     // Attaches a node to a component
     attachNode(node) {
-        if (this.node != undefined)
-        {
+        if (this.node != undefined) {
             console.log("Warning: Attaching a node to a component that already has a node attached");
         }
 
@@ -111,8 +110,7 @@ class ECS {
     // materialName : the material to attach to the entity
     // components : the components to attach to the entity
     createEntity(entityName = "", parent = null, position = null, rotation = null, scale = null, meshName = "", materialName = "", components = new Array()) {
-        if (entityName == "")
-        {
+        if (entityName == "") {
             // create a new name from a GUID
             entityName = generateUUID();
         }
@@ -133,7 +131,7 @@ class ECS {
         this.addEntity(entityName, entity);
 
         // add the entity to the scene graph
-        if (parent != null) {  
+        if (parent != null) {
             // check if the parent is an entity
             if (!(parent instanceof Entity)) {
                 console.log("Warning: parent is not an entity");
@@ -143,8 +141,7 @@ class ECS {
             let parentNode = parent.node;
             parentNode.addChild(node);
         }
-        else
-        {
+        else {
             this.sceneGraph.addObject(node);
         }
         return entity;
@@ -215,7 +212,7 @@ class RotateComponent extends Component {
         let rotation = new Quaternion().setFromAxisAngle(this.axis.elements[0], this.axis.elements[1], this.axis.elements[2], this.speed * deltaTime);
         this.transform.rotation = rotation.multiplySelf(this.transform.rotation);
     }
-}   
+}
 
 // Component used for debugging...
 class PlayerController extends Component {
@@ -233,7 +230,7 @@ class PlayerController extends Component {
     // deltaTime : the time since the last frame
     update(deltaTime) {
         let axis = g_inputManager.getAxis(this.movementAxisSet);
-        
+
         // the axis is a vector3 with the direction of movement at x,y
         // we want to make it a vector3 with the direction of movement at x,z
         axis.elements[2] = axis.elements[1];
@@ -367,7 +364,7 @@ class FollowCameraComponent extends Component {
             return;
         }
         // console.log("Camera position: " + cameraPosition.elements[0] + ", " + cameraPosition.elements[1] + ", " + cameraPosition.elements[2]);
-        
+
         let newPosition = new Vector3(
             [
                 cameraPosition.elements[0] + this.offset.elements[0],
@@ -390,16 +387,15 @@ class FollowCameraComponent extends Component {
 
 
 const ACTIVE_LEG_SET = {
-    EVEN : 0,
-    ODD : 1,
+    EVEN: 0,
+    ODD: 1,
     ALL: 2,
     NONE: 3,
 }
 
 class RobotLegOrchestratorComponent extends Component {
     // Constructor
-    constructor(legIDs)
-    {
+    constructor(legIDs) {
         super();
         this.legIDs = legIDs;
         this.legs = new Array();
@@ -425,7 +421,7 @@ class RobotLegOrchestratorComponent extends Component {
             }
             this.legComponents.push(legComponent);
         }
-        
+
         this.activeLegSet = ACTIVE_LEG_SET.EVEN;
         this.setLegStates(this.activeLegSet);
     }
@@ -484,8 +480,7 @@ class RobotLegOrchestratorComponent extends Component {
         }
     }
 
-    setLegStates(state)
-    {
+    setLegStates(state) {
         const isValidState = (index) => {
             if (state == ACTIVE_LEG_SET.EVEN) {
                 return index % 2 == 0;
@@ -502,7 +497,7 @@ class RobotLegOrchestratorComponent extends Component {
         }
 
         for (let i = 0; i < this.legComponents.length; i++) {
-            console.log("Setting leg " + i + " to " + isValidState(i));
+            // console.log("Setting leg " + i + " to " + isValidState(i));
             this.legComponents[i].allowStep = isValidState(i);
         }
     }
@@ -510,20 +505,36 @@ class RobotLegOrchestratorComponent extends Component {
 
 class RobotLegCompoent extends Component {
     // Constructor
-    constructor(upperLegEntityID, lowerLegEntityID, groundY, speed = 1, idealMarkerEntityID = null, actualMarkerEntityID = null) {
+    constructor(upperLegEntityID, lowerLegEntityID, pelvisID, kneeEntityID, // actual entities
+        footPosOffset, groundY, speed, upperLegLength, lowerLegLength, // settings
+        idealMarkerEntityID = null, actualMarkerEntityID = null, kneeMarkerID = null // used for debugging
+    ) {
         super();
+        // Entity legIDs
         this.upperLegEntityID = upperLegEntityID;
         this.lowerLegEntityID = lowerLegEntityID;
         this.idealMarkerEntityID = idealMarkerEntityID;
         this.actualMarkerEntityID = actualMarkerEntityID;
-        this.groundY = groundY;
-        this.speed = speed;
-        this.time = 0;
+        this.kneeEntityID = kneeEntityID;
+        this.kneeMarkerID = kneeMarkerID;
+        this.pelvisID = pelvisID;
+
+        // Needed for the IK
         this.upperLegEntity = null;
         this.lowerLegEntity = null;
+        this.pelvisEntity = null;
 
+        // Settings
+        this.groundY = groundY;
+        this.speed = speed;
+        this.footPosOffset = footPosOffset;
         this.stepDistance = 0.01;
         this.stepSpeed = 10;
+        this.upperLegLength = upperLegLength;
+        this.lowerLegLength = lowerLegLength;
+
+        // Used for debugging
+        this.time = 0;
         this.allowStep = true;
     }
 
@@ -531,27 +542,44 @@ class RobotLegCompoent extends Component {
     start() {
         this.upperLegEntity = g_ecs.getEntity(this.upperLegEntityID);
         this.lowerLegEntity = g_ecs.getEntity(this.lowerLegEntityID);
-        this.idealMarkerEntity = g_ecs.getEntity(this.idealMarkerEntityID);
-        this.actualMarkerEntity = g_ecs.getEntity(this.actualMarkerEntityID);
-        this.idealPosition = this.calculateIdealFootPlacementPosition();
-        this.actualPosition = this.idealPosition;
+        this.pelvisEntity = g_ecs.getEntity(this.pelvisID);
+        this.kneeEntity = g_ecs.getEntity(this.kneeEntityID);
+
+        // get the marker entities -- used for debugging
+        this.footIdealMarkerEntity = g_ecs.getEntity(this.idealMarkerEntityID);
+        this.footActualMarkerEntity = g_ecs.getEntity(this.actualMarkerEntityID);
+        this.kneeMarkerEntity = g_ecs.getEntity(this.kneeMarkerID);
+
+        this.footIdealPosition = this.calculateIdealFootPlacementPosition();
+        this.footActualPosition = this.footIdealPosition;
+        this.kneePosition = this.calculateKneePosition();
 
         this.moving = false;
         this.movementProgress = 0;
-        this.startingFootRaisePosition = this.actualPosition;
-        this.endingFootRaisePosition = this.actualPosition;
+        this.startingFootRaisePosition = this.footActualPosition;
+        this.endingFootRaisePosition = this.footActualPosition;
+        this.previousKneePosition = this.kneePosition;
     }
 
     // Updates the component
     // deltaTime : the time since the last frame
     update(deltaTime) {
-
         // update the foot placement position
         let idealFootPosition = this.calculateIdealFootPlacementPosition();
-        this.idealPosition = idealFootPosition;
+        this.footIdealPosition = idealFootPosition;
+        let idealKneePosition = this.calculateKneePosition();
+        // check if the new knee position is too far away from the old knee position
+        // this is to prevent the knee from moving too fast, and also a hacky bug fix
+        let kneeDistance = idealKneePosition.distanceTo(this.previousKneePosition);
+        console.log("Knee distance: " + kneeDistance);
+        if (kneeDistance > 2 && kneeDistance < 3) {
+            idealKneePosition = this.previousKneePosition;
+        }
+        this.kneePosition = idealKneePosition;
+        this.previousKneePosition = this.kneePosition;
 
         if (this.allowStep == false) {
-            console.log("Not allowing step");
+            // console.log("Not allowing step");
             this.updateGizmos();
             return;
         }
@@ -559,8 +587,8 @@ class RobotLegCompoent extends Component {
         // slowly move the end position to the ideal position
         // this.endingFootRaisePosition = this.endingFootRaisePosition.lerp(idealFootPosition, deltaTime * this.stepSpeed);
 
-        let idealDistance = idealFootPosition.distanceTo(this.actualPosition);
-        let nextStepDistance = this.endingFootRaisePosition.distanceTo(this.actualPosition);
+        let idealDistance = idealFootPosition.distanceTo(this.footActualPosition);
+        let nextStepDistance = this.endingFootRaisePosition.distanceTo(this.footActualPosition);
         // console.log("Distance: " + idealDistance);
         // console.log("Next step distance: " + nextStepDistance);
 
@@ -569,7 +597,7 @@ class RobotLegCompoent extends Component {
             // snap to the ideal position
             this.moving = true;
             this.movementProgress = 0;
-            this.startingFootRaisePosition = this.actualPosition;
+            this.startingFootRaisePosition = this.footActualPosition;
             this.endingFootRaisePosition = idealFootPosition;
             return;
         }
@@ -580,8 +608,8 @@ class RobotLegCompoent extends Component {
             // this.actualPosition = this.endingFootRaisePosition;
             this.moving = false;
             this.movementProgress = 0;
-            this.startingFootRaisePosition = this.actualPosition;
-            this.endingFootRaisePosition = this.actualPosition;
+            this.startingFootRaisePosition = this.footActualPosition;
+            this.endingFootRaisePosition = this.footActualPosition;
         }
 
         // move the foot
@@ -595,9 +623,9 @@ class RobotLegCompoent extends Component {
                 this.movementProgress = 0;
             }
             // console.log("Movement progress: " + this.movementProgress);
-            this.actualPosition = this.parabolicLerp(this.startingFootRaisePosition, this.endingFootRaisePosition, 1, this.movementProgress);
+            this.footActualPosition = this.parabolicLerp(this.startingFootRaisePosition, this.endingFootRaisePosition, 1, this.movementProgress);
         }
-    
+
 
         this.updateGizmos();
     }
@@ -615,28 +643,138 @@ class RobotLegCompoent extends Component {
         return linear;
     }
 
-    updateGizmos()
-    {
-        if (this.idealMarkerEntity != null) {
-            this.idealMarkerEntity.getTransform().position = this.idealPosition;
+    updateGizmos() {
+        if (this.footIdealMarkerEntity != null) {
+            this.footIdealMarkerEntity.getTransform().position = this.footIdealPosition;
         }
-        if (this.actualMarkerEntity != null) {
-            this.actualMarkerEntity.getTransform().position = this.actualPosition;
+        if (this.footActualMarkerEntity != null) {
+            this.footActualMarkerEntity.getTransform().position = this.footActualPosition;
+        }
+        if (this.kneeMarkerEntity != null) {
+            this.kneeMarkerEntity.getTransform().position = this.kneePosition;
         }
     }
 
     calculateIdealFootPlacementPosition() {
+        // return new Vector3();
         // representation of the foot placement position
-        let upperLegWorldPosition = this.upperLegEntity.node.transform.getWorldPosition();
+        let pelvisWorldPosition = this.pelvisEntity.node.transform.getWorldPosition();
+        let pelvisModelMatrix = this.pelvisEntity.node.transform.getWorldModelMatrix();
+
+        let offsetVector = new Vector4([this.footPosOffset.elements[0], this.footPosOffset.elements[1], this.footPosOffset.elements[2], 0]);
+        let rotatedOffset = pelvisModelMatrix.multiplyVector4(offsetVector);
+
         let idealPosition = new Vector3(
             [
-                upperLegWorldPosition.elements[0],
+                pelvisWorldPosition.elements[0] + rotatedOffset.elements[0],
                 this.groundY,
-                upperLegWorldPosition.elements[2],
+                pelvisWorldPosition.elements[2] + rotatedOffset.elements[2],
             ]
         );
 
         return idealPosition;
     }
+
+    calculateKneePosition() {
+        // return new Vector3();
+        // representation of the foot placement position
+        let pelvisWorldPosition = this.pelvisEntity.node.transform.getWorldPosition();
+        let footWorldPosition = this.footActualPosition;
+        let kneeTargetWorldPosition = this.kneeEntity.node.transform.getWorldPosition();
+
+        // now find a position to place the knee such that the constraints are met
+        // these constraints are:
+        // 1. the knee exists on the same plane as the foot, pelvis, and kneeTarget
+        // 2. the knee is an upperLegLength away from the pelvis
+        // 3. the knee is a lowerLegLength away from the foot
+        // 4. the knee should be as close to the kneeTargetWorldPosition as possible
+
+        // if these aren't met, the knee is placed at the halfway point between the pelvis and the foot
+        // this is the default position
+
+        let footToPelvisDirection = pelvisWorldPosition.sub(footWorldPosition).normalize();
+        let idealKneePosition = footWorldPosition.add(footToPelvisDirection.mul(this.lowerLegLength));
+
+        let pelvisToFoot = footWorldPosition.sub(pelvisWorldPosition);
+        let pelvisToKneeTarget = kneeTargetWorldPosition.sub(pelvisWorldPosition);
+        let projectionLength = pelvisToFoot.dot(pelvisToKneeTarget) / pelvisToFoot.lengthSq();
+        let projectedKneeTarget = pelvisWorldPosition.add(pelvisToFoot.mul(projectionLength));
+
+        let kneePosition = new Vector3(projectedKneeTarget.elements);
+        let toKneeTarget = kneeTargetWorldPosition.sub(kneePosition);
+        let distanceToKneeTarget = toKneeTarget.length();
+
+        // check if the knee is too far away from the knee target
+        if (distanceToKneeTarget > this.upperLegLength + this.lowerLegLength) {
+            // console.log("Knee too far away");
+            // move the knee closer to the knee target
+            let toKneeTargetNormalized = toKneeTarget.normalize();
+            kneePosition = kneePosition.add(toKneeTargetNormalized.mul(distanceToKneeTarget - (this.upperLegLength + this.lowerLegLength)));
+        }
+
+        // check if the knee is too close to the pelvis
+        let upperLegLengthSq = this.upperLegLength * this.upperLegLength;
+        let lowerLengthSq = this.lowerLegLength * this.lowerLegLength;
+
+        let pelvisToKnee = kneePosition.sub(pelvisWorldPosition);
+        let pelvisToKneeLengthSq = pelvisToKnee.lengthSq();
+
+        if (pelvisToKneeLengthSq < upperLegLengthSq || pelvisToKneeLengthSq > upperLegLengthSq + lowerLengthSq) {
+            console.log("Knee too close to pelvis");
+            // move the knee away from the pelvis
+            let toKneeNormalized = pelvisToKnee.normalize();
+            kneePosition = pelvisWorldPosition.add(toKneeNormalized.mul(this.upperLegLength));
+        }
+        else {
+            console.log("Knee is in range");
+        }
+
+        return kneePosition;
+
+
+
+        // let pelvisToFoot = footWorldPosition.sub(pelvisWorldPosition);
+        // let midpoint = footWorldPosition.lerp(pelvisWorldPosition, 0.5);
+
+        // // Calculate the circle intersection
+        // let kneePosition = this.findCircleIntersection(pelvisWorldPosition, this.upperLegLength, footWorldPosition, this.lowerLegLength);
+
+        // // If kneePosition is null, use the midpoint
+        // if (!kneePosition) {
+        //     console.log("Knee position is null");
+        //     kneePosition = midpoint;
+        //     return kneePosition;
+        // };
+
+
+    }
+
+    // findCircleIntersection(center1, radius1, center2, radius2) {
+    //     // Implementation of circle intersection logic
+    //     // Returns the intersection point or null if no valid intersection
+
+    //     let d = center1.distanceTo(center2);
+    
+    //     // Check if there is no intersection
+    //     if (d > radius1 + radius2 || d < Math.abs(radius1 - radius2)) {
+    //         console.log("No intersection");
+    //         return null;
+    //     }
+    
+    //     let a = (radius1 * radius1 - radius2 * radius2 + d * d) / (2 * d);
+    //     let h = Math.sqrt(radius1 * radius1 - a * a);
+    //     let midPoint = center1.lerp(center2, a / d);
+        
+    //     let intersectionX = midPoint.elements[0] + h * (center2.elements[1] - center1.elements[1]) / d;
+    //     let intersectionY = midPoint.elements[1] - h * (center2.elements[0] - center1.elements[0]) / d;
+        
+    //     return new Vector3([intersectionX, intersectionY, center1.elements[2]]); // Assuming a 2D plane for simplicity
+    // }
+
+    // calculateInfluencedKneePosition(idealKneePosition, kneeTargetPosition) {
+    //     let influenceFactor = 0.5;
+    //     let influencedKneePosition = idealKneePosition.lerp(kneeTargetPosition, influenceFactor);
+    //     return influencedKneePosition;
+    // }
 
 }

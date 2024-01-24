@@ -1053,6 +1053,8 @@ Vector3.prototype.lerp = function(vec, t) {
   }
 };
 
+
+
 /**
  * Constructor of Vector4
  * If opt_src is specified, new vector is initialized by opt_src.

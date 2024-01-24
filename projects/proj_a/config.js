@@ -25,6 +25,20 @@ var c_MATERIALS = [
 		]
 	),
 	new MaterialDescriptor(
+		"green",
+		"static/materials/base", 
+		[
+			new MaterialParameter("u_color", new Vector4([0.0, 1.0, 0.0, 1.0])),
+		]
+	),
+	new MaterialDescriptor(
+		"blue",
+		"static/materials/base",
+		[
+			new MaterialParameter("u_color", new Vector4([0.0, 0.0, 1.0, 1.0])),
+		]
+	),
+	new MaterialDescriptor(
 		"robot_inners",
 		"static/materials/base", 
 		[

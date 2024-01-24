@@ -16,7 +16,7 @@ function buildScene() {
 	g_sceneGraph.setCameraRotation(c_CAMERA_STARTING_ROTATION);
 	cameraEntity.attachComponent(
 		new CameraController(
-			"Robot Parent", c_CAMERA_STARTING_POSITION, 10, 1
+			"Robot Parent", c_CAMERA_STARTING_POSITION, 5, 1
 		)
 	);
 
@@ -82,31 +82,46 @@ function buildScene() {
 	// spawn robot legs
 	let numLegs = 4;
 	let legDistance = 2.0;
+	let groundY = -1.5;
 	for (let i = 0; i < numLegs; i++) {
 		let theta = (i / numLegs) * 2 * Math.PI;
 		let legPosition = new Vector3([Math.cos(theta) * legDistance, 0, Math.sin(theta) * legDistance]);
-		let legRotation = new Quaternion().setFromAxisAngle(0, 1, 0, theta * 180 / Math.PI);
+		let legRotation = new Quaternion();
+
+		// ids for the leg components
 		let legUpperID = "robot_leg_" + i + "_upper";
 		let legLowerID = "robot_leg_" + i + "_lower";
-		let idealMarkerID = "robot_leg_" + i + "_ideal_marker"; // used to mark the position of the foot for debugging
-		let actualMarkerID = "robot_leg_" + i + "_actual_marker"; // used to mark the position of the foot for debugging
+		let pelvisID = "robot_leg_" + i + "_pelvis";
+		let kneeID = "robot_leg_" + i + "_knee";
+		let footIdealMarkerID = "robot_leg_" + i + "_foot_ideal_marker"; // used to mark the position of the foot for debugging
+		let footActualMarkerID = "robot_leg_" + i + "_foot_actual_marker"; // used to mark the position of the foot for debugging
+		let kneeActualMarkerID = "robot_leg_" + i + "_knee_actual_marker"; // used to mark the position of the foot for debugging
+
+		let footPosOffset = legPosition.mul(2);
+		let segmentLength = 0.7;
 		// create the leg
 		let legBaseEntity = g_ecs.createEntity(
 			entityName = "robot_leg_" + i,
 			parent = robotBaseEntity,
 			position = legPosition,
 			rotation = legRotation,
-			scale = new Vector3([0.5, 0.5, 0.5]),
+			scale = new Vector3([1, 1, 1]),
 			meshName = "",
 			materialName = "",
 			components = [
 				new RobotLegCompoent(
 					legUpperID,
 					legLowerID,
-					-2,
+					pelvisID,
+					kneeID,
+					footPosOffset,
+					groundY,
 					1,
-					idealMarkerID,
-					actualMarkerID
+					segmentLength,
+					segmentLength,
+					footIdealMarkerID,
+					footActualMarkerID,
+					kneeActualMarkerID
 				)
 			],
 		)
@@ -118,7 +133,7 @@ function buildScene() {
 			position = new Vector3([0, 0.1, 0]),
 			rotation = new Quaternion(),
 			scale = new Vector3([0.5, 0.5, 0.5]),
-			meshName = "sphere",
+			meshName = "",
 			materialName = "robot_inners",
 			components = [],
 		)
@@ -130,26 +145,51 @@ function buildScene() {
 			position = new Vector3([0, -1, 0]),
 			rotation = new Quaternion(),
 			scale = new Vector3([0.5, 0.5, 0.5]),
-			meshName = "sphere",
+			meshName = "",
 			materialName = "robot_inners",
+			components = [],
+		)
+
+		// create the knee
+		let kneePos = legPosition.mul(0.1).add(new Vector3([0, -0.5, 0]));
+		let knee = g_ecs.createEntity(
+			entityName = kneeID,
+			parent = legBaseEntity,
+			position = kneePos,
+			rotation = new Quaternion(),
+			scale = new Vector3([0.1, 0.1, 0.1]),
+			meshName = "",
+			materialName = "red",
+			components = [],
+		)
+
+		// create the pelvis
+		let pelvis = g_ecs.createEntity(
+			entityName = pelvisID,
+			parent = legBaseEntity,
+			position = legPosition.mul(-0.1).sub(new Vector3([0, 0.5, 0])),
+			rotation = new Quaternion(),
+			scale = new Vector3([0.1, 0.1, 0.1]),
+			meshName = "sphere",
+			materialName = "blue",
 			components = [],
 		)
 
 		// create the ideal position marker
 		g_ecs.createEntity(
-			entityName = idealMarkerID,
+			entityName = footIdealMarkerID,
 			parent = null,
 			position = new Vector3([0, 0, 0]),
 			rotation = new Quaternion(),
 			scale = new Vector3([0.1, 0.1, 0.1]),
-			meshName = "sphere",
+			meshName = "ddw",
 			materialName = "red",
 			components = [],
 		)
 
 		// create the actual position marker
 		g_ecs.createEntity(
-			entityName = actualMarkerID,
+			entityName = footActualMarkerID,
 			parent = null,
 			position = new Vector3([0, 0, 0]),
 			rotation = new Quaternion(),
@@ -158,9 +198,22 @@ function buildScene() {
 			materialName = "gray",
 			components = [],
 		)
+
+		// create the knee actual position marker
+		g_ecs.createEntity(
+			entityName = kneeActualMarkerID,
+			parent = null,
+			position = new Vector3([0, 0, 0]),
+			rotation = new Quaternion(),
+			scale = new Vector3([0.1, 0.1, 0.1]),
+			meshName = "sphere",
+			materialName = "green",
+			components = [],
+		)
+
 	}
 
-	buildEnviornment();
+	// buildEnviornment();
 
 	let skyboxEntity = g_ecs.createEntity(
 		entityName = "skybox",
