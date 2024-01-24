@@ -931,6 +931,7 @@ Vector3.prototype.divSelf = function(scalar) {
  * */
 Vector3.prototype.distanceToSq = function(vec) {
   var v = this.elements;
+  var vec = vec.elements;
   var x = v[0] - vec[0];
   var y = v[1] - vec[1];
   var z = v[2] - vec[2];
@@ -945,6 +946,7 @@ Vector3.prototype.distanceToSq = function(vec) {
  */
 Vector3.prototype.add = function(vec) {
   var v = this.elements;
+  var vec = vec.elements;
   return new Vector3([v[0] + vec[0], v[1] + vec[1], v[2] + vec[2]]);
 }
 
@@ -955,6 +957,7 @@ Vector3.prototype.add = function(vec) {
  */
 Vector3.prototype.sub = function(vec) {
   var v = this.elements;
+  var vec = vec.elements;
   return new Vector3([v[0] - vec[0], v[1] - vec[1], v[2] - vec[2]]);
 }
 
@@ -1003,6 +1006,7 @@ Vector3.prototype.lengthSq = function() {
  * */
 Vector3.prototype.distanceTo = function(vec) {
   var v = this.elements;
+  var vec = vec.elements;
   var x = v[0] - vec[0];
   var y = v[1] - vec[1];
   var z = v[2] - vec[2];
@@ -1017,6 +1021,7 @@ Vector3.prototype.distanceTo = function(vec) {
  */
 Vector3.prototype.lerp = function(vec, t) {
   var v = this.elements;
+  var vec = vec.elements;
   return new Vector3([
     v[0] + (vec[0] - v[0]) * t,
     v[1] + (vec[1] - v[1]) * t,

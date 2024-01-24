@@ -81,7 +81,8 @@ function buildScene() {
 		let legRotation = new Quaternion().setFromAxisAngle(0, 1, 0, theta * 180 / Math.PI);
 		let legUpperID = "robot_leg_" + i + "_upper";
 		let legLowerID = "robot_leg_" + i + "_lower";
-		let footPositionMarkerEntityID = "robot_leg_" + i + "_foot_position_marker"; // used to mark the position of the foot for debugging
+		let idealMarkerID = "robot_leg_" + i + "_ideal_marker"; // used to mark the position of the foot for debugging
+		let actualMarkerID = "robot_leg_" + i + "_actual_marker"; // used to mark the position of the foot for debugging
 		// create the leg
 		let legBaseEntity = g_ecs.createEntity(
 			entityName = "robot_leg_" + i,
@@ -97,7 +98,9 @@ function buildScene() {
 					legLowerID, 
 					-2,
 					1, 
-					footPositionMarkerEntityID)
+					idealMarkerID,
+					actualMarkerID
+				)
 			],
 		)
 
@@ -125,15 +128,27 @@ function buildScene() {
 			components = [],
 		)
 
-		// create the foot position marker
-		let footPositionMarker = g_ecs.createEntity(
-			entityName = footPositionMarkerEntityID,
+		// create the ideal position marker
+		g_ecs.createEntity(
+			entityName = idealMarkerID,
 			parent = null,
 			position = new Vector3([0, 0, 0]),
 			rotation = new Quaternion(),
 			scale = new Vector3([0.1, 0.1, 0.1]),
 			meshName = "sphere",
 			materialName = "red",
+			components = [],
+		)
+
+		// create the actual position marker
+		g_ecs.createEntity(
+			entityName = actualMarkerID,
+			parent = null,
+			position = new Vector3([0, 0, 0]),
+			rotation = new Quaternion(),
+			scale = new Vector3([0.1, 0.1, 0.1]),
+			meshName = "sphere",
+			materialName = "gray",
 			components = [],
 		)
 	}

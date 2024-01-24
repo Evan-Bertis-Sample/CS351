@@ -390,25 +390,34 @@ class FollowCameraComponent extends Component {
 
 class RobotLegCompoent extends Component {
     // Constructor
-    constructor(upperLegEntityID, lowerLegEntityID, groundY, speed = 1, footPositionMarkerEntityID = null) {
+    constructor(upperLegEntityID, lowerLegEntityID, groundY, speed = 1, idealMarkerEntityID = null, actualMarkerEntityID = null) {
         super();
         this.upperLegEntityID = upperLegEntityID;
         this.lowerLegEntityID = lowerLegEntityID;
-        this.footPositionMarkerID = footPositionMarkerEntityID;
+        this.idealMarkerEntityID = idealMarkerEntityID;
+        this.actualMarkerEntityID = actualMarkerEntityID;
         this.groundY = groundY;
         this.speed = speed;
         this.time = 0;
         this.upperLegEntity = null;
         this.lowerLegEntity = null;
+
+        this.stepDistance = 1;
     }
 
     // Start is called before the first frame update
     start() {
         this.upperLegEntity = g_ecs.getEntity(this.upperLegEntityID);
         this.lowerLegEntity = g_ecs.getEntity(this.lowerLegEntityID);
-        this.footPositionMarkerEntity = g_ecs.getEntity(this.footPositionMarkerID);
-        this.footPlacementPosition = this.calculateIdealFootPlacementPosition();
-        this.footVelocity = new Vector3([0, 0, 0]);
+        this.idealMarkerEntity = g_ecs.getEntity(this.idealMarkerEntityID);
+        this.actualMarkerEntity = g_ecs.getEntity(this.actualMarkerEntityID);
+        this.idealPosition = this.calculateIdealFootPlacementPosition();
+        this.actualPosition = this.idealPosition;
+
+        this.moving = false;
+        this.movementProgress = 0;
+        this.startingFootRaisePosition = this.actualPosition;
+        this.endingFootRaisePosition = this.actualPosition;
     }
 
     // Updates the component
@@ -416,6 +425,67 @@ class RobotLegCompoent extends Component {
     update(deltaTime) {
         // update the foot placement position
         let idealFootPosition = this.calculateIdealFootPlacementPosition();
+        this.idealPosition = idealFootPosition;
+
+        // slowly move the end position to the ideal position
+        this.endingFootRaisePosition = this.endingFootRaisePosition.lerp(idealFootPosition, deltaTime * 0.1);
+
+        let idealDistance = idealFootPosition.distanceTo(this.actualPosition);
+        let nextStepDistance = this.endingFootRaisePosition.distanceTo(this.actualPosition);
+        console.log("Distance: " + idealDistance);
+        console.log("Next step distance: " + nextStepDistance);
+
+        // start a step if we are far enough away
+        if (idealDistance > this.stepDistance && this.moving == false) {
+            // snap to the ideal position
+            this.moving = true;
+            this.movementProgress = 0;
+            this.startingFootRaisePosition = this.actualPosition;
+            this.endingFootRaisePosition = idealFootPosition;
+            return;
+        }
+
+        // stop moving if we are close enough
+        if (nextStepDistance < this.stepDistance && this.moving == true) {
+            // snap to the step position
+            this.actualPosition = this.endingFootRaisePosition;
+            this.moving = false;
+            this.movementProgress = 0;
+            this.startingFootRaisePosition = this.actualPosition;
+            this.endingFootRaisePosition = this.actualPosition;
+        }
+
+        // move the foot
+        if (this.moving == true) {
+            // lerp between the current position and the ideal position
+            this.movementProgress += deltaTime * 0.1;
+            console.log("Movement progress: " + this.movementProgress);
+            this.actualPosition = this.parabolicLerp(this.startingFootRaisePosition, this.endingFootRaisePosition, 1, 1);
+        }
+    
+
+        this.updateGizmos();
+    }
+
+    // Lerps between two points using a parabolic curve
+    // this parabolic curve moves the y value up, then down
+    // a : the first point
+    // b : the second point
+    // h : the arch height of the parabola
+    // t : the time
+    parabolicLerp(a, b, h, t) {
+        let linear = a.lerp(b, t);
+        return linear;
+    }
+
+    updateGizmos()
+    {
+        if (this.idealMarkerEntity != null) {
+            this.idealMarkerEntity.getTransform().position = this.idealPosition;
+        }
+        if (this.actualMarkerEntity != null) {
+            this.actualMarkerEntity.getTransform().position = this.actualPosition;
+        }
     }
 
     calculateIdealFootPlacementPosition() {
