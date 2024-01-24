@@ -188,8 +188,7 @@ class BobComponent extends Component {
         this.time = 0;
     }
 
-    start()
-    {
+    start() {
         this.startY = this.transform.position.elements[1];
     }
 
@@ -412,6 +411,7 @@ class RobotLegOrchestratorComponent extends Component {
 
     // Start is called before the first frame update
     start() {
+        // return;
         for (let i = 0; i < this.legIDs.length; i++) {
             let leg = g_ecs.getEntity(this.legIDs[i]);
             if (leg == null) {
@@ -434,6 +434,7 @@ class RobotLegOrchestratorComponent extends Component {
     // Updates the component
     // deltaTime : the time since the last frame
     update(deltaTime) {
+        // return;
         // console.log("Active leg set: " + this.activeLegSet);
         // console.log("Time since last switch: " + this.timeSinceLastSwitch)
         let checkIndex = 0;
@@ -520,8 +521,8 @@ class RobotLegCompoent extends Component {
         this.lowerLegEntityID = lowerLegEntityID;
         this.idealMarkerEntityID = idealMarkerEntityID;
         this.actualMarkerEntityID = actualMarkerEntityID;
-        this.kneeEntityID = kneeEntityID;
-        this.kneeMarkerID = kneeMarkerID;
+        this.kneeTargetEntityID = kneeEntityID; // the target for the knee
+        this.kneeEntityID = kneeMarkerID; // the 
         this.pelvisID = pelvisID;
 
         // Needed for the IK
@@ -533,8 +534,8 @@ class RobotLegCompoent extends Component {
         this.groundY = groundY;
         this.speed = speed;
         this.footPosOffset = footPosOffset;
-        this.stepDistance = 0.5;
-        this.stepSpeed = 7;
+        this.stepDistance = (lowerLegLength + upperLegLength);
+        this.stepSpeed = c_PLAYER_MOVE_SPEED;
         this.stepHeight = 2;
         this.upperLegLength = upperLegLength;
         this.lowerLegLength = lowerLegLength;
@@ -549,12 +550,12 @@ class RobotLegCompoent extends Component {
         this.upperLegEntity = g_ecs.getEntity(this.upperLegEntityID);
         this.lowerLegEntity = g_ecs.getEntity(this.lowerLegEntityID);
         this.pelvisEntity = g_ecs.getEntity(this.pelvisID);
-        this.kneeEntity = g_ecs.getEntity(this.kneeEntityID);
+        this.kneeEntity = g_ecs.getEntity(this.kneeTargetEntityID);
 
         // get the marker entities -- used for debugging
         this.footIdealMarkerEntity = g_ecs.getEntity(this.idealMarkerEntityID);
         this.footActualMarkerEntity = g_ecs.getEntity(this.actualMarkerEntityID);
-        this.kneeMarkerEntity = g_ecs.getEntity(this.kneeMarkerID);
+        this.kneeMarkerEntity = g_ecs.getEntity(this.kneeEntityID);
 
         this.footIdealPosition = this.calculateIdealFootPlacementPosition();
         this.footActualPosition = this.footIdealPosition;
@@ -575,10 +576,8 @@ class RobotLegCompoent extends Component {
         let idealFootPosition = this.calculateIdealFootPlacementPosition();
         this.footIdealPosition = idealFootPosition;
         let idealKneePosition = this.calculateKneePosition();
+        this.kneePosition = this.kneePosition.lerp(idealKneePosition, 0.5);
         this.pelvisPosition = this.pelvisEntity.node.transform.getWorldPosition();
-
-        this.kneePosition = idealKneePosition;
-        this.previousKneePosition = this.kneePosition;
 
         let idealDistance = idealFootPosition.distanceTo(this.footActualPosition);
         let footToPelvis = this.pelvisPosition.sub(this.footActualPosition);
@@ -589,11 +588,6 @@ class RobotLegCompoent extends Component {
             this.updateGizmos();
             return;
         }
-
-        // slowly move the end position to the ideal position
-        // slowly lerp the steps to the ideal position
-        // this.startingFootRaisePosition = this.startingFootRaisePosition.lerp(idealFootPosition, deltaTime * 0.1);
-        // this.endingFootRaisePosition = this.endingFootRaisePosition.lerp(idealFootPosition, deltaTime * 0.1);
 
         let nextStepDistance = this.endingFootRaisePosition.distanceTo(this.footActualPosition);
         // console.log("Distance: " + idealDistance);
@@ -623,6 +617,11 @@ class RobotLegCompoent extends Component {
         // move the foot
         if (this.moving == true) {
             this.movementProgress += deltaTime * this.stepSpeed;
+            // slowly move the end position to the ideal position
+            // slowly lerp the steps to the ideal position
+            this.startingFootRaisePosition = this.startingFootRaisePosition.lerp(idealFootPosition, deltaTime * this.stepSpeed * 2);
+            this.endingFootRaisePosition = this.endingFootRaisePosition.lerp(idealFootPosition, deltaTime * this.stepSpeed * 2);
+            
             // clamp the movement progress
             if (this.movementProgress > 1) {
                 this.movementProgress = 1;
@@ -690,6 +689,14 @@ class RobotLegCompoent extends Component {
         let footWorldPosition = this.footActualPosition;
         let kneeTargetWorldPosition = this.kneeEntity.node.transform.getWorldPosition();
 
+        // // add the direction that we are walking in to the knee target
+        // let stepDirection = this.footIdealPosition.sub(this.footActualPosition)
+        // let stepDistance = this.footIdealPosition.distanceTo(this.footActualPosition);
+        // let stepAmount = stepDistance / this.stepDistance;
+        // let stepVector = stepDirection.mul(stepAmount);
+
+        // kneeTargetWorldPosition = kneeTargetWorldPosition.add(stepVector);
+
         // now find a position to place the knee such that the constraints are met
         // these constraints are:
         // 1. the knee exists on the same plane as the foot, pelvis, and kneeTarget
@@ -700,96 +707,10 @@ class RobotLegCompoent extends Component {
         // if these aren't met, the knee is placed at the halfway point between the pelvis and the foot
         // this is the default position
 
-        // return this.ikSolveDep(pelvisWorldPosition, footWorldPosition, kneeTargetWorldPosition);
-        // return this.ikSolve(pelvisWorldPosition, footWorldPosition, kneeTargetWorldPosition, this.upperLegLength, this.lowerLegLength);
         return this.ikSolveNew(pelvisWorldPosition, footWorldPosition, kneeTargetWorldPosition, this.upperLegLength, this.lowerLegLength);
     }
 
-    ikSolveDep(pelvisWorldPosition, footWorldPosition, kneeTargetWorldPosition) {
-        let footToPelvisDirection = pelvisWorldPosition.sub(footWorldPosition).normalize();
-        let idealKneePosition = footWorldPosition.add(footToPelvisDirection.mul(this.lowerLegLength));
-
-        let pelvisToFoot = footWorldPosition.sub(pelvisWorldPosition);
-        let pelvisToKneeTarget = kneeTargetWorldPosition.sub(pelvisWorldPosition);
-        let projectionLength = pelvisToFoot.dot(pelvisToKneeTarget) / pelvisToFoot.lengthSq();
-        let projectedKneeTarget = pelvisWorldPosition.add(pelvisToFoot.mul(projectionLength));
-
-        let kneePosition = new Vector3(projectedKneeTarget.elements);
-        let toKneeTarget = kneeTargetWorldPosition.sub(kneePosition);
-        let distanceToKneeTarget = toKneeTarget.length();
-
-        // check if the knee is too far away from the knee target
-        if (distanceToKneeTarget > this.upperLegLength + this.lowerLegLength) {
-            // console.log("Knee too far away");
-            // move the knee closer to the knee target
-            let toKneeTargetNormalized = toKneeTarget.normalize();
-            kneePosition = kneePosition.add(toKneeTargetNormalized.mul(distanceToKneeTarget - (this.upperLegLength + this.lowerLegLength)));
-        }
-
-        // check if the knee is too close to the pelvis
-        let upperLegLengthSq = this.upperLegLength * this.upperLegLength;
-        let lowerLengthSq = this.lowerLegLength * this.lowerLegLength;
-
-        let pelvisToKnee = kneePosition.sub(pelvisWorldPosition);
-        let pelvisToKneeLengthSq = pelvisToKnee.lengthSq();
-
-        if (pelvisToKneeLengthSq < upperLegLengthSq || pelvisToKneeLengthSq > upperLegLengthSq + lowerLengthSq) {
-            console.log("Knee too close to pelvis");
-            // move the knee away from the pelvis
-            let toKneeNormalized = pelvisToKnee.normalize();
-            kneePosition = pelvisWorldPosition.add(toKneeNormalized.mul(this.upperLegLength));
-        }
-        else {
-            console.log("Knee is in range");
-        }
-
-        return kneePosition;
-    }
-
-    ikSolve(pelvisPosition, footPosition, kneeTargetPosition, upperLegLength, lowerLegLength) {
-        // Convert the positions to Vector3 objects if they aren't already
-        let pelvis = new Vector3(pelvisPosition.elements);
-        let foot = new Vector3(footPosition.elements);
-        let kneeTarget = new Vector3(kneeTargetPosition.elements);
-
-        // Calculate the vector from the pelvis to the foot
-        let hipToFootVec = foot.sub(pelvis);
-
-        // Calculate the distance from the hip to the foot
-        let hipToFootDistance = hipToFootVec.length();
-        // console.log("Hip to foot distance: " + hipToFootDistance);
-
-        // Check if the leg can reach the foot
-        if (hipToFootDistance > upperLegLength + lowerLegLength) {
-            // console.error("The leg cannot reach the target foot position.");
-            // return the midpoint between the pelvis and the foot
-            return pelvis.add(hipToFootVec.mul(0.5));
-        }
-
-        // Calculate the angle at the knee using the Law of Cosines
-        let cosKneeAngle = (upperLegLength * upperLegLength + lowerLegLength * lowerLegLength - hipToFootDistance * hipToFootDistance) / (2 * upperLegLength * lowerLegLength);
-        let kneeAngle = Math.acos(cosKneeAngle);
-
-        // Calculate the direction from the hip to the knee
-        let hipToKneeDirection = hipToFootVec.normalize();
-
-        // Calculate the position of the knee
-        let kneePosition = pelvis.add(hipToKneeDirection.mul(upperLegLength));
-
-        // Adjust the knee position based on the knee target
-        // This involves projecting the knee-to-target vector onto the plane perpendicular to the hip-to-foot vector
-        let kneeToTargetVec = kneeTarget.sub(kneePosition);
-        let kneeToTargetOnPlane = kneeToTargetVec.sub(hipToFootVec.mul(hipToFootVec.dot(kneeToTargetVec) / hipToFootVec.lengthSq()));
-        // Adjust the knee position towards the knee target
-        let normalizedKneeToTargetOnPlane = kneeToTargetOnPlane.normalize();
-        let influence = upperLegLength * Math.cos(kneeAngle);
-        let influenceVec = normalizedKneeToTargetOnPlane.mul(influence);
-        kneePosition = kneePosition.add(influenceVec);
-        return kneePosition;
-    }
-
-    ikSolveNew(pelvisPosition, footPosition, kneeTargetPosition, upperLegLength, lowerLegLength)
-    {
+    ikSolveNew(pelvisPosition, footPosition, kneeTargetPosition, upperLegLength, lowerLegLength,) {
         // find the position of the knee
         // the knee is the point where the two circles intersect
         // the knee position should be on the same plane as the pelvis, foot, and knee target
@@ -803,26 +724,26 @@ class RobotLegCompoent extends Component {
         let pelvis = new Vector3(pelvisPosition.elements);
         let foot = new Vector3(footPosition.elements);
         let kneeTarget = new Vector3(kneeTargetPosition.elements);
-    
+
         // Calculate the plane normal
         let pelvisToFoot = foot.sub(pelvis);
 
-        if (pelvisToFoot.length() > upperLegLength + lowerLegLength)
-        {
+        if (pelvisToFoot.length() > upperLegLength + lowerLegLength) {
             // just return the midpoint between the pelvis and the foot
-            return pelvis.add(pelvisToFoot.mul(0.5));
+            let midpoint = pelvis.add(pelvisToFoot.mul(0.5));
+            return midpoint;
         }
 
         let pelvisToKneeTarget = kneeTarget.sub(pelvis);
         let planeNormal = pelvisToFoot.cross(pelvisToKneeTarget).normalize();
-    
+
         // Project all points onto the plane
-        let projectOntoPlane = function(point, planePoint, normal) {
+        let projectOntoPlane = function (point, planePoint, normal) {
             let pointToPlanePoint = point.sub(planePoint);
             let distance = pointToPlanePoint.dot(normal);
             return point.sub(normal.mul(distance));
         };
-    
+
         pelvis = projectOntoPlane(pelvis, pelvis, planeNormal);
         foot = projectOntoPlane(foot, pelvis, planeNormal);
         kneeTarget = projectOntoPlane(kneeTarget, pelvis, planeNormal);
@@ -830,29 +751,29 @@ class RobotLegCompoent extends Component {
         // pelvis.printMe();
         // foot.printMe();
         // kneeTarget.printMe();
-    
+
         // FABRIK algorithm
         let tolerance = 0.01;
         let maxIterations = 10;
         let iteration = 0;
         let currentFootPosition = new Vector3();
         let kneePosition = new Vector3();
-    
+
         while (currentFootPosition.distanceTo(foot) > tolerance && iteration < maxIterations) {
             // Backward
             kneePosition = foot.sub(pelvis).normalize().mul(upperLegLength).add(pelvis);
             pelvis = foot.sub(kneePosition).normalize().mul(lowerLegLength).add(kneePosition);
-            
+
             let footToKnee = kneePosition.sub(foot);
             let pelvisToKnee = kneePosition.sub(pelvis);
 
             footToKnee.printMe();
             pelvisToKnee.printMe();
-    
+
             // Forward
             kneePosition = pelvis.add(kneePosition.sub(pelvis).normalize().mul(upperLegLength));
             currentFootPosition = kneePosition.add(foot.sub(kneePosition).normalize().mul(lowerLegLength));
-    
+
             // Adjust knee using pole target
             let kneeToKneeTarget = kneeTarget.sub(kneePosition);
             kneeToKneeTarget.printMe();
@@ -861,24 +782,8 @@ class RobotLegCompoent extends Component {
             kneePosition = kneePosition.addSelf(correction);
             iteration++;
         }
-        kneePosition.printMe();
+
         return kneePosition;
-
-        // let pelvisToKneeTarget = kneeTargetPosition.sub(pelvisPosition);
-        // let pelvisToFoot = footPosition.sub(pelvisPosition);
-        // // find the normal of the plane
-        // let planeNormal = pelvisToFoot.cross(pelvisToKneeTarget).normalize();
-
-        // // find the 2D distance from the pelvis to the foot, on the plane
-        // // the y value of this distance vector will be the difference in height between the pelvis and the foot
-        // // the x value of this distance vector will be the distance between the pelvis and the foot on the plane
-
-        // // vectors representing the pelvis and foot on the plane
-        // let xPrime = pelvisPosition.sub(footPosition);
-        // let yPrime = xPrime.cross(planeNormal);
-
-        // // we need to modify the xPrime vector and yPrime vector such that the yPrime vector is perpendicular to the xPrime vector
-        // // this 
     }
 }
 
@@ -887,39 +792,31 @@ const SEGMENT_TYPE = {
     LOWER_LEG: 1,
 }
 
-class RobotLegSegmentComponent extends Component
-{
-    constructor(legControllerEntityID, segmentType, segmentOffset)
-    {
+class RobotLegSegmentComponent extends Component {
+    constructor(legControllerEntityID, segmentType) {
         super();
         this.legControllerEntityID = legControllerEntityID;
         this.legControllerEntity = null;
         this.legControllerComponent = null;
         this.segmentType = segmentType;
-        this.segmentOffset = segmentOffset;
     }
 
-    start()
-    {
+    start() {
         this.legControllerEntity = g_ecs.getEntity(this.legControllerEntityID);
-        if (this.legControllerEntity == null)
-        {
+        if (this.legControllerEntity == null) {
             console.log("Unable to get leg controller entity");
             return;
         }
-        
+
         this.legControllerComponent = this.legControllerEntity.getComponent(RobotLegCompoent);
-        if (this.legControllerComponent == null)
-        {
+        if (this.legControllerComponent == null) {
             console.log("Unable to get leg controller component");
             return;
         }
     }
 
-    update(deltaTime)
-    {
-        if (this.legControllerComponent == null)
-        {
+    update(deltaTime) {
+        if (this.legControllerComponent == null) {
             return;
         }
 
@@ -930,22 +827,23 @@ class RobotLegSegmentComponent extends Component
         // and the foot is the target
         let originPosition = new Vector3();
         let targetPosition = new Vector3();
-        if (this.segmentType == SEGMENT_TYPE.UPPER_LEG)
-        {
+        if (this.segmentType == SEGMENT_TYPE.UPPER_LEG) {
             originPosition = this.legControllerComponent.pelvisPosition;
             targetPosition = this.legControllerComponent.kneePosition;
         }
-        else if (this.segmentType == SEGMENT_TYPE.LOWER_LEG)
-        {
+        else if (this.segmentType == SEGMENT_TYPE.LOWER_LEG) {
             originPosition = this.legControllerComponent.kneePosition;
             targetPosition = this.legControllerComponent.footActualPosition;
         }
 
         // rotate the segment to point towards the target from the origin
         let direction = targetPosition.sub(originPosition);
+        // adjust the y scale to match the length of the segment
+        let requiredLength = direction.length();
+        this.transform.scale.elements[1] = requiredLength / 2;
         let rotation = new Quaternion().setFromUnitVectors(new Vector3([0, 1, 0]), direction.normalize());
         // slerp between the current rotation and the new rotation
         this.transform.rotation = rotation;
-        this.transform.position = originPosition.add(direction.mul(this.segmentOffset));
+        this.transform.position = originPosition.add(direction.mul(requiredLength / 2));
     }
 }

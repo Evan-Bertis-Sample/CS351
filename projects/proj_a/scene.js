@@ -80,9 +80,13 @@ function buildScene() {
 	)
 
 	// spawn robot legs
-	let numLegs = 4;
-	let legDistance = 2.0;
+	let numLegs = 8;
 	let groundY = -1.5;
+	let segmentLength = 1;
+	let segmentSize = 0.25;
+	let legDistance = 2.5 + segmentSize;
+	let segmentOffset = segmentLength / 2;
+
 	for (let i = 0; i < numLegs; i++) {
 		let theta = (i / numLegs) * 2 * Math.PI;
 		let legPosition = new Vector3([Math.cos(theta) * legDistance, 0, Math.sin(theta) * legDistance]);
@@ -97,10 +101,7 @@ function buildScene() {
 		let footActualMarkerID = "robot_leg_" + i + "_foot_actual_marker"; // used to mark the position of the foot for debugging
 		let kneeActualMarkerID = "robot_leg_" + i + "_knee_actual_marker"; // used to mark the position of the foot for debugging
 
-		let footPosOffset = legPosition.mul(0.35);
-		let segmentLength = 1.5;
-		let segmentSize = 0.25;
-		let segmentOffset = segmentLength / 2;
+		let footPosOffset = legPosition.mul(segmentLength * 2);
 		// create the leg
 		let legBaseEntity = g_ecs.createEntity(
 			entityName = "robot_leg_" + i,
@@ -168,16 +169,16 @@ function buildScene() {
 		let pelvis = g_ecs.createEntity(
 			entityName = pelvisID,
 			parent = legBaseEntity,
-			position = legPosition.mul(-0.25).sub(new Vector3([0, 0.5, 0])),
+			position = legPosition.mul(-segmentSize).sub(new Vector3([0, 0.5, 0])),
 			rotation = new Quaternion(),
-			scale = new Vector3([1, 1, 1]),
-			meshName = "",
-			materialName = "blue",
+			scale = new Vector3([segmentSize, segmentSize, segmentSize]),
+			meshName = "sphere",
+			materialName = "robot_outers",
 			components = [],
 		)
 
 		// create the knee
-		let kneePos = legPosition.mul(.75).add(new Vector3([0, -0.1, 0]));
+		let kneePos = legPosition.mul(segmentLength * 4).add(new Vector3([0, 1, 0]));
 		let knee = g_ecs.createEntity(
 			entityName = kneeID,
 			parent = pelvis,
