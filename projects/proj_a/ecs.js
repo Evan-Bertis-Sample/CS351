@@ -402,7 +402,8 @@ class RobotLegCompoent extends Component {
         this.upperLegEntity = null;
         this.lowerLegEntity = null;
 
-        this.stepDistance = 1;
+        this.stepDistance = 0.1;
+        this.stepSpeed = 10;
     }
 
     // Start is called before the first frame update
@@ -428,12 +429,12 @@ class RobotLegCompoent extends Component {
         this.idealPosition = idealFootPosition;
 
         // slowly move the end position to the ideal position
-        this.endingFootRaisePosition = this.endingFootRaisePosition.lerp(idealFootPosition, deltaTime * 0.1);
+        // this.endingFootRaisePosition = this.endingFootRaisePosition.lerp(idealFootPosition, deltaTime * this.stepSpeed);
 
         let idealDistance = idealFootPosition.distanceTo(this.actualPosition);
         let nextStepDistance = this.endingFootRaisePosition.distanceTo(this.actualPosition);
-        console.log("Distance: " + idealDistance);
-        console.log("Next step distance: " + nextStepDistance);
+        // console.log("Distance: " + idealDistance);
+        // console.log("Next step distance: " + nextStepDistance);
 
         // start a step if we are far enough away
         if (idealDistance > this.stepDistance && this.moving == false) {
@@ -448,7 +449,7 @@ class RobotLegCompoent extends Component {
         // stop moving if we are close enough
         if (nextStepDistance < this.stepDistance && this.moving == true) {
             // snap to the step position
-            this.actualPosition = this.endingFootRaisePosition;
+            // this.actualPosition = this.endingFootRaisePosition;
             this.moving = false;
             this.movementProgress = 0;
             this.startingFootRaisePosition = this.actualPosition;
@@ -457,10 +458,16 @@ class RobotLegCompoent extends Component {
 
         // move the foot
         if (this.moving == true) {
-            // lerp between the current position and the ideal position
-            this.movementProgress += deltaTime * 0.1;
+            this.movementProgress += deltaTime * this.stepSpeed;
+            // clamp the movement progress
+            if (this.movementProgress > 1) {
+                this.movementProgress = 1;
+            }
+            if (this.movementProgress < 0) {
+                this.movementProgress = 0;
+            }
             console.log("Movement progress: " + this.movementProgress);
-            this.actualPosition = this.parabolicLerp(this.startingFootRaisePosition, this.endingFootRaisePosition, 1, 1);
+            this.actualPosition = this.parabolicLerp(this.startingFootRaisePosition, this.endingFootRaisePosition, 1, this.movementProgress);
         }
     
 
@@ -475,6 +482,8 @@ class RobotLegCompoent extends Component {
     // t : the time
     parabolicLerp(a, b, h, t) {
         let linear = a.lerp(b, t);
+        // add the height of the parabola
+        linear.elements[1] += h * Math.sin(t * Math.PI);
         return linear;
     }
 

@@ -45,7 +45,7 @@ function main() {
 	
 	var tick = function () {
 		let newTime = Date.now();
-		g_deltaTime = newTime - g_timeElapsed;
+		g_deltaTime = (newTime - g_timeElapsed) / 1000;
 		g_timeElapsed = newTime;
 		g_inputManager.update();
 		g_ecs.update(g_deltaTime);
