@@ -97,8 +97,9 @@ function buildScene() {
 		let footActualMarkerID = "robot_leg_" + i + "_foot_actual_marker"; // used to mark the position of the foot for debugging
 		let kneeActualMarkerID = "robot_leg_" + i + "_knee_actual_marker"; // used to mark the position of the foot for debugging
 
-		let footPosOffset = legPosition.mul(2);
-		let segmentLength = 0.8;
+		let footPosOffset = legPosition.mul(0.75);
+		let segmentLength = 2.5;
+		let segmentOffset = 0.3;
 		// create the leg
 		let legBaseEntity = g_ecs.createEntity(
 			entityName = "robot_leg_" + i,
@@ -139,6 +140,7 @@ function buildScene() {
 				new RobotLegSegmentComponent(
 					legBaseEntity.name,
 					SEGMENT_TYPE.UPPER_LEG,
+					segmentOffset,
 				)
 			],
 		)
@@ -156,32 +158,33 @@ function buildScene() {
 				new RobotLegSegmentComponent(
 					legBaseEntity.name,
 					SEGMENT_TYPE.LOWER_LEG,
+					segmentOffset,
 				)
 			],
-		)
-
-		// create the knee
-		let kneePos = legPosition.mul(0.5).add(new Vector3([0, -0.1, 0]));
-		let knee = g_ecs.createEntity(
-			entityName = kneeID,
-			parent = legBaseEntity,
-			position = kneePos,
-			rotation = new Quaternion(),
-			scale = new Vector3([0.1, 0.1, 0.1]),
-			meshName = "sphere",
-			materialName = "red",
-			components = [],
 		)
 
 		// create the pelvis
 		let pelvis = g_ecs.createEntity(
 			entityName = pelvisID,
 			parent = legBaseEntity,
-			position = legPosition.mul(-0.2).sub(new Vector3([0, 0.5, 0])),
+			position = legPosition.mul(-0.25).sub(new Vector3([0, 0.5, 0])),
+			rotation = new Quaternion(),
+			scale = new Vector3([1, 1, 1]),
+			meshName = "",
+			materialName = "blue",
+			components = [],
+		)
+
+		// create the knee
+		let kneePos = legPosition.mul(0.5).add(new Vector3([0, -0.1, 0]));
+		let knee = g_ecs.createEntity(
+			entityName = kneeID,
+			parent = pelvis,
+			position = kneePos,
 			rotation = new Quaternion(),
 			scale = new Vector3([0.1, 0.1, 0.1]),
 			meshName = "sphere",
-			materialName = "blue",
+			materialName = "red",
 			components = [],
 		)
 

@@ -879,6 +879,7 @@ Vector3.prototype.cross = function(opt_src) {
 */
 Vector3.prototype.addSelf = function(vec) {
   var v = this.elements;
+  vec = vec.elements;
   v[0] += vec[0];
   v[1] += vec[1];
   v[2] += vec[2];
