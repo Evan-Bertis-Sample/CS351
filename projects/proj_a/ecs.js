@@ -568,13 +568,13 @@ class RobotLegCompoent extends Component {
         let idealFootPosition = this.calculateIdealFootPlacementPosition();
         this.footIdealPosition = idealFootPosition;
         let idealKneePosition = this.calculateKneePosition();
+
         // check if the new knee position is too far away from the old knee position
         // this is to prevent the knee from moving too fast, and also a hacky bug fix
         let kneeDistance = idealKneePosition.distanceTo(this.previousKneePosition);
         console.log("Knee distance: " + kneeDistance);
-        if (kneeDistance > 2 && kneeDistance < 3) {
-            idealKneePosition = this.previousKneePosition;
-        }
+
+
         this.kneePosition = idealKneePosition;
         this.previousKneePosition = this.kneePosition;
 
@@ -585,7 +585,9 @@ class RobotLegCompoent extends Component {
         }
 
         // slowly move the end position to the ideal position
-        // this.endingFootRaisePosition = this.endingFootRaisePosition.lerp(idealFootPosition, deltaTime * this.stepSpeed);
+        // slowly lerp the steps to the ideal position
+        // this.startingFootRaisePosition = this.startingFootRaisePosition.lerp(idealFootPosition, deltaTime * 0.1);
+        // this.endingFootRaisePosition = this.endingFootRaisePosition.lerp(idealFootPosition, deltaTime * 0.1);
 
         let idealDistance = idealFootPosition.distanceTo(this.footActualPosition);
         let nextStepDistance = this.endingFootRaisePosition.distanceTo(this.footActualPosition);
@@ -692,6 +694,12 @@ class RobotLegCompoent extends Component {
         // if these aren't met, the knee is placed at the halfway point between the pelvis and the foot
         // this is the default position
 
+        // return this.ikSolveApproach(pelvisWorldPosition, footWorldPosition, kneeTargetWorldPosition);
+        return this.ikSolve(pelvisWorldPosition, footWorldPosition, kneeTargetWorldPosition, this.upperLegLength, this.lowerLegLength);
+
+    }
+
+    ikSolveDep(pelvisWorldPosition, footWorldPosition, kneeTargetWorldPosition) {
         let footToPelvisDirection = pelvisWorldPosition.sub(footWorldPosition).normalize();
         let idealKneePosition = footWorldPosition.add(footToPelvisDirection.mul(this.lowerLegLength));
 
@@ -730,51 +738,48 @@ class RobotLegCompoent extends Component {
         }
 
         return kneePosition;
-
-
-
-        // let pelvisToFoot = footWorldPosition.sub(pelvisWorldPosition);
-        // let midpoint = footWorldPosition.lerp(pelvisWorldPosition, 0.5);
-
-        // // Calculate the circle intersection
-        // let kneePosition = this.findCircleIntersection(pelvisWorldPosition, this.upperLegLength, footWorldPosition, this.lowerLegLength);
-
-        // // If kneePosition is null, use the midpoint
-        // if (!kneePosition) {
-        //     console.log("Knee position is null");
-        //     kneePosition = midpoint;
-        //     return kneePosition;
-        // };
-
-
     }
 
-    // findCircleIntersection(center1, radius1, center2, radius2) {
-    //     // Implementation of circle intersection logic
-    //     // Returns the intersection point or null if no valid intersection
+    ikSolve(pelvisPosition, footPosition, kneeTargetPosition, upperLegLength, lowerLegLength) {
+        // Convert the positions to Vector3 objects if they aren't already
+        let pelvis = new Vector3(pelvisPosition.elements);
+        let foot = new Vector3(footPosition.elements);
+        let kneeTarget = new Vector3(kneeTargetPosition.elements);
 
-    //     let d = center1.distanceTo(center2);
-    
-    //     // Check if there is no intersection
-    //     if (d > radius1 + radius2 || d < Math.abs(radius1 - radius2)) {
-    //         console.log("No intersection");
-    //         return null;
-    //     }
-    
-    //     let a = (radius1 * radius1 - radius2 * radius2 + d * d) / (2 * d);
-    //     let h = Math.sqrt(radius1 * radius1 - a * a);
-    //     let midPoint = center1.lerp(center2, a / d);
-        
-    //     let intersectionX = midPoint.elements[0] + h * (center2.elements[1] - center1.elements[1]) / d;
-    //     let intersectionY = midPoint.elements[1] - h * (center2.elements[0] - center1.elements[0]) / d;
-        
-    //     return new Vector3([intersectionX, intersectionY, center1.elements[2]]); // Assuming a 2D plane for simplicity
-    // }
+        // Calculate the vector from the pelvis to the foot
+        let hipToFootVec = foot.sub(pelvis);
 
-    // calculateInfluencedKneePosition(idealKneePosition, kneeTargetPosition) {
-    //     let influenceFactor = 0.5;
-    //     let influencedKneePosition = idealKneePosition.lerp(kneeTargetPosition, influenceFactor);
-    //     return influencedKneePosition;
-    // }
+        // Calculate the distance from the hip to the foot
+        let hipToFootDistance = hipToFootVec.length();
+        console.log("Hip to foot distance: " + hipToFootDistance);
+
+        // Check if the leg can reach the foot
+        if (hipToFootDistance > upperLegLength + lowerLegLength) {
+            console.error("The leg cannot reach the target foot position.");
+            // return the midpoint between the pelvis and the foot
+            return pelvis.add(hipToFootVec.mul(0.5));
+        }
+
+        // Calculate the angle at the knee using the Law of Cosines
+        let cosKneeAngle = (upperLegLength * upperLegLength + lowerLegLength * lowerLegLength - hipToFootDistance * hipToFootDistance) / (2 * upperLegLength * lowerLegLength);
+        let kneeAngle = Math.acos(cosKneeAngle);
+
+        // Calculate the direction from the hip to the knee
+        let hipToKneeDirection = hipToFootVec.normalize();
+
+        // Calculate the position of the knee
+        let kneePosition = pelvis.add(hipToKneeDirection.mul(upperLegLength));
+
+        // Adjust the knee position based on the knee target
+        // This involves projecting the knee-to-target vector onto the plane perpendicular to the hip-to-foot vector
+        let kneeToTargetVec = kneeTarget.sub(kneePosition);
+        let kneeToTargetOnPlane = kneeToTargetVec.sub(hipToFootVec.mul(hipToFootVec.dot(kneeToTargetVec) / hipToFootVec.lengthSq()));
+        // Adjust the knee position towards the knee target
+        let normalizedKneeToTargetOnPlane = kneeToTargetOnPlane.normalize();
+        let influence = upperLegLength * Math.cos(kneeAngle);
+        let influenceVec = normalizedKneeToTargetOnPlane.mul(influence);
+        kneePosition = kneePosition.add(influenceVec);
+        return kneePosition;
+    }
 
 }
