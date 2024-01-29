@@ -25,6 +25,9 @@ class MaterialParameter {
         else if (this.value instanceof Matrix4) {
             gl.uniformMatrix4fv(location, false, this.value.elements);
         }
+        else if (Number.isFinite(this.value)) {
+            gl.uniform1f(location, this.value);
+        }
         else {
             console.log("Shader parameter type not supported");
             return;
@@ -113,9 +116,9 @@ class ShaderSet {
         for (let i = 0; i < this.paramNames.length; i++) {
             let paramName = this.paramNames[i];
             let location = gl.getUniformLocation(gl.program, paramName);
-            if (location < 0) {
+            if (location == null || location < 0) {
                 console.log('Failed to get the storage location of ' + paramName);
-                return;
+                continue;
             }
             this.uLoc_params.set(paramName, location);
         }
@@ -124,11 +127,10 @@ class ShaderSet {
     loadParameters(gl, params) {
         for (let i = 0; i < this.paramNames.length; i++) {
             let param = params[i];
-            // console.log("Loading parameter " + param.name);
             let location = this.uLoc_params.get(param.name);
-            if (location < 0) {
+            if (location == null || location < 0) {
                 console.log('Failed to get the storage location of ' + param.name);
-                return;
+                continue;
             }
             param.loadParameter(gl, location);
         }
@@ -280,8 +282,7 @@ class MaterialRegistry {
             shader.loadShader(gl);
             this.currentlyLoadedShader = material.shaderName;
         }
-        else
-        {
+        else {
             // console.log("Skipping shader loading");
         }
 

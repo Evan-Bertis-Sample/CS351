@@ -9,10 +9,13 @@ const float cellShadingWeight = 0.4;
 
 uniform vec3 u_cameraPosition;
 uniform vec4 u_color;
+uniform float u_diffuse_influence;
+uniform float u_specular_influence;
 
 // varying variables -- passed from vertex shader
 varying vec4 v_position;
 varying vec4 v_normal;
+varying float v_enable_lighting;
 
 float nStep(float x, float numSteps) {
     return floor(x * numSteps) / float(numSteps);
@@ -21,6 +24,15 @@ float nStep(float x, float numSteps) {
 void main() {
     // normalize the normal vector
     vec4 normal = normalize(v_normal);
+
+    // gl_FragColor = vec4(v_enableLighting, v_enableLighting, v_enableLighting, 1.0);
+    // return;
+
+    if (v_enable_lighting == 0.0) {
+        gl_FragColor = vec4(normal.x, normal.y, normal.z, 1.0);
+        return;
+    }
+
     vec4 lightingDirection = normalize(directionalLight);
     // calculate the dot product of the normal and the lighting direction
     float diffuse = max(dot(normal, lightingDirection), 0.0);
@@ -36,6 +48,10 @@ void main() {
     // calculate the diffuse and specular components
     diffuse = diffuse * 0.8 + 0.2;
     specular = specular * 0.8 + 0.2;
+
+    diffuse = diffuse * u_diffuse_influence;
+    specular = specular * u_specular_influence;
+
     // ensure that the specular lighting is muted in shadow
     specular = specular * diffuse;
     specular = specular * specular;

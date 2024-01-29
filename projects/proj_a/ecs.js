@@ -767,8 +767,8 @@ class RobotLegCompoent extends Component {
             let footToKnee = kneePosition.sub(foot);
             let pelvisToKnee = kneePosition.sub(pelvis);
 
-            footToKnee.printMe();
-            pelvisToKnee.printMe();
+            // footToKnee.printMe();
+            // pelvisToKnee.printMe();
 
             // Forward
             kneePosition = pelvis.add(kneePosition.sub(pelvis).normalize().mul(upperLegLength));
@@ -776,7 +776,7 @@ class RobotLegCompoent extends Component {
 
             // Adjust knee using pole target
             let kneeToKneeTarget = kneeTarget.sub(kneePosition);
-            kneeToKneeTarget.printMe();
+            // kneeToKneeTarget.printMe();
             let kneeToPelvis = pelvis.sub(kneePosition);
             let correction = kneeToKneeTarget.normalize().mul(kneeToPelvis.length());
             kneePosition = kneePosition.addSelf(correction);

@@ -21,6 +21,25 @@ function buildScene() {
 	);
 
 	// build the robot
+	buildRobot();
+
+	buildEnviornment();
+
+	let skyboxEntity = g_ecs.createEntity(
+		entityName = "skybox",
+		parent = null,
+		position = new Vector3([0, 0, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([c_CAMERA_SETTINGS.far / 2, c_CAMERA_SETTINGS.far / 2, c_CAMERA_SETTINGS.far / 2]),
+		meshName = "invert_sphere",
+		materialName = "skybox",
+		components = [
+			new FollowCameraComponent(new Vector3([0, -2, -2])),
+		],
+	)
+}
+
+function buildRobot() {
 	let robotBaseEntity = g_ecs.createEntity(
 		entityName = "Robot Parent",
 		parent = null,
@@ -43,8 +62,8 @@ function buildScene() {
 					"robot_leg_3",
 				]
 			),
-		],
-	)
+		]
+	);
 
 	let robotInnersEntity = g_ecs.createEntity(
 		entityName = "robot_inners",
@@ -54,8 +73,8 @@ function buildScene() {
 		scale = new Vector3([1, 1, 1]),
 		meshName = "robot_cube_inners",
 		materialName = "robot_inners",
-		components = [],
-	)
+		components = []
+	);
 
 	let robotOutersEntity = g_ecs.createEntity(
 		entityName = "robot_outers",
@@ -65,8 +84,8 @@ function buildScene() {
 		scale = new Vector3([1, 1, 1]),
 		meshName = "robot_cube_outers",
 		materialName = "robot_outers",
-		components = [],
-	)
+		components = []
+	);
 
 	let robotVeinsEntity = g_ecs.createEntity(
 		entityName = "robot_veins",
@@ -76,8 +95,8 @@ function buildScene() {
 		scale = new Vector3([1, 1, 1]),
 		meshName = "robot_cube_veins",
 		materialName = "robot_veins",
-		components = [],
-	)
+		components = []
+	);
 
 	// spawn robot legs
 	let numLegs = 8;
@@ -88,266 +107,201 @@ function buildScene() {
 	let segmentOffset = segmentLength / 2;
 
 	for (let i = 0; i < numLegs; i++) {
-		let theta = (i / numLegs) * 2 * Math.PI;
-		let legPosition = new Vector3([Math.cos(theta) * legDistance, 0, Math.sin(theta) * legDistance]);
-		let legRotation = new Quaternion();
-
-		// ids for the leg components
-		let legUpperID = "robot_leg_" + i + "_upper";
-		let legLowerID = "robot_leg_" + i + "_lower";
-		let pelvisID = "robot_leg_" + i + "_pelvis";
-		let kneeID = "robot_leg_" + i + "_knee";
-		let footIdealMarkerID = "robot_leg_" + i + "_foot_ideal_marker"; // used to mark the position of the foot for debugging
-		let footActualMarkerID = "robot_leg_" + i + "_foot_actual_marker"; // used to mark the position of the foot for debugging
-		let kneeActualMarkerID = "robot_leg_" + i + "_knee_actual_marker"; // used to mark the position of the foot for debugging
-
-		let footPosOffset = legPosition.mul(segmentLength * 2);
-		// create the leg
-		let legBaseEntity = g_ecs.createEntity(
-			entityName = "robot_leg_" + i,
-			parent = robotBaseEntity,
-			position = legPosition,
-			rotation = legRotation,
-			scale = new Vector3([1, 1, 1]),
-			meshName = "",
-			materialName = "",
-			components = [
-				new RobotLegCompoent(
-					legUpperID,
-					legLowerID,
-					pelvisID,
-					kneeID,
-					footPosOffset,
-					groundY,
-					1,
-					segmentLength,
-					segmentLength,
-					footIdealMarkerID,
-					footActualMarkerID,
-					kneeActualMarkerID
-				)
-			],
-		)
-
-		// create the upper leg
-		let upperLeg = g_ecs.createEntity(
-			entityName = legUpperID,
-			parent = null,
-			position = new Vector3([0, 0.1, 0]),
-			rotation = new Quaternion(),
-			scale = new Vector3([segmentSize, segmentLength/2, segmentSize]),
-			meshName = "cube",
-			materialName = "robot_inners",
-			components = [
-				new RobotLegSegmentComponent(
-					legBaseEntity.name,
-					SEGMENT_TYPE.UPPER_LEG,
-					segmentOffset,
-				)
-			],
-		)
-
-		// create the lower leg
-		let lowerLeg = g_ecs.createEntity(
-			entityName = legLowerID,
-			parent = null,
-			position = new Vector3([0, -1, 0]),
-			rotation = new Quaternion(),
-			scale = new Vector3([segmentSize, segmentLength/2, segmentSize]),
-			meshName = "cube",
-			materialName = "robot_outers",
-			components = [
-				new RobotLegSegmentComponent(
-					legBaseEntity.name,
-					SEGMENT_TYPE.LOWER_LEG,
-					segmentOffset,
-				)
-			],
-		)
-
-		// create the pelvis
-		let pelvis = g_ecs.createEntity(
-			entityName = pelvisID,
-			parent = legBaseEntity,
-			position = legPosition.mul(-segmentSize).sub(new Vector3([0, 0.5, 0])),
-			rotation = new Quaternion(),
-			scale = new Vector3([segmentSize, segmentSize, segmentSize]),
-			meshName = "sphere",
-			materialName = "robot_outers",
-			components = [],
-		)
-
-		// create the knee
-		let kneePos = legPosition.mul(segmentLength * 4).add(new Vector3([0, 1, 0]));
-		let knee = g_ecs.createEntity(
-			entityName = kneeID,
-			parent = pelvis,
-			position = kneePos,
-			rotation = new Quaternion(),
-			scale = new Vector3([0.1, 0.1, 0.1]),
-			meshName = "",
-			materialName = "red",
-			components = [],
-		)
-
-		// create the ideal position marker
-		g_ecs.createEntity(
-			entityName = footIdealMarkerID,
-			parent = null,
-			position = new Vector3([0, 0, 0]),
-			rotation = new Quaternion(),
-			scale = new Vector3([0.1, 0.1, 0.1]),
-			meshName = "",
-			materialName = "red",
-			components = [],
-		)
-
-		// create the actual position marker
-		g_ecs.createEntity(
-			entityName = footActualMarkerID,
-			parent = null,
-			position = new Vector3([0, 0, 0]),
-			rotation = new Quaternion(),
-			scale = new Vector3([segmentSize, segmentSize, segmentSize]),
-			meshName = "sphere",
-			materialName = "robot_outers",
-			components = [],
-		)
-
-		// create the knee actual position marker
-		g_ecs.createEntity(
-			entityName = kneeActualMarkerID,
-			parent = null,
-			position = new Vector3([0, 0, 0]),
-			rotation = new Quaternion(),
-			scale = new Vector3([segmentSize, segmentSize, segmentSize]),
-			meshName = "sphere",
-			materialName = "robot_outers",
-			components = [],
-		)
+		buildLeg(i, numLegs, legDistance, segmentLength, robotBaseEntity, groundY, segmentSize);
 	}
+}
 
-	buildEnviornment();
+function buildLeg(i, numLegs, legDistance, segmentLength, robotBaseEntity, groundY, segmentSize) {
+	let theta = (i / numLegs) * 2 * Math.PI;
+	let legPosition = new Vector3([Math.cos(theta) * legDistance, 0, Math.sin(theta) * legDistance]);
+	let legRotation = new Quaternion();
 
-	let skyboxEntity = g_ecs.createEntity(
-		entityName = "skybox",
+	// ids for the leg components
+	let legUpperID = "robot_leg_" + i + "_upper";
+	let legLowerID = "robot_leg_" + i + "_lower";
+	let pelvisID = "robot_leg_" + i + "_pelvis";
+	let kneeID = "robot_leg_" + i + "_knee";
+	let footIdealMarkerID = "robot_leg_" + i + "_foot_ideal_marker"; // used to mark the position of the foot for debugging
+	let footActualMarkerID = "robot_leg_" + i + "_foot_actual_marker"; // used to mark the position of the foot for debugging
+	let kneeActualMarkerID = "robot_leg_" + i + "_knee_actual_marker"; // used to mark the position of the foot for debugging
+
+	let footPosOffset = legPosition.mul(segmentLength * 2);
+	// create the leg
+	let legBaseEntity = g_ecs.createEntity(
+		entityName = "robot_leg_" + i,
+		parent = robotBaseEntity,
+		position = legPosition,
+		rotation = legRotation,
+		scale = new Vector3([1, 1, 1]),
+		meshName = "",
+		materialName = "",
+		components = [
+			new RobotLegCompoent(
+				legUpperID,
+				legLowerID,
+				pelvisID,
+				kneeID,
+				footPosOffset,
+				groundY,
+				1,
+				segmentLength,
+				segmentLength,
+				footIdealMarkerID,
+				footActualMarkerID,
+				kneeActualMarkerID
+			)
+		]
+	);
+
+	// create the upper leg
+	let upperLeg = g_ecs.createEntity(
+		entityName = legUpperID,
+		parent = null,
+		position = new Vector3([0, 0.1, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([segmentSize, segmentLength / 2, segmentSize]),
+		meshName = "cube",
+		materialName = "robot_inners",
+		components = [
+			new RobotLegSegmentComponent(
+				legBaseEntity.name,
+				SEGMENT_TYPE.UPPER_LEG
+			)
+		]
+	);
+
+	// create the lower leg
+	let lowerLeg = g_ecs.createEntity(
+		entityName = legLowerID,
+		parent = null,
+		position = new Vector3([0, -1, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([segmentSize, segmentLength / 2, segmentSize]),
+		meshName = "cube",
+		materialName = "robot_outers",
+		components = [
+			new RobotLegSegmentComponent(
+				legBaseEntity.name,
+				SEGMENT_TYPE.LOWER_LEG
+			)
+		]
+	);
+
+	// create the pelvis
+	let pelvis = g_ecs.createEntity(
+		entityName = pelvisID,
+		parent = legBaseEntity,
+		position = legPosition.mul(-segmentSize).sub(new Vector3([0, 0.5, 0])),
+		rotation = new Quaternion(),
+		scale = new Vector3([segmentSize, segmentSize, segmentSize]),
+		meshName = "sphere",
+		materialName = "robot_outers",
+		components = []
+	);
+
+	// create the knee
+	let kneePos = legPosition.mul(segmentLength * 4).add(new Vector3([0, 1, 0]));
+	let knee = g_ecs.createEntity(
+		entityName = kneeID,
+		parent = pelvis,
+		position = kneePos,
+		rotation = new Quaternion(),
+		scale = new Vector3([0.1, 0.1, 0.1]),
+		meshName = "",
+		materialName = "red",
+		components = []
+	);
+
+	// create the ideal position marker
+	g_ecs.createEntity(
+		entityName = footIdealMarkerID,
 		parent = null,
 		position = new Vector3([0, 0, 0]),
 		rotation = new Quaternion(),
-		scale = new Vector3([c_CAMERA_SETTINGS.far / 2, c_CAMERA_SETTINGS.far / 2, c_CAMERA_SETTINGS.far / 2]),
-		// scale = new Vector3([1, 1, 1]),
-		meshName = "invert_sphere",
-		materialName = "skybox",
-		components = [
-			new FollowCameraComponent(new Vector3([0, -2, -2])),
-		],
-	)
+		scale = new Vector3([0.1, 0.1, 0.1]),
+		meshName = "",
+		materialName = "red",
+		components = []
+	);
 
-	g_sceneGraph.print();
+	// create the actual position marker
+	g_ecs.createEntity(
+		entityName = footActualMarkerID,
+		parent = null,
+		position = new Vector3([0, 0, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([segmentSize, segmentSize, segmentSize]),
+		meshName = "sphere",
+		materialName = "robot_outers",
+		components = []
+	);
+
+	// create the knee actual position marker
+	g_ecs.createEntity(
+		entityName = kneeActualMarkerID,
+		parent = null,
+		position = new Vector3([0, 0, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([segmentSize, segmentSize, segmentSize]),
+		meshName = "sphere",
+		materialName = "robot_outers",
+		components = []
+	);
 }
 
 function buildEnviornment() {
-	let floorBaseEntity = g_ecs.createEntity(
-		entityName = "floor",
+	let numSpheres = 6;
+	let sphereRadius = 20;
+	let innerMaterial = "star";
+	let outerMaterial = "gray";
+	let scale = new Vector3([1, 1, 1]);
+
+	let dysonParent = g_ecs.createEntity(
+		entityName = "dyson_sphere_parent",
 		parent = null,
-		position = new Vector3([0, -2.5, 0]),
-		rotation = new Quaternion(),
-		scale = new Vector3([40, 40, 40]),
-		meshName = "",
-		materialName = "",
-		components = []
-	);
-
-	let floorGroutEntity = g_ecs.createEntity(
-		entityName = "floor_grout",
-		parent = floorBaseEntity,
 		position = new Vector3([0, 0, 0]),
-		rotation = new Quaternion(),
-		scale = new Vector3([1, 1, 1]),
-		meshName = "floor_grout",
-		materialName = "floor_grout",
-		components = []
-	);
-
-	let floorTilesEntity = g_ecs.createEntity(
-		entityName = "floor_tiles",
-		parent = floorBaseEntity,
-		position = new Vector3([0, 0, 0]),
-		rotation = new Quaternion(),
-		scale = new Vector3([1, 1, 1]),
-		meshName = "floor_tiles",
-		materialName = "floor_tiles",
-		components = []
-	);
-
-	// create an orbiting ball
-	let ballParent = g_ecs.createEntity(
-		entityName = "ball_parent",
-		parent = null,
-		position = new Vector3([0, 5, 0]),
 		rotation = new Quaternion(),
 		scale = new Vector3([1, 1, 1]),
 		meshName = "",
 		materialName = "",
 		components = [
-			new RotateComponent(new Vector3([0, 1, 0]), 50),
-			new BobComponent(1, 5),
-		],
-	)
+			new RotateComponent(new Vector3([0, 1, 0]), 8),
+		]
+	);
 
-	let ball = g_ecs.createEntity(
-		entityName = "ball",
-		parent = ballParent,
-		position = new Vector3([10, 0, 0]),
+	for (let i = 0; i < numSpheres; i++) {
+		let theta = (i / numSpheres) * 2 * Math.PI;
+		let pos = new Vector3([Math.cos(theta) * sphereRadius, 0, Math.sin(theta) * sphereRadius]);
+		let identifier = "dyson_sphere_" + i;
+		let entity = buildDysonSphere(identifier, pos, scale, innerMaterial, outerMaterial, dysonParent);
+	}
+}
+
+function buildDysonSphere(identifier, position, scale, innerMaterial, outerMaterial, parent)
+{
+	let sphereEntity = g_ecs.createEntity(
+		entityName = identifier,
+		parent = parent,
+		position = position,
 		rotation = new Quaternion(),
-		scale = new Vector3([1, 1, 1]),
+		scale = scale,
 		meshName = "sphere",
-		materialName = "red",
-		components = [
-			new RotateComponent(new Vector3([0, 1, 0]), 100),
-		],
-	)
+		materialName = innerMaterial,
+		components = []
+	);
 
-	// create a ball that orbits the first ball
-	let ball2 = g_ecs.createEntity(
-		entityName = "ball2_parent",
-		parent = ball,
-		position = new Vector3([4, 0, 0]),
+	let outerSphereEntity = g_ecs.createEntity(
+		entityName = identifier + "_outer",
+		parent = sphereEntity,
+		position = new Vector3([0, 0, 0]),
 		rotation = new Quaternion(),
-		scale = new Vector3([0.25, 0.25, 0.25]),
-		meshName = "sphere",
-		materialName = "blue",
+		scale = new Vector3([2, 2, 2]),
+		meshName = "gyro",
+		materialName = outerMaterial,
 		components = [
-			new RotateComponent(new Vector3([1, 0, 0]), 150),
-		],
-	)
+			new RotateComponent(new Vector3([1, 1, 1]), 10),
+		]
+	);
 
-	// create a cube that orbits the first ball
-	let cubeParent = g_ecs.createEntity(
-		entityName = "cube_parent",
-		parent = ball,
-		position = new Vector3([0, 0, 3]),
-		rotation = new Quaternion(),
-		scale = new Vector3([0.5, 0.5, 0.5]),
-		meshName = "cube",
-		materialName = "gray",
-		components = [
-			new RotateComponent(new Vector3([1, 1, 1]), 150),
-			new BobComponent(0.5, 2),
-		],
-	)
-
-	// create a ball that orbits the second ball
-	let ball3 = g_ecs.createEntity(
-		entityName = "ball3_parent",
-		parent = ball2,
-		position = new Vector3([0, 3, 0]),
-		rotation = new Quaternion(),
-		scale = new Vector3([0.2, 0.2, 0.2]),
-		meshName = "sphere",
-		materialName = "green",
-		components = [
-		],
-	)
-
+	return sphereEntity;
 }

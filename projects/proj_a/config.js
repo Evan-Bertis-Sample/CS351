@@ -7,6 +7,7 @@ var c_VIEWPORT_WIDTH = 1920;
 var c_VIEWPORT_HEIGHT = 1080;
 var c_PLAYER_MOVE_SPEED = 10;
 var c_PLAYER_ROT_SPEED = 10;
+var c_ENABLE_LIGHTING = 0.0; // 0.0 for no lighting, 1.0 for lighting
 
 // Debugging
 var g_USE_FETCH = true;
@@ -18,27 +19,9 @@ var c_MATERIALS = [
 		"static/materials/base", 
 		[
 			new MaterialParameter("u_color", new Vector4([0.65, 0.65, 0.65, 1.0])),
-		]
-	),
-	new MaterialDescriptor(
-		"red",
-		"static/materials/base", 
-		[
-			new MaterialParameter("u_color", new Vector4([1.0, 0.0, 0.0, 1.0])),
-		]
-	),
-	new MaterialDescriptor(
-		"green",
-		"static/materials/base", 
-		[
-			new MaterialParameter("u_color", new Vector4([0.0, 1.0, 0.0, 1.0])),
-		]
-	),
-	new MaterialDescriptor(
-		"blue",
-		"static/materials/base",
-		[
-			new MaterialParameter("u_color", new Vector4([0.0, 0.0, 1.0, 1.0])),
+			new MaterialParameter("u_diffuse_influence", 0.8),
+			new MaterialParameter("u_specular_influence", 0.2),
+			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
 		]
 	),
 	new MaterialDescriptor(
@@ -46,6 +29,9 @@ var c_MATERIALS = [
 		"static/materials/base", 
 		[
 			new MaterialParameter("u_color", new Vector4([0.5, 0.5, 0.5, 1.0])),
+			new MaterialParameter("u_diffuse_influence", 0.8),
+			new MaterialParameter("u_specular_influence", 0.2),
+			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
 		]
 	),
 	new MaterialDescriptor(
@@ -53,6 +39,9 @@ var c_MATERIALS = [
 		"static/materials/base", 
 		[
 			new MaterialParameter("u_color", new Vector4([0.7, 0.7, 0.7, 1.0])),
+			new MaterialParameter("u_diffuse_influence", 0.8),
+			new MaterialParameter("u_specular_influence", 0.2),
+			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
 		]
 	),
 	new MaterialDescriptor(
@@ -60,27 +49,24 @@ var c_MATERIALS = [
 		"static/materials/base", 
 		[
 			new MaterialParameter("u_color", new Vector4([0.8, 0.4, 0.6, 1.0])),
-		]
-	),
-	new MaterialDescriptor(
-		"floor_grout",
-		"static/materials/base", 
-		[
-			new MaterialParameter("u_color", new Vector4([0.85, 0.85, 0.85, 1.0])),
-		]
-	),
-	new MaterialDescriptor(
-		"floor_tiles",
-		"static/materials/base", 
-		[
-			new MaterialParameter("u_color", new Vector4([0.7, 0.7, 0.7, 1.0])),
+			new MaterialParameter("u_diffuse_influence", 0.8),
+			new MaterialParameter("u_specular_influence", 0.2),
+			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
 		]
 	),
 	new MaterialDescriptor(
 		"skybox",
 		"static/materials/skybox", 
+		[]
+	),
+	new MaterialDescriptor(
+		"star",
+		"static/materials/base", 
 		[
-			// new MaterialParameter("u_color", new Vector4([0.0, 1.0, 0.0, 1.0])),
+			new MaterialParameter("u_color", new Vector4([0.0, 1.0, 0.0, 1.0])),
+			new MaterialParameter("u_diffuse_influence", 0.8),
+			new MaterialParameter("u_specular_influence", 0.2),
+			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
 		]
 	),
 ];
@@ -95,7 +81,8 @@ var c_MESHES = [
 	"./static/meshes/robot_cube_outers.obj",
 	"./static/meshes/robot_cube_veins.obj",
 	"./static/meshes/floor_grout.obj",
-	"./static/meshes/floor_tiles.obj"
+	"./static/meshes/floor_tiles.obj",
+	"./static/meshes/gyro.obj",
 ];
 
 var c_CONTROLS = {
@@ -104,10 +91,10 @@ var c_CONTROLS = {
 }
 
 // camera configuration
-var c_CAMERA_STARTING_POSITION = new Vector3([0, 15, 12]);
+var c_CAMERA_STARTING_POSITION = new Vector3([0, 20, 15]);
 var c_CAMERA_STARTING_ROTATION = new Quaternion().setFromAxisAngle(1, 0, 0, 45);
 var c_CAMERA_SETTINGS = {
-	fov: 45,
+	fov: 60,
 	near: 0.1,
 	far: 100,
 };
