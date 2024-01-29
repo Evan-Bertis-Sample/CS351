@@ -180,8 +180,7 @@ class ECS {
     }
 
     // prints the ECS
-    print()
-    {
+    print() {
         // for each entity, print out it's name, and information about it's transform, and render info
         this.sceneGraph.traverse(this.printHelper.bind(this));
     }
@@ -325,9 +324,27 @@ class CameraController extends Component {
         this.cameraVelocity = new Vector3([0, 0, 0]);
     }
 
+    start() {
+        this.startingRotation = this.transform.rotation;
+    }
     // Updates the component
     // deltaTime : the time since the last frame
     update(deltaTime) {
+        this.handlePosition(deltaTime);
+        // handle the rotation
+        let inputVector = g_inputManager.getAxis(AxisSets.MOUSE_MOVEMENT);
+        // wobble the camera based on the input vector
+        let rotationAmount = inputVector.elements[1] * deltaTime * c_CAMERA_SENSITIVITY;
+        if (rotationAmount != 0) {
+            let rotation = new Quaternion().setFromAxisAngle(1, 0, 0, rotationAmount);
+            this.transform.rotation = rotation.multiplySelf(this.transform.rotation);
+        }
+
+
+        // this.transform.rotation = rotation.multiplySelf(this.transform.rotation);
+    }
+
+    handlePosition(deltaTime) {
         let entity = g_ecs.getEntity(this.entityName);
         if (entity == null) {
             console.log("Warning: entity is null");
@@ -368,7 +385,6 @@ class CameraController extends Component {
         )
 
         this.cameraVelocity = lerpedPosition.sub(this.transform.position).mul(1 / deltaTime);
-
         this.transform.position = lerpedPosition;
     }
 }
@@ -643,7 +659,7 @@ class RobotLegCompoent extends Component {
             // slowly lerp the steps to the ideal position
             this.startingFootRaisePosition = this.startingFootRaisePosition.lerp(idealFootPosition, deltaTime * this.stepSpeed * 2);
             this.endingFootRaisePosition = this.endingFootRaisePosition.lerp(idealFootPosition, deltaTime * this.stepSpeed * 2);
-            
+
             // clamp the movement progress
             if (this.movementProgress > 1) {
                 this.movementProgress = 1;

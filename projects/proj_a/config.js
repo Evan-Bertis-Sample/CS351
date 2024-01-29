@@ -3,10 +3,11 @@
 // this includes the material descriptors, and meshes used
 
 // Constants
-var c_VIEWPORT_WIDTH = 1920;
-var c_VIEWPORT_HEIGHT = 1080;
+var c_VIEWPORT_WIDTH = 1920/4;
+var c_VIEWPORT_HEIGHT = 1080/4;
 var c_PLAYER_MOVE_SPEED = 10;
 var c_PLAYER_ROT_SPEED = 10;
+var c_CAMERA_SENSITIVITY = 5;
 var c_WALKABLE_RADIUS = 10; // controls how far the player can move from the origin
 var c_ENABLE_LIGHTING = 1.0; // 0.0 for no lighting, 1.0 for lighting
 

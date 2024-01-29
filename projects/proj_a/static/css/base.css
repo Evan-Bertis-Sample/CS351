@@ -36,7 +36,7 @@ canvas {
     margin-right: auto;
     width: 100%;
     height: auto;
-    max-height: 65vh;
+    max-height: 50vh;
     aspect-ratio: 16/9;
     object-fit: contain;
     overflow: hidden;

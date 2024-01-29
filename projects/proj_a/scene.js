@@ -22,21 +22,8 @@ function buildScene() {
 
 	// build the robot
 	buildRobot();
-
 	buildEnviornment();
 
-	let skyboxEntity = g_ecs.createEntity(
-		entityName = "skybox",
-		parent = null,
-		position = new Vector3([0, 0, 0]),
-		rotation = new Quaternion(),
-		scale = new Vector3([c_CAMERA_SETTINGS.far / 2, c_CAMERA_SETTINGS.far / 2, c_CAMERA_SETTINGS.far / 2]),
-		meshName = "invert_sphere",
-		materialName = "skybox",
-		components = [
-			new FollowCameraComponent(new Vector3([0, -2, -2])),
-		],
-	)
 
 	console.log("Scene built");
 	let cache = [];
@@ -340,6 +327,19 @@ function buildEnviornment() {
 		materialName = "platform",
 		components = []
 	);
+
+	let skyboxEntity = g_ecs.createEntity(
+		entityName = "skybox",
+		parent = null,
+		position = new Vector3([0, 0, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([c_CAMERA_SETTINGS.far / 2, c_CAMERA_SETTINGS.far / 2, c_CAMERA_SETTINGS.far / 2]),
+		meshName = "invert_sphere",
+		materialName = "skybox",
+		components = [
+			new FollowCameraComponent(new Vector3([0, -2, -2])),
+		],
+	)
 }
 
 function buildStar(identifier, position, scale, parent, starMaterial) {
@@ -383,7 +383,7 @@ function buildDysonSphere(identifier, position, scale, innerMaterial, outerMater
 		meshName = "gyro",
 		materialName = outerMaterial,
 		components = [
-			new RotateComponent(new Vector3([1, 1, 1]), 10),
+			new RotateComponent(new Vector3([1, 1, 1]), 30),
 			new ShakerComponent(0.5),
 		]
 	);

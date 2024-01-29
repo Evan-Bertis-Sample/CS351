@@ -133,6 +133,11 @@ class InputManager {
                 this.axisCallbacks[axis][i](axisValue);
             }
         }
+
+        // check for mouse movement
+        this.mouseChange.elements[0] *= 0.5;
+        this.mouseChange.elements[1] *= 0.5;
+
     }
 
 
