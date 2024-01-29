@@ -287,7 +287,9 @@ function buildDysonSphere(identifier, position, scale, innerMaterial, outerMater
 		scale = scale,
 		meshName = "sphere",
 		materialName = innerMaterial,
-		components = []
+		components = [
+			new ShakerComponent(0.5),
+		]
 	);
 
 	let outerSphereEntity = g_ecs.createEntity(
@@ -300,6 +302,7 @@ function buildDysonSphere(identifier, position, scale, innerMaterial, outerMater
 		materialName = outerMaterial,
 		components = [
 			new RotateComponent(new Vector3([1, 1, 1]), 10),
+			new ShakerComponent(0.5),
 		]
 	);
 

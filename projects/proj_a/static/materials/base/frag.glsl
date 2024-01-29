@@ -11,6 +11,9 @@ uniform vec3 u_cameraPosition;
 uniform vec4 u_color;
 uniform float u_diffuse_influence;
 uniform float u_specular_influence;
+uniform float u_frensel_influence;
+uniform vec4 u_frensel_color;
+uniform float u_frensel_border;
 
 // varying variables -- passed from vertex shader
 varying vec4 v_position;
@@ -58,7 +61,15 @@ void main() {
     specular = specular * diffuse;
     specular = specular * specular;
 
+    // calculate the frensel effect
+    float frensel = 1.0 - dot(normal, viewDirection);
+    frensel = pow(frensel, 1.0 / u_frensel_border);
+
+    vec4 frenselColor = u_frensel_color * frensel;
     // calculate the final color
     vec4 finalColor = (ambientLightColor * u_color) + (lightColor * u_color * diffuse) + (lightColor * specular);
+    // add the frensel effect
+    finalColor = finalColor + frenselColor * u_frensel_influence;
+
     gl_FragColor = finalColor;
 }

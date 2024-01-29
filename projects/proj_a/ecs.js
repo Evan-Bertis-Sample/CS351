@@ -847,3 +847,31 @@ class RobotLegSegmentComponent extends Component {
         this.transform.position = originPosition.add(direction.mul(requiredLength / 2));
     }
 }
+
+class ShakerComponent extends Component {
+    constructor(amplitude = 1) {
+        super();
+        this.amplitude = amplitude;
+        this.time = 0;
+    }
+
+    start() {
+        this.startPosition = this.transform.position;
+    }
+
+    // Updates the component
+    // deltaTime : the time since the last frame
+    update(deltaTime) {
+        // generate a random point within the unit sphere, then scale it by the amplitude
+        let randomPoint = new Vector3([Math.random(), Math.random(), Math.random()]);
+        randomPoint = randomPoint.sub(new Vector3([0.5, 0.5, 0.5]));
+        randomPoint = randomPoint.normalize();
+        randomPoint = randomPoint.mul(this.amplitude);
+
+        // lerp between the current position and the new position
+        let output = new Vector3();
+        let newPoint = this.startPosition.add(randomPoint);
+        output = this.transform.position.lerp(newPoint, 0.1);
+        this.transform.position = output;
+    }
+}
