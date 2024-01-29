@@ -29,7 +29,9 @@ void main() {
     // return;
 
     if (v_enable_lighting == 0.0) {
-        gl_FragColor = vec4(normal.x, normal.y, normal.z, 1.0);
+        vec4 normalColor = vec4(normal.x, normal.y, normal.z, 1.0) * 0.5 + 0.5;
+        // mix the normal color with the object color
+        gl_FragColor = normalColor;
         return;
     }
 

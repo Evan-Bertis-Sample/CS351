@@ -257,6 +257,16 @@ class MaterialRegistry {
         return this.shaders.get(name);
     }
 
+    setGlobalParam(name, value) {
+        for (let [key, material] of this.materials) {
+            for (let i = 0; i < material.params.length; i++) {
+                if (material.params[i].name == name) {
+                    material.params[i].value = value;
+                }
+            }
+        }
+    }
+
     // sets the material to use for the next object
     // name: the name of the material
     setMaterial(name, gl) {

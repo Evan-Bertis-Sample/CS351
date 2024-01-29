@@ -29,15 +29,11 @@
       Use the WASD keys to move around and explore!
     </p>
     <h4>
-      Planned Revisions
+      Controls
     </h4>
-    <p>
-      The cube is supposed to have legs attached.
-      Currently, there are debug spheres representing the hips, knees, and feet (solved with IK).
-      In the future, I plan to use the solved positions to place models of legs.
-      <br>
-      I am also planning on making a more sci-fi themed scene, and possibly make the render look more N64-esque (love that aesthetic)
-    </p>
+    <button onclick="invertLightingSetting()">
+      Toggle Lighting
+    </button>
 
     <!-- Footer -->
     <footer>
@@ -92,6 +88,24 @@
 
     <!-- Entry point -->
     <script src="app.js"></script>
+
+    <!-- Controls points-->
+    <script>
+      function invertLightingSetting()
+      {
+        console.log("Toggling lighting");
+        if (c_ENABLE_LIGHTING == 1.0)
+        {
+          c_ENABLE_LIGHTING = 0.0;
+        }
+        else
+        {
+          c_ENABLE_LIGHTING = 1.0;
+        }
+
+        g_materialRegistry.setGlobalParam("u_enable_lighting", c_ENABLE_LIGHTING);
+      }
+    </script>
   </body>
 </div>
 
