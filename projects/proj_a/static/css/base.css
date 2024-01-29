@@ -1,12 +1,10 @@
 :root {
     font-size: 16px;
     font-family: 'Open Sans';
-    --light-primary: #F1F7ED;
-    --light-secondary: #E0EEC6;
-    --dark-primary: #243E36;
-    --dark-secondary: #496F4D;
-    --accent: #eca148;
-    --accent-soft: #a1be8d;
+    --light-primary: #f1e8ff;
+    --light-secondary: #dbcff7;
+    --dark-primary: #241846;
+    --dark-secondary: #473a80;
     --shadow-color: #00000033;
     --navbar-width: 5rem;
     --notion-content-width: 60%;
@@ -128,4 +126,16 @@ a:hover {
 
 .image-button:hover {
     transform: scale(1);
+}
+
+button {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--light-primary);
+    border: var(--light-primary);
+    border-radius: 1rem;
+    padding: 0.5rem 1.5rem;
+    margin: 0.25rem;
+    background-color: var(--dark-primary);
+    transition: 0.2s ease-in-out;
 }

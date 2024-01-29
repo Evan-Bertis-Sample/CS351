@@ -7,6 +7,7 @@ var c_VIEWPORT_WIDTH = 1920;
 var c_VIEWPORT_HEIGHT = 1080;
 var c_PLAYER_MOVE_SPEED = 10;
 var c_PLAYER_ROT_SPEED = 10;
+var c_WALKABLE_RADIUS = 10; // controls how far the player can move from the origin
 var c_ENABLE_LIGHTING = 1.0; // 0.0 for no lighting, 1.0 for lighting
 
 // Debugging
@@ -72,7 +73,7 @@ var c_MATERIALS = [
 		[]
 	),
 	new MaterialDescriptor(
-		"star",
+		"black_hole",
 		"static/materials/base",
 		[
 			new MaterialParameter("u_color", new Vector4([0.0, 0.0, 0.0, 1.0])),
@@ -81,6 +82,32 @@ var c_MATERIALS = [
 			new MaterialParameter("u_frensel_influence", 1.0),
 			new MaterialParameter("u_frensel_color", new Vector4([1.0, 0.0, 1.0, 1.0])),
 			new MaterialParameter("u_frensel_border", 1.5),
+			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
+		]
+	),
+	new MaterialDescriptor(
+		"star",
+		"static/materials/base",
+		[
+			new MaterialParameter("u_color", new Vector4([0.7, 0.0, 1.0, 1.0])),
+			new MaterialParameter("u_diffuse_influence", 1.0),
+			new MaterialParameter("u_specular_influence", 1.0),
+			new MaterialParameter("u_frensel_influence", 1.0),
+			new MaterialParameter("u_frensel_color", new Vector4([1.0, 1.0, 1.0, 1.0])),
+			new MaterialParameter("u_frensel_border", 1.5),
+			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
+		]
+	),
+	new MaterialDescriptor(
+		"platform",
+		"static/materials/base",
+		[
+			new MaterialParameter("u_color", new Vector4([1.0, 1.0, 1.0, 1.0])),
+			new MaterialParameter("u_diffuse_influence", 0.8),
+			new MaterialParameter("u_specular_influence", 0.2),
+			new MaterialParameter("u_frensel_influence", 1.0),
+			new MaterialParameter("u_frensel_color", new Vector4([1.0, 1.0, 1.0, 1.0])),
+			new MaterialParameter("u_frensel_border", 0.5),
 			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
 		]
 	),
@@ -98,6 +125,7 @@ var c_MESHES = [
 	"./static/meshes/floor_grout.obj",
 	"./static/meshes/floor_tiles.obj",
 	"./static/meshes/gyro.obj",
+	"./static/meshes/platform.obj",
 ];
 
 var c_CONTROLS = {

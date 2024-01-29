@@ -95,6 +95,8 @@ class ECS {
     constructor(sceneGraph) {
         this.sceneGraph = sceneGraph;
         this.entities = {};
+        this.entityToNode = {}; // maps an entity to a node
+        this.nodeToEntity = {}; // maps a node to an entity
 
         // add the camera to the entity list
         this.addEntity("camera", new Entity("camera", this.sceneGraph.camera));
@@ -118,6 +120,8 @@ class ECS {
         let node = createObject(meshName, materialName, position, rotation, scale);
         // now create the entity
         let entity = new Entity(entityName, node);
+        this.entityToNode[entityName] = node;
+        this.nodeToEntity[node] = entity;
         // attach the components
         for (let i = 0; i < components.length; i++) {
             // assert that the component is a component
@@ -174,6 +178,28 @@ class ECS {
             this.entities[key].update(deltaTime);
         }
     }
+
+    // prints the ECS
+    print()
+    {
+        // for each entity, print out it's name, and information about it's transform, and render info
+        this.sceneGraph.traverse(this.printHelper.bind(this));
+    }
+
+    printHelper(node, modelMatrix, depth) {
+        let tab = "";
+        for (let i = 0; i < depth; i++) {
+            tab += "  ";
+        }
+        let entity = this.nodeToEntity[node]
+        if (entity == undefined) {
+            entity = "null";
+        }
+
+        console.log(tab + "Name: " + entity.name);
+        console.log(tab + "Model matrix: " + modelMatrix);
+        console.log(tab + "Render info: " + node.renderInfo);
+    }
 }
 
 // COMPONENTS
@@ -218,9 +244,8 @@ class RotateComponent extends Component {
     }
 }
 
-// Component used for debugging...
 class PlayerController extends Component {
-    constructor(movementAxisSet = AxisSets.WASD_KEYS_KEYS, movementSpeed = 1, rotationSpeed = 1, leanAmount = 10, originalRotation = new Quaternion()) {
+    constructor(movementAxisSet = AxisSets.WASD_KEYS_KEYS, movementSpeed = 1, rotationSpeed = 1, leanAmount = 10, originalRotation = new Quaternion(), walkableRadius) {
         super();
         this.movementAxisSet = movementAxisSet;
         this.movementSpeed = movementSpeed;
@@ -228,6 +253,7 @@ class PlayerController extends Component {
         this.originalRotation = originalRotation;
         this.previousTheta = 0;
         this.leanAmount = leanAmount;
+        this.walkableRadius = walkableRadius;
     }
 
     // Updates the component
@@ -251,6 +277,13 @@ class PlayerController extends Component {
                 oldPosition.elements[2] - axis.elements[2] * moveAmount,
             ]
         )
+
+
+        // clamp the new position to be within the bounds of the walkable area
+        if (newPosition.length() > this.walkableRadius) {
+            newPosition = newPosition.normalize().mul(this.walkableRadius);
+        }
+
         this.transform.position = newPosition;
 
         // rotates towards the movement direction on the y axis
@@ -309,30 +342,17 @@ class CameraController extends Component {
 
         // check if the entity is within the deadzone
         let difference = entityPosition.sub(this.transform.position).add(this.offset);
-
         if (difference.length() < this.deadZone) {
             // console.log("Within deadzone");
             // still add the velocity
-            let newPosition = new Vector3(
-                [
-                    this.transform.position.elements[0] + this.cameraVelocity.elements[0] * deltaTime,
-                    this.transform.position.elements[1] + this.cameraVelocity.elements[1] * deltaTime,
-                    this.transform.position.elements[2] + this.cameraVelocity.elements[2] * deltaTime,
-                ]
-            )
+            let newPosition = this.transform.position.add(this.cameraVelocity.mul(deltaTime));
             this.transform.position = newPosition;
             this.cameraVelocity.mulSelf(0.9);
             return;
         }
 
         // idk why doing vector3.add doesn't work here
-        let newPosition = new Vector3(
-            [
-                entityPosition.elements[0] + this.offset.elements[0],
-                entityPosition.elements[1] + this.offset.elements[1],
-                entityPosition.elements[2] + this.offset.elements[2],
-            ]
-        )
+        let newPosition = entityPosition.add(this.offset);
 
         // samething with vector3.lerp
         const lerp = (a, b, t) => (1 - t) * a + t * b;
@@ -397,6 +417,8 @@ const ACTIVE_LEG_SET = {
     NONE: 3,
 }
 
+
+// Responsible for controlling the gait for a set of robot legs
 class RobotLegOrchestratorComponent extends Component {
     // Constructor
     constructor(legIDs) {

@@ -2,8 +2,8 @@
 precision mediump float;
 
 // constants
-const vec4 darkSkyColor = vec4(0.2, 0.26, 0.37, 1.0);
-const vec4 lightSkyColor = vec4(0.25, 0.39, 0.52, 1.0);
+const vec4 darkSkyColor = vec4(0.05, 0.08, 0.13, 1.0);
+const vec4 lightSkyColor = vec4(0.18, 0.06, 0.31, 1.0);
 const float mixingZoneSize = 15.0;
 const float bottom = -50.0;
 const float numSteps = 5.0;

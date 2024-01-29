@@ -119,6 +119,8 @@ class Transform {
         worldRotation.setFromRotationMatrix(modelMatrix);
         return worldRotation;
     }
+
+
 }
 
 // A representation of a GameObject in the scene graph
@@ -288,7 +290,7 @@ class SceneGraph {
         // console.log("Depth: " + depth);
         // console.log(node);
         // modelMatrix.printMe();
-        callback(node, modelMatrix);
+        callback(node, modelMatrix, depth);
         for (var i = 0; i < node.children.length; i++) {
             let modelMatrixCopy = new Matrix4().set(modelMatrix)
             this._traverseHelper(node.children[i], callback, modelMatrixCopy, depth + 1);

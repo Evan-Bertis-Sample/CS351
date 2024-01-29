@@ -4,7 +4,7 @@ precision mediump float;
 // constants
 const vec4 directionalLight = vec4(1, 2, 1, 0);
 const vec4 ambientLightColor = vec4(0.44, 0.45, 0.49, 1.0);
-const vec4 lightColor = vec4(0.73, 0.82, 0.83, 1.0);
+const vec4 lightColor = vec4(0.6, 0.54, 0.88, 1.0);
 const float cellShadingWeight = 0.4;
 
 uniform vec3 u_cameraPosition;
@@ -27,9 +27,6 @@ float nStep(float x, float numSteps) {
 void main() {
     // normalize the normal vector
     vec4 normal = normalize(v_normal);
-
-    // gl_FragColor = vec4(v_enableLighting, v_enableLighting, v_enableLighting, 1.0);
-    // return;
 
     if (v_enable_lighting == 0.0) {
         vec4 normalColor = vec4(normal.x, normal.y, normal.z, 1.0) * 0.5 + 0.5;
@@ -63,13 +60,16 @@ void main() {
 
     // calculate the frensel effect
     float frensel = 1.0 - dot(normal, viewDirection);
+    // make sure that the frensel effect is positive
+    // sqrt(pow)
+    frensel = sqrt(frensel * frensel);
     frensel = pow(frensel, 1.0 / u_frensel_border);
 
     vec4 frenselColor = u_frensel_color * frensel;
     // calculate the final color
     vec4 finalColor = (ambientLightColor * u_color) + (lightColor * u_color * diffuse) + (lightColor * specular);
     // add the frensel effect
-    finalColor = finalColor + frenselColor * u_frensel_influence;
+    finalColor = finalColor + (frenselColor * u_frensel_influence);
 
     gl_FragColor = finalColor;
 }

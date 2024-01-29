@@ -37,6 +37,22 @@ function buildScene() {
 			new FollowCameraComponent(new Vector3([0, -2, -2])),
 		],
 	)
+
+	console.log("Scene built");
+	let cache = [];
+	let sceneGraphJSON = JSON.stringify(g_ecs, (key, value) =>
+	{
+		if (typeof value === 'object' && value !== null) {
+			// Duplicate reference found, discard key
+			if (cache.includes(value)) return;
+		
+			// Store value in our collection
+			cache.push(value);
+		  }
+		  return value;
+	});
+	cache = null; // Enable garbage collection
+	g_ecs.print();
 }
 
 function buildRobot() {
@@ -52,7 +68,7 @@ function buildRobot() {
 			new BobComponent(0.2, 10),
 			// new RotateComponent(new Vector3([0, 1, 0]), 0.1),
 			new PlayerController(
-				c_CONTROLS.MOVEMENT_AXIS_SET, c_PLAYER_MOVE_SPEED, c_PLAYER_ROT_SPEED, 20, new Quaternion().setFromAxisAngle(0, 1, 0, 45)
+				c_CONTROLS.MOVEMENT_AXIS_SET, c_PLAYER_MOVE_SPEED, c_PLAYER_ROT_SPEED, 20, new Quaternion().setFromAxisAngle(0, 1, 0, 45), c_WALKABLE_RADIUS,
 			),
 			new RobotLegOrchestratorComponent(
 				[
@@ -250,11 +266,47 @@ function buildLeg(i, numLegs, legDistance, segmentLength, robotBaseEntity, groun
 }
 
 function buildEnviornment() {
-	let numSpheres = 6;
-	let sphereRadius = 20;
-	let innerMaterial = "star";
-	let outerMaterial = "gray";
-	let scale = new Vector3([1, 1, 1]);
+	// build the stars
+	let numStars = 1000;
+	let starRadius = 80;
+	let minimumRadius = 50;
+	let starMaterial = "star";
+	let starSizeVariation = 0.5;
+
+	let starParent = g_ecs.createEntity(
+		entityName = "star_parent",
+		parent = null,
+		position = new Vector3([0, 0, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([1, 1, 1]),
+		meshName = "",
+		materialName = "",
+		components = [
+			new RotateComponent(new Vector3([0, 1, 0]), 0.5),
+		]
+	);
+
+	for (let i = 0; i < numStars; i++) {
+		let theta = Math.random() * 2 * Math.PI;
+		let phi = Math.random() * 2 * Math.PI;
+		let r = Math.random() * (starRadius - minimumRadius) + minimumRadius;
+		let x = r * Math.sin(theta) * Math.cos(phi);
+		let y = r * Math.sin(theta) * Math.sin(phi);
+		let z = r * Math.cos(theta);
+		let pos = new Vector3([x, y, z]);
+		let size = Math.random() * starSizeVariation;
+		let sizeVec = new Vector3([size, size, size]);
+
+		let identifier = "star_" + i;
+		let entity = buildStar(identifier, pos, sizeVec, starParent, starMaterial);
+	}
+
+	// build the dyson spheres
+	let numSpheres = 10;
+	let sphereRadius = 40;
+	let innerMaterial = "black_hole";
+	let outerMaterial = "platform";
+	let sphereScale = new Vector3([1, 1, 1]);
 
 	let dysonParent = g_ecs.createEntity(
 		entityName = "dyson_sphere_parent",
@@ -273,8 +325,38 @@ function buildEnviornment() {
 		let theta = (i / numSpheres) * 2 * Math.PI;
 		let pos = new Vector3([Math.cos(theta) * sphereRadius, 0, Math.sin(theta) * sphereRadius]);
 		let identifier = "dyson_sphere_" + i;
-		let entity = buildDysonSphere(identifier, pos, scale, innerMaterial, outerMaterial, dysonParent);
+		let entity = buildDysonSphere(identifier, pos, sphereScale, innerMaterial, outerMaterial, dysonParent);
 	}
+
+	// build the platform
+	let platformScale = c_WALKABLE_RADIUS + 3;
+	let platformEntity = g_ecs.createEntity(
+		entityName = "platform",
+		parent = null,
+		position = new Vector3([0, -1.5, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([platformScale, platformScale, platformScale]),
+		meshName = "platform",
+		materialName = "platform",
+		components = []
+	);
+}
+
+function buildStar(identifier, position, scale, parent, starMaterial) {
+	let starEntity = g_ecs.createEntity(
+		entityName = identifier,
+		parent = parent,
+		position = position,
+		rotation = new Quaternion(),
+		scale = scale,
+		meshName = "sphere",
+		materialName = starMaterial,
+		components = [
+			new RotateComponent(new Vector3([0, 1, 0]), 5),
+		]
+	);
+
+	return starEntity;
 }
 
 function buildDysonSphere(identifier, position, scale, innerMaterial, outerMaterial, parent)
