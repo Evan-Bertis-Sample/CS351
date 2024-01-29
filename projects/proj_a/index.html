@@ -13,9 +13,9 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&display=swap" rel="stylesheet">
 
 </head>
-<div class="body-container">
 
-  <body onload="main()">
+<body onload="main()">
+  <div class="body-container">
     <canvas id="webgl">
       Please use a browser that supports "canvas"
     </canvas>
@@ -24,19 +24,32 @@
     <h1>Project A: Moving, Joined 3D Assemblies</h1>
     <h3>Evan Bertis-Sample</h3>
     <p>
-      Enjoy this daring adventure into a deeply immersive 3D world. Playing as the famous "buddy cube", gawk at the that tiny moon that orbits about a regular moon that orbits around nothing.
-      <br>
-      Use the WASD keys to move around and explore!
+      Enjoy this daring adventure into a deeply immersive 3D world. Playing as the famous "buddy cube", gawk at the that
+      tiny dyson spheres that orbit about a strange platform. Be slightly terrified by the spider-like movmenets of the
+      "buddy cube" as it moves about the world.
     </p>
-    <h4>
+    <h3>
       Controls
-    </h4>
-    <button onclick="invertLightingSetting()">
-      Toggle Lighting
-    </button>
+    </h3>
+    <div class="adaptable-container">
+      <div class="item">
+        <h4> Toggles </h4>
+        <button onclick="invertLightingSetting()">
+          Toggle Lighting
+        </button>
+      </div>
+
+      <div class="item">
+        <h4>Keyboard and Mouse Controls</h4>
+        <p>
+          WASD: Move <br>
+          Mouse: Rotate Camera - only works with the y-axis <br>
+        </p>
+      </div>
+    </div>
 
     <!-- Footer -->
-    <footer>
+    <!-- <footer>
       <img src="static/images/links_icon_light.png" alt="Links Icon" class="footer-logo" />
   
       <div class="footer-list">
@@ -63,9 +76,8 @@
                 <img src="static/images/logo_light.png" alt="itch.io Icon" class="image-button" />
             </a>
         </div>
-  
       <div>
-  </footer>
+  </footer> -->
 
     <!-- Scripts -->
     <script src="lib/webgl-utils.js"></script>
@@ -91,22 +103,19 @@
 
     <!-- Controls points-->
     <script>
-      function invertLightingSetting()
-      {
+      function invertLightingSetting() {
         console.log("Toggling lighting");
-        if (c_ENABLE_LIGHTING == 1.0)
-        {
+        if (c_ENABLE_LIGHTING == 1.0) {
           c_ENABLE_LIGHTING = 0.0;
         }
-        else
-        {
+        else {
           c_ENABLE_LIGHTING = 1.0;
         }
 
         g_materialRegistry.setGlobalParam("u_enable_lighting", c_ENABLE_LIGHTING);
       }
     </script>
-  </body>
-</div>
+  </div>
+</body>
 
 </html>

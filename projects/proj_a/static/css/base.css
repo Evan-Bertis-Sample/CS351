@@ -23,7 +23,7 @@ body {
     width: 100%;
     height: auto;
     margin: 0;
-    padding: 2rem 10rem;
+    padding: 2rem 20rem;
     display: flex; 
     flex-direction: column;
     gap: 0.5rem;
@@ -31,12 +31,38 @@ body {
     overflow-y: hidden;
 }
 
+.adaptable-container {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0.5rem;
+    overflow: hidden; /* Prevents any overflow */
+    display: flex; 
+    align-items: center;
+    justify-content: space-around;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.adaptable-container > .item {
+    margin: 0;
+    padding: 0;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.stop-scrolling {
+    height: 100%;
+    overflow: hidden;
+}
+
 canvas {
     margin-left: auto;
     margin-right: auto;
     width: 100%;
     height: auto;
-    max-height: 50vh;
+    max-height: 55vh;
     aspect-ratio: 16/9;
     object-fit: contain;
     overflow: hidden;
@@ -135,7 +161,14 @@ button {
     border: var(--light-primary);
     border-radius: 1rem;
     padding: 0.5rem 1.5rem;
-    margin: 0.25rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
     background-color: var(--dark-primary);
     transition: 0.2s ease-in-out;
+}
+
+button:hover {
+    background-color: var(--dark-secondary);
+    border: var(--dark-secondary);
+    cursor: pointer;
 }
