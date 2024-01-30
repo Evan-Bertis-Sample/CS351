@@ -44,6 +44,8 @@ class MaterialDescriptor {
     }
 }
 
+// ShaderSet
+// Used to pair a vertex and fragment shader together, as well as storing the position of common shader parameters
 class ShaderSet {
     constructor(name, vertexShaderSource = "", fragmentShaderSource = "", paramNames = new Array()) {
         this.name = name;
@@ -137,6 +139,8 @@ class ShaderSet {
     }
 }
 
+// A representation of a material
+// Stores the name of the material, the name of the shader, and the parameters
 class Material {
     // name: the name of the material
     // shaderName: the name of the shader used
@@ -153,6 +157,9 @@ class Material {
     }
 }
 
+// A registry of materials and shaders
+// Used to load and store materials and shaders
+// Also used to set the current material and pass uniforms to the shader
 class MaterialRegistry {
     constructor(materialDescriptors = new Array()) {
         this.materials = new Map();

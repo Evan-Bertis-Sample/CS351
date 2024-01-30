@@ -243,6 +243,9 @@ class RotateComponent extends Component {
     }
 }
 
+
+// PlayerController
+// Responsible for making the player move around
 class PlayerController extends Component {
     constructor(movementAxisSet = AxisSets.WASD_KEYS_KEYS, movementSpeed = 1, rotationSpeed = 1, leanAmount = 10, originalRotation = new Quaternion(), walkableRadius) {
         super();
@@ -314,6 +317,8 @@ class PlayerController extends Component {
     }
 }
 
+// CameraController
+// Responsible for making the camera follow an entity, and allowing for slight rotation
 class CameraController extends Component {
     constructor(entityName = "", offset = new Vector3([0, 0, 0]), lerpSpeed = 0.1, deadZone = 0.1) {
         super();
@@ -389,6 +394,9 @@ class CameraController extends Component {
     }
 }
 
+// FollowCameraComponent
+// Makes an entity follow the camera
+// Used for the skybox
 class FollowCameraComponent extends Component {
     constructor(offset = new Vector3([0, 0, 0])) {
         super();
@@ -433,7 +441,7 @@ const ACTIVE_LEG_SET = {
     NONE: 3,
 }
 
-
+// RobotLegOrchestratorComponent
 // Responsible for controlling the gait for a set of robot legs
 class RobotLegOrchestratorComponent extends Component {
     // Constructor
@@ -547,6 +555,9 @@ class RobotLegOrchestratorComponent extends Component {
     }
 }
 
+// RobotLegCompoent
+// Responsible for controlling a robot leg
+// Uses inverse kinematics to move the leg, and debug markers to show the leg's position
 class RobotLegCompoent extends Component {
     // Constructor
     constructor(upperLegEntityID, lowerLegEntityID, pelvisID, kneeEntityID, // actual entities
@@ -727,14 +738,6 @@ class RobotLegCompoent extends Component {
         let footWorldPosition = this.footActualPosition;
         let kneeTargetWorldPosition = this.kneeEntity.node.transform.getWorldPosition();
 
-        // // add the direction that we are walking in to the knee target
-        // let stepDirection = this.footIdealPosition.sub(this.footActualPosition)
-        // let stepDistance = this.footIdealPosition.distanceTo(this.footActualPosition);
-        // let stepAmount = stepDistance / this.stepDistance;
-        // let stepVector = stepDirection.mul(stepAmount);
-
-        // kneeTargetWorldPosition = kneeTargetWorldPosition.add(stepVector);
-
         // now find a position to place the knee such that the constraints are met
         // these constraints are:
         // 1. the knee exists on the same plane as the foot, pelvis, and kneeTarget
@@ -830,6 +833,10 @@ const SEGMENT_TYPE = {
     LOWER_LEG: 1,
 }
 
+// RobotLegSegmentComponent
+// Responsible for controlling a segment of a robot leg
+// Used in conjunction with the RobotLegCompoent to create a full leg
+// These control the position and rotation of the leg segments, not the IK
 class RobotLegSegmentComponent extends Component {
     constructor(legControllerEntityID, segmentType) {
         super();
@@ -886,6 +893,9 @@ class RobotLegSegmentComponent extends Component {
     }
 }
 
+
+// ShakerComponent
+// Makes an object shake
 class ShakerComponent extends Component {
     constructor(amplitude = 1) {
         super();

@@ -15,6 +15,7 @@ var c_ENABLE_LIGHTING = 1.0; // 0.0 for no lighting, 1.0 for lighting
 var g_USE_FETCH = false; // Used to grab files via the fetch method, not usable using the file:// protocol
 
 // Rendering Configuration
+// Used by the MaterialRegistry to create materials
 var c_MATERIALS = [
 	new MaterialDescriptor(
 		"gray",
@@ -114,6 +115,7 @@ var c_MATERIALS = [
 	),
 ];
 
+// Used by the MeshRegistry to create meshes
 var c_MESHES = [
 	"./static/meshes/cube.obj",
 	"./static/meshes/invert_cube.obj",
@@ -128,6 +130,7 @@ var c_MESHES = [
 	"./static/meshes/gyro.obj",
 	"./static/meshes/platform.obj",
 ];
+
 
 var c_CONTROLS = {
 	MOVEMENT_AXIS_SET: AxisSets.WASD_KEYS,

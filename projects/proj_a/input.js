@@ -16,7 +16,8 @@ const AxisSets = {
     MOUSE_POSITION: 3,
 }
 
-
+// InputManager
+// Handles input for the application
 class InputManager {
     constructor() {
         this.keyStates = {};

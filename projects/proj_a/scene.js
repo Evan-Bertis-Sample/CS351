@@ -3,15 +3,16 @@
 
 // builds the initial scene graph
 function buildScene() {
+	// Initialize the scene graph and ECS
 	g_sceneGraph = new SceneGraph();
 	g_ecs = new ECS(g_sceneGraph);
 
+	// Set the camera
 	let cameraEntity = g_ecs.getEntity("camera");
 	if (cameraEntity == null) {
 		console.log("Camera entity is null");
 		return;
 	}
-
 	g_sceneGraph.setCameraPosition(c_CAMERA_STARTING_POSITION);
 	g_sceneGraph.setCameraRotation(c_CAMERA_STARTING_ROTATION);
 	cameraEntity.attachComponent(
@@ -24,22 +25,7 @@ function buildScene() {
 	buildRobot();
 	buildEnviornment();
 
-
 	console.log("Scene built");
-	let cache = [];
-	let sceneGraphJSON = JSON.stringify(g_ecs, (key, value) =>
-	{
-		if (typeof value === 'object' && value !== null) {
-			// Duplicate reference found, discard key
-			if (cache.includes(value)) return;
-		
-			// Store value in our collection
-			cache.push(value);
-		  }
-		  return value;
-	});
-	cache = null; // Enable garbage collection
-	g_ecs.print();
 }
 
 function buildRobot() {
