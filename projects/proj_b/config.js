@@ -11,6 +11,9 @@ var c_CAMERA_SENSITIVITY = 5;
 var c_WALKABLE_RADIUS = 10; // controls how far the player can move from the origin
 var c_ENABLE_LIGHTING = 1.0; // 0.0 for no lighting, 1.0 for lighting
 
+// WebGL Configuration
+var c_WEBGL_IDS = ["webgl", "webgl-2"]; // The id of the canvas elements
+
 // Debugging
 var g_USE_FETCH = true; // Used to grab files via the fetch method, not usable using the file:// protocol
 

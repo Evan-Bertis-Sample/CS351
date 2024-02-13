@@ -273,27 +273,27 @@ class SceneGraph {
 
     // Traverses the scene graph
     // callback: the function to call on each node, takes in a TransformNode, and the model matrix of the node
-    traverse(callback) {
+    traverse(callback, gl) {
         // push an identity matrix to the matrix stack
         // this is the model matrix of the root node
         let identityMatrix = new Matrix4();
-        this._traverseHelper(this.root, callback, identityMatrix, 0);
+        this._traverseHelper(this.root, callback, gl, identityMatrix, 0);
     }
 
     // Helper function for traversing the scene graph
     // node: the node to traverse
     // callback: the function to call on each node, takes in a TransformNode, and the model matrix of the node
     // parentModelMatrix: the model matrix of the parent node
-    _traverseHelper(node, callback, parentModelMatrix, depth) {
+    _traverseHelper(node, callback, cl, parentModelMatrix, depth) {
         let localModelMatrix = node.transform.getLocalModelMatrix();
         let modelMatrix = parentModelMatrix.multiply(localModelMatrix);
         // console.log("Depth: " + depth);
         // console.log(node);
         // modelMatrix.printMe();
-        callback(node, modelMatrix, depth);
+        callback(node, modelMatrix, cl);
         for (var i = 0; i < node.children.length; i++) {
             let modelMatrixCopy = new Matrix4().set(modelMatrix)
-            this._traverseHelper(node.children[i], callback, modelMatrixCopy, depth + 1);
+            this._traverseHelper(node.children[i], callback, cl, modelMatrixCopy, depth + 1);
         }
     }
 

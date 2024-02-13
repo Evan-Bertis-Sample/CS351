@@ -6,10 +6,7 @@
 // Northwestern University
 //
 
-
-// Global Variables for the application
-var g_gl; // WebGL rendering context
-var g_canvasID; // HTML-5 'canvas' element ID#
+var g_canvasMap = new Map(); // maps canvas ids to their respective webgl contexts
 
 var g_sceneGraph; // The scene graph for the application
 var g_materialRegistry; // The material registry for the application
@@ -31,26 +28,38 @@ var g_normalBuffer; // The normal buffer for the application
 var g_timeElapsed = 0;
 var g_deltaTime = 0;
 
-// controls
-var g_cameraPosition = new Vector3([0, 0, 30]);
-
-
 async function main() {
-	await initialize();
-	drawAll();
+	// Load the materials
+	g_materialRegistry = new MaterialRegistry(c_MATERIALS);
+	await g_materialRegistry.loadMaterials();
+	// Load the meshes
+	g_meshRegistry = new MeshRegistry();
+	await g_meshRegistry.loadMeshes(c_MESHES);
+	// initialize the input manager
+	buildScene();
+	g_inputManager = new InputManager();
+	g_inputManager.attach();
+
+
+	let ids = c_WEBGL_IDS;
+	for (let i = 0; i < ids.length; i++) {
+		await initialize(ids[i]);
+	}
 
 	// update loop
 	g_timeElapsed = 0;
 	g_ecs.start();
-	
+
 	var tick = function () {
 		let newTime = Date.now();
 		g_deltaTime = (newTime - g_timeElapsed) / 1000;
 		g_timeElapsed = newTime;
 		g_inputManager.update();
 		g_ecs.update(g_deltaTime);
-		requestAnimationFrame(tick, g_canvasID);
-		drawAll();
+		for (let [key, value] of g_canvasMap) {
+			requestAnimationFrame(tick, value);
+			drawAll(value);
+		}
 	};
 
 	tick();
@@ -61,39 +70,40 @@ async function main() {
 // Loads the materials and meshes
 // Builds the scene graph
 // Initializes the input
-async function initialize() {
+async function initialize(canvasID) {
 	// Retrieve the HTML-5 <canvas> element where webGL will draw our pictures
-	g_canvasID = document.getElementById('webgl');
-	g_gl = g_canvasID.getContext("webgl", { preserveDrawingBuffer: true, antialias: false });
+	console.log("Initializing WebGL for: " + canvasID);
+	let canvasElement = document.getElementById(canvasID);
+
+	if (canvasElement == null) {
+		console.log("Canvas element is null");
+		return;
+	}
+
+	gl = canvasElement.getContext("webgl", { preserveDrawingBuffer: true, antialias: false });
 	// Handle failures
-	if (!g_gl) {
+	if (!gl) {
 		console.log('Failed to get the rendering context for WebGL. Bye!');
 		return;
 	}
 	// set the viewport to be sized correctly
 	// g_canvasID.width = c_VIEWPORT_WIDTH;
 	// g_canvasID.height = c_VIEWPORT_HEIGHT;
-	g_gl.viewport(0, 0, g_canvasID.width, g_canvasID.height);
-	g_gl.clearColor(1, 1, 1, 1);
-	g_gl.enable(g_gl.DEPTH_TEST);
-	g_gl.clear(g_gl.COLOR_BUFFER_BIT);
+	gl.viewport(0, 0, canvasElement.width, canvasElement.height);
+	gl.clearColor(1, 1, 1, 1);
+	gl.enable(gl.DEPTH_TEST);
+	gl.clear(gl.COLOR_BUFFER_BIT);
 	// cull
-	g_gl.enable(g_gl.CULL_FACE);
-	// Load the materials
-	g_materialRegistry = new MaterialRegistry(c_MATERIALS);
-	await g_materialRegistry.loadMaterials();
-	console.log(g_materialRegistry);
-	// Load the meshes
-	g_meshRegistry = new MeshRegistry();
-	await g_meshRegistry.loadMeshes(c_MESHES);
-	buildScene();
-	loadMeshes();
-	// initialize the input manager
-	g_inputManager = new InputManager();
-	g_inputManager.attach();
+	gl.enable(gl.CULL_FACE);
+
+	loadMeshes(gl);
+
+	// add the canvas to the map
+	g_canvasMap.set(canvasID, gl);
+
 }
 
-function loadMeshes() {
+function loadMeshes(gl) {
 	// load the meshes into the buffers
 	g_sceneGraph.traverse(loadMeshHelper);
 	// now create the buffers that we will send to the GPU
@@ -136,9 +146,9 @@ function loadMeshes() {
 
 	// let vertexArray = vec4ArrayToFloat32Array(interleavedArray);
 	let vertexArray = new Float32Array(interleavedArray);
-	g_vertexBufferID = g_gl.createBuffer();
-	g_gl.bindBuffer(g_gl.ARRAY_BUFFER, g_vertexBufferID);
-	g_gl.bufferData(g_gl.ARRAY_BUFFER, vertexArray, g_gl.STATIC_DRAW);
+	g_vertexBufferID = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, g_vertexBufferID);
+	gl.bufferData(gl.ARRAY_BUFFER, vertexArray, gl.STATIC_DRAW);
 }
 
 function loadMeshHelper(node, modelMatrix) {
@@ -158,14 +168,14 @@ function loadMeshHelper(node, modelMatrix) {
 	mesh.loadObject(g_vertexArray, g_normalArray);
 }
 
-function drawAll() {
+function drawAll(gl) {
 	// Clear <canvas>
-	g_gl.clear(g_gl.COLOR_BUFFER_BIT | g_gl.DEPTH_BUFFER_BIT);
+	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	// Draw the scene graph
-	g_sceneGraph.traverse(drawNode);
+	g_sceneGraph.traverse(drawNode, gl);
 }
 
-function drawNode(node, modelMatrix) {
+function drawNode(node, modelMatrix, gl) {
 	// draw the node
 	// get the mesh and material from the node
 	// get the model matrix from the node
@@ -196,9 +206,9 @@ function drawNode(node, modelMatrix) {
 		console.log("Material is null");
 		return;
 	}
-	g_materialRegistry.setMaterial(node.renderInfo.material, g_gl);
-	g_materialRegistry.passUniforms(g_gl, modelMatrix, g_sceneGraph.getViewMatrix(), g_sceneGraph.getProjectionMatrix(), g_sceneGraph.getCameraPosition());
+	g_materialRegistry.setMaterial(node.renderInfo.material, gl);
+	g_materialRegistry.passUniforms(gl, modelMatrix, g_sceneGraph.getViewMatrix(), g_sceneGraph.getProjectionMatrix(), g_sceneGraph.getCameraPosition());
 	// draw the mesh
-	mesh.draw(g_gl);
+	mesh.draw(gl);
 
 }

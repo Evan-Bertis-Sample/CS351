@@ -22,7 +22,7 @@ function buildScene() {
 	);
 
 	// build the robot
-	buildRobot();
+	// buildRobot();
 	buildEnviornment();
 
 	console.log("Scene built");
