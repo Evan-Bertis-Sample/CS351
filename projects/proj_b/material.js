@@ -224,8 +224,8 @@ class MaterialRegistry {
                     const vertSource = await loadFile(vertexShaderPath);
                     const fragSource = await loadFile(fragmentShaderPath);
 
-                    console.log(vertSource)
-                    console.log(fragSource)
+                    // console.log(vertSource)
+                    // console.log(fragSource)
 
                     let paramNames = new Array();
                     for (let j = 0; j < materialDescriptors[i].params.length; j++) {

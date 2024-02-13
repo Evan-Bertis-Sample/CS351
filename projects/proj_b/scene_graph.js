@@ -233,6 +233,64 @@ class SceneNode {
     }
 }
 
+class CameraDescriptor {
+    constructor(projectionMatrix, position, rotation) {
+        this.projectionMatrix = projectionMatrix;
+        this.position = position;
+        this.rotation = rotation;
+    }
+}
+
+class Camera {
+    constructor(canvasID, projectionMatrix, position, rotation) {
+        // get the canvas
+        this.canvasElementID = g_idToElement.get(canvasID);
+        this.gl = g_elementToCanvas.get(this.canvasElementID);
+        this.position = position;
+        this.rotation = rotation;
+        this.projectionMatrix = projectionMatrix;
+    }
+
+    getViewMatrix()
+    {
+        let viewMatrix = new Matrix4();
+        viewMatrix.setFromQuat(this.rotation.x, this.rotation.y, this.rotation.z, this.rotation.w);
+        viewMatrix.translate(-this.position.elements[0], -this.position.elements[1], -this.position.elements[2]);
+        return viewMatrix;
+    }
+
+    getProjectionMatrix()
+    {
+        return this.projectionMatrix;
+    }
+
+    getPosition()
+    {
+        return this.position;
+    }
+
+    setPosition(position) {
+        this.position = position;
+    }
+
+    setRotation(rotation) {
+        this.rotation = rotation;
+    }
+
+    setRotationFromEulerAngles(pitch, yaw, roll) {
+        this.rotation.setFromEuler(pitch, yaw, roll);
+    }
+
+    setRotationFromMatrix(rotationMatrix) {
+        this.rotation.setFromRotationMatrix(rotationMatrix);
+    }
+
+    setRotationFromAxisAngle(axis, angle) {
+        this.rotation.setFromAxisAngle(axis.x, axis.y, axis.z, angle);
+    }
+}
+
+
 // A representation of a scene graph
 // Stores the root node of the scene graph
 class SceneGraph {
@@ -240,35 +298,8 @@ class SceneGraph {
     // root: the root node of the scene graph
     constructor() {
         this.root = new SceneNode(null, new Transform());
-        this.camera = this.root.addChild(new SceneNode(null, new Transform()));
         this.projectionMatrix = new Matrix4();
-        this.projectionMatrix.setPerspective(
-            c_CAMERA_SETTINGS.fov,
-            c_VIEWPORT_WIDTH / c_VIEWPORT_HEIGHT,
-            c_CAMERA_SETTINGS.near,
-            c_CAMERA_SETTINGS.far
-        );
-        this.viewMatrix = new Matrix4();
-    }
-
-    // Gets the view matrix of the scene graph
-    // returns the view matrix
-    getViewMatrix() {
-        // using the camera node, get the view matrix
-        let position = this.camera.transform.position;
-        let rotation = this.camera.transform.rotation;
-
-        // construct the view matrix
-        let viewMatrix = new Matrix4();
-        viewMatrix.setFromQuat(rotation.x, rotation.y, rotation.z, rotation.w);
-        viewMatrix.translate(-position.elements[0], -position.elements[1], -position.elements[2]);
-        return viewMatrix;
-    }
-
-    // gets the projection matrix of the scene graph
-    // returns the projection matrix
-    getProjectionMatrix() {
-        return this.projectionMatrix;
+        this.cameras = new Map();
     }
 
     // Traverses the scene graph
@@ -295,6 +326,14 @@ class SceneGraph {
             let modelMatrixCopy = new Matrix4().set(modelMatrix)
             this._traverseHelper(node.children[i], callback, cl, modelMatrixCopy, depth + 1);
         }
+    }
+
+    addCamera(glElementID, camera) {
+        this.cameras.set(glElementID, camera);
+    }
+
+    getCamera(glElementID) {
+        return this.cameras.get(glElementID);
     }
 
     // Adds children to the scene
@@ -340,69 +379,6 @@ class SceneGraph {
         for (var i = 0; i < node.children.length; i++) {
             this._printHelper(node.children[i], depth + 1);
         }
-    }
-
-    // CAMERA FUNCTIONS
-    // These functions are used to manipulate the camera in the scene graph
-    // The camera is the first child of the root node
-
-    // Sets the position of the camera
-    // position: a Vector3 representing the position of the camera
-    setCameraPosition(position) {
-        // reverse the position
-        this.camera.transform.position = position;
-    }
-
-    // Sets the rotation of the camera
-    // rotation: a Quaternion representing the rotation of the camera
-    setCameraRotation(rotation) {
-        // rotation.printMe();
-        this.camera.transform.rotation = rotation;
-    }
-
-    // Sets the rotation of the camera
-    // pitch: the pitch of the rotation in degrees
-    // yaw: the yaw of the rotation in degrees
-    // roll: the roll of the rotation in degrees
-    setCameraRotationFromEulerAngles(pitch, yaw, roll) {
-        let rotation = new Quaternion();
-        rotation.setFromEuler(pitch, yaw, roll);
-        this.setCameraRotation(rotation);
-    }
-
-    // rotationMatrix: a 4x4 rotation matrix
-    setCameraRotationFromMatrix(rotationMatrix) {
-        let rotation = new Quaternion();
-        rotation.setFromRotationMatrix(rotationMatrix);
-        this.setCameraRotation(rotation);
-    }
-
-    // Sets the roation of the camera from an axis-angle representation
-    // axis: a Vector3 representing the axis of rotation
-    // angle: the angle of rotation in degrees
-    setCameraRotationFromAxisAngle(axis, angle) {
-        let rotation = new Quaternion();
-        rotation.setFromAxisAngle(axis.x, axis.y, axis.z, angle);
-        this.setCameraRotation(rotation);
-    }
-
-    // Gets the camera position
-    // returns a Vector3 representing the camera position
-    getCameraPosition() {
-        return this.camera.transform.position;
-    }
-
-    // Gets the camera rotation
-    // returns a Quaternion representing the camera rotation
-    getCameraRotation() {
-        // inverse the rotation
-        let rotation = new Quaternion();
-        rotation.x = this.camera.transform.rotation.x;
-        rotation.y = this.camera.transform.rotation.y;
-        rotation.z = this.camera.transform.rotation.z;
-        rotation.w = this.camera.transform.rotation.w;
-        rotation.inverse();
-        return rotation;
     }
 }
 

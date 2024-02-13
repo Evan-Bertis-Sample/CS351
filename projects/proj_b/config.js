@@ -3,8 +3,7 @@
 // this includes the material descriptors, and meshes used
 
 // Constants
-var c_VIEWPORT_WIDTH = 1920/4;
-var c_VIEWPORT_HEIGHT = 1080/4;
+var c_DOWNSAMPLE_FACTOR = 4; // The factor to downsample the screen by
 var c_PLAYER_MOVE_SPEED = 10;
 var c_PLAYER_ROT_SPEED = 10;
 var c_CAMERA_SENSITIVITY = 5;
@@ -14,8 +13,27 @@ var c_ENABLE_LIGHTING = 1.0; // 0.0 for no lighting, 1.0 for lighting
 // WebGL Configuration
 var c_WEBGL_IDS = ["webgl", "webgl-2"]; // The id of the canvas elements
 
+// camera configuration
+// maps the camera id to a camera descriptor
+var c_CAMERAS = new Map([
+	[
+		"webgl", new CameraDescriptor(
+			new Matrix4().setPerspective(60, 1, 1, 1000),
+			new Vector3([0, 0, 0]),
+			new Quaternion()
+		)
+	],
+	[
+		"webgl-2", new CameraDescriptor(
+			new Matrix4().setPerspective(60, 1, 1, 1000),
+			new Vector3([0, 40, 40]),
+			new Quaternion().setFromAxisAngle(1, 0, 0, 45)
+		)
+	]
+]);
+
 // Debugging
-var g_USE_FETCH = true; // Used to grab files via the fetch method, not usable using the file:// protocol
+var g_USE_FETCH = false; // Used to grab files via the fetch method, not usable using the file:// protocol
 
 // Rendering Configuration
 // Used by the MaterialRegistry to create materials
@@ -139,12 +157,3 @@ var c_CONTROLS = {
 	MOVEMENT_AXIS_SET: AxisSets.WASD_KEYS,
 	ROTATION_AXIS_SET: AxisSets.MOUSE_MOVEMENT,
 }
-
-// camera configuration
-var c_CAMERA_STARTING_POSITION = new Vector3([0, 20, 15]);
-var c_CAMERA_STARTING_ROTATION = new Quaternion().setFromAxisAngle(1, 0, 0, 45);
-var c_CAMERA_SETTINGS = {
-	fov: 60,
-	near: 0.1,
-	far: 100,
-};

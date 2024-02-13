@@ -6,7 +6,9 @@
 // Northwestern University
 //
 
-var g_canvasMap = new Map(); // maps canvas ids to their respective webgl contexts
+var g_idToElement = new Map(); // maps canvas ids to their respective webgl contexts
+var g_elementToCanvas = new Map(); // maps canvas ids to their respective webgl contexts
+var g_canvasToElement = new Map(); // maps webgl contexts to their respective canvas ids
 
 var g_sceneGraph; // The scene graph for the application
 var g_materialRegistry; // The material registry for the application
@@ -46,6 +48,14 @@ async function main() {
 		await initialize(ids[i]);
 	}
 
+	// register the cameras
+	console.log("Registering cameras");
+	console.log(c_CAMERAS);
+	for (let [key, value] of c_CAMERAS) {
+		let camera = new Camera(key, value.projectionMatrix, value.position, value.rotation);
+		g_sceneGraph.addCamera(key, camera);
+	}
+
 	// update loop
 	g_timeElapsed = 0;
 	g_ecs.start();
@@ -56,13 +66,12 @@ async function main() {
 		g_timeElapsed = newTime;
 		g_inputManager.update();
 		g_ecs.update(g_deltaTime);
-		for (let [key, value] of g_canvasMap) {
-			requestAnimationFrame(tick, value);
+		for (let [key, value] of g_elementToCanvas) {
 			drawAll(value);
 		}
 	};
 
-	tick();
+	setInterval(tick, 1000 / 60);
 }
 
 // Initializes WebGL and the scene
@@ -99,7 +108,9 @@ async function initialize(canvasID) {
 	loadMeshes(gl);
 
 	// add the canvas to the map
-	g_canvasMap.set(canvasID, gl);
+	g_idToElement.set(canvasID, gl);
+	g_elementToCanvas.set(canvasID, gl);
+	g_canvasToElement.set(gl, canvasID);
 
 }
 
@@ -108,11 +119,11 @@ function loadMeshes(gl) {
 	g_sceneGraph.traverse(loadMeshHelper);
 	// now create the buffers that we will send to the GPU
 	// create the vertex buffer
-	console.log("Loaded Vertex Array: ");
-	console.log(g_vertexArray);
+	// console.log("Loaded Vertex Array: ");
+	// console.log(g_vertexArray);
 
-	console.log("Loaded Normal Array: ");
-	console.log(g_normalArray);
+	// console.log("Loaded Normal Array: ");
+	// console.log(g_normalArray);
 
 	if (g_vertexArray.length == 0) {
 		console.log("Vertex array is empty");
@@ -207,7 +218,24 @@ function drawNode(node, modelMatrix, gl) {
 		return;
 	}
 	g_materialRegistry.setMaterial(node.renderInfo.material, gl);
-	g_materialRegistry.passUniforms(gl, modelMatrix, g_sceneGraph.getViewMatrix(), g_sceneGraph.getProjectionMatrix(), g_sceneGraph.getCameraPosition());
+
+	// get the element for the gl context
+	let canvasID = g_canvasToElement.get(gl);
+	if (canvasID == null) {
+		console.log("Canvas ID is null");
+		return;
+	}
+
+	// get the camera from the scene graph
+	let camera = g_sceneGraph.getCamera(canvasID);
+
+	if (camera == null) {
+		console.log("Camera is null");
+		return;
+	}
+
+	// pass the uniforms
+	g_materialRegistry.passUniforms(gl, modelMatrix, camera.getViewMatrix(), camera.getProjectionMatrix(), camera.getPosition());
 	// draw the mesh
 	mesh.draw(gl);
 

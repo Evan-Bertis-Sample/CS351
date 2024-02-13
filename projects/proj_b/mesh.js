@@ -229,8 +229,8 @@ class MeshRegistry {
         }
 
         let mesh = new Mesh(vertices, normals, vertexIndices, normalIndices);
-        console.log("Loaded mesh: ");
-        console.log(mesh);
+        // console.log("Loaded mesh: ");
+        // console.log(mesh);
         return mesh;
     }
 }
