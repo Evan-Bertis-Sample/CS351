@@ -71,8 +71,8 @@ async function initialize() {
 		return;
 	}
 	// set the viewport to be sized correctly
-	g_canvasID.width = c_VIEWPORT_WIDTH;
-	g_canvasID.height = c_VIEWPORT_HEIGHT;
+	// g_canvasID.width = c_VIEWPORT_WIDTH;
+	// g_canvasID.height = c_VIEWPORT_HEIGHT;
 	g_gl.viewport(0, 0, g_canvasID.width, g_canvasID.height);
 	g_gl.clearColor(1, 1, 1, 1);
 	g_gl.enable(g_gl.DEPTH_TEST);

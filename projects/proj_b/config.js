@@ -12,7 +12,7 @@ var c_WALKABLE_RADIUS = 10; // controls how far the player can move from the ori
 var c_ENABLE_LIGHTING = 1.0; // 0.0 for no lighting, 1.0 for lighting
 
 // Debugging
-var g_USE_FETCH = false; // Used to grab files via the fetch method, not usable using the file:// protocol
+var g_USE_FETCH = true; // Used to grab files via the fetch method, not usable using the file:// protocol
 
 // Rendering Configuration
 // Used by the MaterialRegistry to create materials

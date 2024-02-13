@@ -25,7 +25,7 @@ body {
     margin: 0;
     padding: 2rem 20rem;
     display: flex; 
-    flex-direction: column;
+    flex-direction: row;
     gap: 0.5rem;
     overflow-x: hidden;
     overflow-y: hidden;
@@ -45,6 +45,31 @@ body {
     min-width: 0;
 }
 
+/* makes webgl canvases within the container be displayed in a row, with no space between them */
+/* also takes up the entire width of the screen */
+.webgl-container {
+    box-sizing: border-box;
+    width: 100vw;
+    height: 66vh;
+    margin: 0;
+    padding: 0;
+    margin: 2rem 0;
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    overflow: hidden;
+    flex: 1 1 auto;
+}
+
+.webgl-container > canvas {
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+    width: 100%;
+    height: 100%;
+    flex: 1 1 auto;
+}
+
 .adaptable-container > .item {
     margin: 0;
     padding: 0;
@@ -54,17 +79,6 @@ body {
 
 .stop-scrolling {
     height: 100%;
-    overflow: hidden;
-}
-
-canvas {
-    margin-left: auto;
-    margin-right: auto;
-    width: 100%;
-    height: auto;
-    max-height: 55vh;
-    aspect-ratio: 16/9;
-    object-fit: contain;
     overflow: hidden;
 }
 
