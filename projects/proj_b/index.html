@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Project A</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="static/css/base.css" />
+  <link rel="stylesheet" href="static/css/footer.css" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&display=swap" rel="stylesheet">
+
+</head>
+
+<body onload="main()">
+  <div class="body-container">
+    <canvas id="webgl">
+      Please use a browser that supports "canvas"
+    </canvas>
+
+    <br>
+    <h1>Project A: Moving, Jointed 3D Assemblies</h1>
+    <h3>Evan Bertis-Sample</h3>
+    <p>
+      Enjoy this daring adventure into a deeply immersive 3D world. Playing as the famous "buddy cube", gawk at the that
+      tiny dyson spheres that orbit about a strange platform. Be slightly terrified by the spider-like movmenets of the
+      "buddy cube" as it moves about the world.
+    </p>
+    <h3>
+      Controls
+    </h3>
+    <div class="adaptable-container">
+      <div class="item">
+        <h4> Toggles </h4>
+        <button onclick="invertLightingSetting()">
+          Toggle Lighting
+        </button>
+      </div>
+
+      <div class="item">
+        <h4>Keyboard and Mouse Controls</h4>
+        <p>
+          WASD: Move <br>
+          Mouse: Rotate Camera - only works with the y-axis <br>
+        </p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <!-- <footer>
+      <img src="static/images/links_icon_light.png" alt="Links Icon" class="footer-logo" />
+  
+      <div class="footer-list">
+          <div class="footer-item">
+              <a href="https://github.com/Evan-Bertis-Sample">
+                  <img src="static/images/github_icon_light.png" alt="Github Icon" class="image-button" />
+              </a>
+          </div>
+  
+          <div class="footer-item">
+              <a href="https://www.linkedin.com/in/evan-bertis-sample-1987901bb/">
+                  <img src="static/images/linkedin_icon_light.png"Linkedin Icon" class="image-button" />
+              </a>
+          </div>
+  
+          <div class="footer-item">
+              <a href="https://evanmakesstuff.itch.io/">
+                  <img src="static/images/itchio_icon_light.png" alt="itch.io Icon" class="image-button" />
+              </a>
+          </div>
+
+          <div class="footer-item">
+            <a href="https://evanbs.com/">
+                <img src="static/images/logo_light.png" alt="itch.io Icon" class="image-button" />
+            </a>
+        </div>
+      <div>
+  </footer> -->
+
+    <!-- Scripts -->
+    <script src="lib/webgl-utils.js"></script>
+    <script src="lib/webgl-debug.js"></script>
+    <script src="lib/cuon-utils.js"></script>
+    <script src="lib/cuon-matrix-quat03.js"></script>
+
+    <!-- Static Files/File Loading-->
+    <script src="static.js"></script>
+    <script src="file.js"></script>
+
+    <!-- Modules -->
+    <script src="material.js"></script>
+    <script src="mesh.js"></script>
+    <script src="scene_graph.js"></script>
+    <script src="scene.js"></script>
+    <script src="input.js"></script>
+    <script src="ecs.js"></script>
+    <script src="config.js"></script>
+
+    <!-- Entry point -->
+    <script src="app.js"></script>
+
+    <!-- Controls points-->
+    <script>
+      function invertLightingSetting() {
+        console.log("Toggling lighting");
+        if (c_ENABLE_LIGHTING == 1.0) {
+          c_ENABLE_LIGHTING = 0.0;
+        }
+        else {
+          c_ENABLE_LIGHTING = 1.0;
+        }
+
+        g_materialRegistry.setGlobalParam("u_enable_lighting", c_ENABLE_LIGHTING);
+      }
+    </script>
+  </div>
+</body>
+
+</html>
