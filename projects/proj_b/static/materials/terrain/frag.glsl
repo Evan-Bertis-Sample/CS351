@@ -67,8 +67,22 @@ void main() {
     frensel = pow(frensel, 1.0 / u_frensel_border);
 
     vec4 frenselColor = u_frensel_color * frensel;
+
+    vec4 color = u_color;
+
+    // determine the color by the steepness of the normal
+    float steepness = (1.0 - dot(normal, vec4(0.0, 1.0, 0.0, 0.0)));
+
+    if (steepness < 0.15) {
+        color = vec4(0.3, 0.0, 1.0, 1.0);
+    }
+    else {
+        color = vec4(1.0, 0.0, 0.0, 1.0);
+    }
+
+
     // calculate the final color
-    vec4 finalColor = (ambientLightColor * u_color) + (lightColor * u_color * diffuse) + (lightColor * specular);
+    vec4 finalColor = (ambientLightColor * color) + (lightColor * color * diffuse) + (lightColor * specular);
     // add the frensel effect
     finalColor = finalColor + (frenselColor * u_frensel_influence);
 
