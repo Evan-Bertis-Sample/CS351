@@ -24,7 +24,9 @@ function buildEnviornment() {
 		scale = new Vector3([platformScale, platformScale, platformScale]),
 		meshName = "platform",
 		materialName = "platform",
-		components = []
+		components = [
+			new RotateComponent(new Vector3([0, 1, 0]), 5)
+		]
 	);
 
 	let skyboxEntity = g_ecs.createEntity(

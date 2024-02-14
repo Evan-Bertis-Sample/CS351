@@ -19,7 +19,7 @@ var c_CAMERAS = new Map([
 	[
 		"webgl", new CameraDescriptor(
 			new Matrix4().setPerspective(60, 1, 1, 1000),
-			new Vector3([0, 0, 0]),
+			new Vector3([0, 1, 60]),
 			new Quaternion()
 		)
 	],
