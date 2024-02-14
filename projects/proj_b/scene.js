@@ -18,7 +18,7 @@ function buildScene() {
 function buildCamera() {
 	// build the camera
 	let cameraEntity = g_ecs.createEntity(
-		entityName = "camera",
+		entityName = "camera controller",
 		parent = null,
 		position = new Vector3([0, 40, 80]),
 		rotation = new Quaternion().setFromAxisAngle(1, 0, 0, 30),
@@ -27,9 +27,10 @@ function buildCamera() {
 		materialName = "",
 		components = [
 			new CameraControllerComponent(
-				"webgl",
+				"webgl", "Robot Parent",
 				{
 					movementSpeed: 10,
+					offset : new Vector3([0, 30, 40]),
 					originalRotation: new Quaternion().setFromAxisAngle(1, 0, 0, 30),
 				}
 			)

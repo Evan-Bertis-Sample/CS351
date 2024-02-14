@@ -808,7 +808,7 @@ class ShakerComponent extends Component {
 }
 
 class CameraControllerComponent extends Component {
-    constructor(cameraEntityID, { movementSpeed = 1, rotationSpeed = 1, leanAmount = 10, originalRotation = new Quaternion() }) {
+    constructor(cameraEntityID, entityFollowID, { movementSpeed = 1, rotationSpeed = 1, leanAmount = 10, originalRotation = new Quaternion(), offset = new Vector3([0, 0, 0]) }) {
         super();
         this.cameraEntityID = cameraEntityID;
         this.movementSpeed = movementSpeed;
@@ -816,6 +816,8 @@ class CameraControllerComponent extends Component {
         this.leanAmount = leanAmount;
         this.originalRotation = originalRotation;
         this.previousTheta = 0;
+        this.offset = offset;
+        this.entityFollowID = entityFollowID;
 
         this.camera = g_sceneGraph.getCamera(this.cameraEntityID);
     }
@@ -824,24 +826,20 @@ class CameraControllerComponent extends Component {
     }
 
     update(deltaTime) {
-        let axis = g_inputManager.getAxis(AxisSets.WASD_KEYS);
+        // follow the entity
+        let entity = g_ecs.getEntity(this.entityFollowID);
+        if (entity == null) {
+            return;
+        }
 
-        // the axis is a vector3 with the direction of movement at x,y
-        // we want to make it a vector3 with the direction of movement at x,z
-        axis.elements[2] = axis.elements[1];
-        axis.elements[1] = 0;
+        let entityTransform = entity.getTransform();
+        let targetPosition = entityTransform.position.add(this.offset);
 
-        let moveAmount = deltaTime * this.movementSpeed;
-        let oldPosition = this.camera.getPosition();
-        let newPosition = new Vector3(
-            [
-                // must negate the movement because the camera is the parent of the scene graph
-                // so moving the camera forward is actually moving the scene graph backwards
-                oldPosition.elements[0] + axis.elements[0] * moveAmount,
-                oldPosition.elements[1] + axis.elements[1] * moveAmount,
-                oldPosition.elements[2] - axis.elements[2] * moveAmount,
-            ]
-        )
-        this.camera.setPosition(newPosition);
+        // lerp between the current position and the target position
+        let output = new Vector3();
+        output = this.camera.getPosition().lerp(targetPosition, 0.1);
+
+        // now set the camera position to the target position
+        this.camera.setPosition(output);
     }
 }
