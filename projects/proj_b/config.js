@@ -26,7 +26,7 @@ var c_CAMERAS = new Map([
 				allowDynamicReize: true,
 				fov: 35,
 				near: 1,
-				far: 1000
+				far: 500
 			}
 		)
 	],

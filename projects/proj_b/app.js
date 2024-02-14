@@ -115,8 +115,7 @@ async function initialize(canvasID) {
 		return;
 	}
 	// set the viewport to be sized correctly
-	// g_canvasID.width = c_VIEWPORT_WIDTH;
-	// g_canvasID.height = c_VIEWPORT_HEIGHT;
+
 	gl.viewport(0, 0, canvasElement.width, canvasElement.height);
 	gl.clearColor(1, 1, 1, 1);
 	gl.enable(gl.DEPTH_TEST);
@@ -265,7 +264,8 @@ function getAspectRatio(canvasID) {
 		console.log("Canvas is null");
 		return;
 	}
-	let aspect = canvas.width / canvas.height;
+	
+	let aspect = canvas.scrollWidth / canvas.scrollHeight;
 	console.log("Aspect ratio: " + aspect);
 	return aspect;
 }

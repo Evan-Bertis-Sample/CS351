@@ -257,7 +257,7 @@ class CameraDescriptor {
         }
 
         if (this.mode == "orthographic") {
-            if (this.linkTo != null) {
+            if (this.linkTo == null) {
                 return new Matrix4().setOrtho(this.left, this.right, this.bottom, this.top, this.near, this.far);
             }
 
@@ -278,14 +278,13 @@ class CameraDescriptor {
             // where the bounds are the same as the linked perspective camera
             // at the given depth
             let depth = (cameraDescriptor.far - cameraDescriptor.near) * depthFactor;
+            let frustrumHeight = Math.tan(cameraDescriptor.fov * Math.PI / 180.0) * depth;
+            let frustrumWidth = frustrumHeight * getAspectRatio(this.canvasID);
 
-            let aspectRatio = getAspectRatio(cameraDescriptor.canvasID);
-            let height = Math.tan(cameraDescriptor.fov / 2) * depth;
-            let width = height * aspectRatio;
-            let left = -width;
-            let right = width;
-            let bottom = -height;
-            let top = height;
+            let left = -frustrumWidth / 2;
+            let right = frustrumWidth / 2;
+            let bottom = -frustrumHeight / 2;
+            let top = frustrumHeight / 2;
 
             return new Matrix4().setOrtho(left, right, bottom, top, this.near, this.far);
         }
