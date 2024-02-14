@@ -21,7 +21,7 @@ function buildEnviornment() {
 		rotation = new Quaternion(),
 		scale = new Vector3([1, 1, 1]),
 		meshName = "terrain",
-		materialName = "gray",
+		materialName = "terrain",
 		components = [
 		]
 	);

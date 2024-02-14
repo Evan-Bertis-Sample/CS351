@@ -65,36 +65,10 @@ var c_MATERIALS = [
 		]
 	),
 	new MaterialDescriptor(
-		"robot_inners",
-		"static/materials/base",
+		"terrain",
+		"static/materials/terrain",
 		[
 			new MaterialParameter("u_color", new Vector4([0.5, 0.5, 0.5, 1.0])),
-			new MaterialParameter("u_diffuse_influence", 0.8),
-			new MaterialParameter("u_specular_influence", 0.2),
-			new MaterialParameter("u_frensel_influence", 0.0),
-			new MaterialParameter("u_frensel_color", new Vector4([0.0, 0.0, 0.0, 1.0])),
-			new MaterialParameter("u_frensel_border", 1.0),
-			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
-		]
-	),
-	new MaterialDescriptor(
-		"robot_outers",
-		"static/materials/base",
-		[
-			new MaterialParameter("u_color", new Vector4([0.7, 0.7, 0.7, 1.0])),
-			new MaterialParameter("u_diffuse_influence", 0.8),
-			new MaterialParameter("u_specular_influence", 0.2),
-			new MaterialParameter("u_frensel_influence", 0.0),
-			new MaterialParameter("u_frensel_color", new Vector4([0.0, 0.0, 0.0, 1.0])),
-			new MaterialParameter("u_frensel_border", 1.0),
-			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
-		]
-	),
-	new MaterialDescriptor(
-		"robot_veins",
-		"static/materials/base",
-		[
-			new MaterialParameter("u_color", new Vector4([0.8, 0.4, 0.6, 1.0])),
 			new MaterialParameter("u_diffuse_influence", 0.8),
 			new MaterialParameter("u_specular_influence", 0.2),
 			new MaterialParameter("u_frensel_influence", 0.0),
@@ -107,32 +81,6 @@ var c_MATERIALS = [
 		"skybox",
 		"static/materials/skybox",
 		[]
-	),
-	new MaterialDescriptor(
-		"black_hole",
-		"static/materials/base",
-		[
-			new MaterialParameter("u_color", new Vector4([0.0, 0.0, 0.0, 1.0])),
-			new MaterialParameter("u_diffuse_influence", 0.0),
-			new MaterialParameter("u_specular_influence", 0.0),
-			new MaterialParameter("u_frensel_influence", 1.0),
-			new MaterialParameter("u_frensel_color", new Vector4([1.0, 0.0, 1.0, 1.0])),
-			new MaterialParameter("u_frensel_border", 1.5),
-			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
-		]
-	),
-	new MaterialDescriptor(
-		"star",
-		"static/materials/base",
-		[
-			new MaterialParameter("u_color", new Vector4([0.7, 0.0, 1.0, 1.0])),
-			new MaterialParameter("u_diffuse_influence", 1.0),
-			new MaterialParameter("u_specular_influence", 1.0),
-			new MaterialParameter("u_frensel_influence", 1.0),
-			new MaterialParameter("u_frensel_color", new Vector4([1.0, 1.0, 1.0, 1.0])),
-			new MaterialParameter("u_frensel_border", 1.5),
-			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
-		]
 	),
 	new MaterialDescriptor(
 		"platform",
