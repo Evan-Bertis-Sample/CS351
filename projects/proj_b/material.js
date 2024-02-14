@@ -77,17 +77,28 @@ class ShaderSet {
             return;
         }
 
+        var aloc_uv = gl.getAttribLocation(gl.program, 'a_uv');
+        if (aloc_uv < 0) {
+            console.log('Failed to get the storage location of a_uv');
+            console.log("aloc_uv: " + aloc_uv);
+            return;
+        }
+
         // the vertex buffer is sorted as follows:
         // vertex, normal, vertex, normal, etc.
         // this was loaded initially before loading the shaders
         // set the vertex attribute pointer
         // vertexAttribPointer(index, size, type, normalized, stride, offset)
-        gl.vertexAttribPointer(aLoc_position, 4, gl.FLOAT, false, 8 * Float32Array.BYTES_PER_ELEMENT, 0);
+        gl.vertexAttribPointer(aLoc_position, 4, gl.FLOAT, false, 10 * Float32Array.BYTES_PER_ELEMENT, 0);
         gl.enableVertexAttribArray(aLoc_position);
 
         // set the normal attribute pointer
-        gl.vertexAttribPointer(aLoc_normal, 4, gl.FLOAT, false, 8 * Float32Array.BYTES_PER_ELEMENT, 4 * Float32Array.BYTES_PER_ELEMENT);
+        gl.vertexAttribPointer(aLoc_normal, 4, gl.FLOAT, false, 10 * Float32Array.BYTES_PER_ELEMENT, 4 * Float32Array.BYTES_PER_ELEMENT);
         gl.enableVertexAttribArray(aLoc_normal);
+
+        // set the uv attribute pointer
+        gl.vertexAttribPointer(aloc_uv, 2, gl.FLOAT, false, 10 * Float32Array.BYTES_PER_ELEMENT, 6 * Float32Array.BYTES_PER_ELEMENT);
+        gl.enableVertexAttribArray(aloc_uv);
 
         // get location of the uniform variables
         this.uLoc_modelMatrix = gl.getUniformLocation(gl.program, 'u_modelMatrix');

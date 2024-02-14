@@ -4,6 +4,7 @@
 // Vertex shader inputs
 attribute vec4 a_position;
 attribute vec4 a_normal;
+attribute vec2 a_uv;
 uniform mat4 u_viewMatrix;
 uniform mat4 u_projectionMatrix;
 uniform mat4 u_modelMatrix;
@@ -11,6 +12,7 @@ uniform mat4 u_modelMatrix;
 // varying variables
 varying vec4 v_position;
 varying vec4 v_normal;
+varying vec2 v_uv;
 
 // main
 void main()
@@ -24,4 +26,5 @@ void main()
     // Pass the vertex position and normal to the fragment shader
     v_position = u_modelMatrix * a_position;
     v_normal = u_modelMatrix * a_normal;
+    v_uv = a_uv;
 }

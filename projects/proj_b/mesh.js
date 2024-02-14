@@ -9,11 +9,13 @@ class Mesh {
     // vertices: an array of Vector3s
     // normals: an array of Vector3s
     // vertexIndices: an array of vertexIndices that map to the vertices and normals to form triangles -- triangles should be wound counter-clockwise
-    constructor(vertices, normals, vertexIndices, normalIndices) {
+    constructor(vertices, normals, uvs, vertexIndices, normalIndices, uvIndices) {
         this.vertices = vertices;
         this.normals = normals;
+        this.uvs = uvs;
         this.vertexIndices = vertexIndices;
         this.normalIndices = normalIndices;
+        this.uvIndices = uvIndices;
 
         // stores the start indices of the mesh in the vertex, normal, and index buffers
         this.vertexStartIndex = -1;
@@ -65,7 +67,7 @@ class Mesh {
     // vertexBuffer : a list of Vector4s representing the vertices
     // normalBuffer : a list of Vector4s representing the normals
     // indexBuffer : a list of vertexIndices
-    loadObject(vertexBuffer, normalBuffer)
+    loadObject(vertexBuffer, normalBuffer, uvBuffer)
     {
         if (this.vertexStartIndex != -1) {
             // already loaded
@@ -96,6 +98,15 @@ class Mesh {
                                          0]);
             normalBuffer.push(normalVec);
         }
+
+        this.uvStartIndex = uvBuffer.length;
+        for (var i = 0; i < this.uvIndices.length; i++) {
+            let uvIndex = this.uvIndices[i];
+            let uv = this.uvs[uvIndex];
+
+            uvBuffer.push(uv.elements[0]);
+            uvBuffer.push(uv.elements[1]);
+        }
     }
 
     // Draws the mesh using the given gl context
@@ -109,10 +120,6 @@ class Mesh {
 
         // console.log("Drawing mesh");
         let vertexCount = this.vertexIndices.length;
-        // console.log("Vertex index range: " + this.vertexStartIndex + " - " + (this.vertexStartIndex + vertexCount));
-        // draw the mesh
-        // gl.drawArrays(gl.LINE_LOOP, this.vertexStartIndex, vertexCount);
-        // gl.drawArrays(gl.POINTS, this.vertexStartIndex, vertexCount);
         gl.drawArrays(gl.TRIANGLES, this.vertexStartIndex, vertexCount);
     }
 
@@ -185,8 +192,10 @@ class MeshRegistry {
     parseMesh(source) {
         let vertices = [];
         let normals = [];
+        let uvs = [];
         let vertexIndices = [];
         let normalIndices = [];
+        let uvIndices = [];
 
         let lines = source.split("\n");
 
@@ -226,9 +235,16 @@ class MeshRegistry {
                 normalIndices.push(n2);
                 normalIndices.push(n3);
             }
+            else if (tokens[0] == "vt") {
+                // uv
+                let u = parseFloat(tokens[1]);
+                let v = parseFloat(tokens[2]);
+                let uv = new Vector3([u, v, 0]);
+                uvs.push(uv);
+            }
         }
 
-        let mesh = new Mesh(vertices, normals, vertexIndices, normalIndices);
+        let mesh = new Mesh(vertices, normals, uvs, vertexIndices, normalIndices, uvIndices);
         // console.log("Loaded mesh: ");
         // console.log(mesh);
         return mesh;

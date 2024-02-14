@@ -19,6 +19,7 @@ uniform float u_frensel_border;
 varying vec4 v_position;
 varying vec4 v_normal;
 varying float v_enable_lighting;
+varying vec2 v_uv;
 
 float nStep(float x, float numSteps) {
     return floor(x * numSteps) / float(numSteps);

@@ -4,6 +4,7 @@
 // Vertex shader inputs
 attribute vec4 a_position;
 attribute vec4 a_normal;
+attribute vec2 a_uv;
 
 // uniforms
 uniform mat4 u_viewMatrix;
@@ -15,6 +16,7 @@ uniform float u_enable_lighting;
 varying vec4 v_position;
 varying vec4 v_normal;
 varying float v_enable_lighting;
+varying vec2 v_uv;
 
 // main
 void main() {
@@ -38,6 +40,9 @@ void main() {
     } else {
         v_normal = a_normal;
     }
+
+    // Pass the texture coordinates to the fragment shader
+    v_uv = a_uv;
 
     // Pass the lighting flag to the fragment shader
     v_enable_lighting = u_enable_lighting;

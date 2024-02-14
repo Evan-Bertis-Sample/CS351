@@ -14,6 +14,7 @@ uniform vec3 u_cameraPosition;
 // varying variables -- passed from vertex shader
 varying vec4 v_position;
 varying vec4 v_normal;
+varying vec2 v_uv;
 
 float nStep(float x, float numSteps) {
     return floor(x * numSteps) / float(numSteps);

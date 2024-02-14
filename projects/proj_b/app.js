@@ -20,7 +20,7 @@ var g_ecs; // The entity component system for the application
 // Rather, they are used to store the vertices, normals, and indices, then used create the buffers
 var g_vertexArray = []; // The vertex buffer for the application
 var g_normalArray = []; // The normal buffer for the application
-var g_indexArray = []; // The index buffer for the application
+var g_uvArray = []; // The uv buffer for the application
 
 // These buffers are sent to the GPU
 var g_vertexBufferID; // The vertex buffer for the application
@@ -171,6 +171,16 @@ function loadMeshes(gl) {
 		interleavedArray.push(g_normalArray[i].elements[1]);
 		interleavedArray.push(g_normalArray[i].elements[2]);
 		interleavedArray.push(g_normalArray[i].elements[3]);
+
+		// only add the uv if it exists
+		if (g_uvArray.length > i) {
+			interleavedArray.push(g_uvArray[i].elements[0]);
+			interleavedArray.push(g_uvArray[i].elements[1]);
+		}
+		else { // add a default uv
+			interleavedArray.push(0);
+			interleavedArray.push(0);
+		}
 	}
 
 	// let vertexArray = vec4ArrayToFloat32Array(interleavedArray);
@@ -194,7 +204,7 @@ function loadMeshHelper(node, modelMatrix) {
 	}
 
 	// load the mesh
-	mesh.loadObject(g_vertexArray, g_normalArray);
+	mesh.loadObject(g_vertexArray, g_normalArray, g_uvArray);
 }
 
 function drawAll(gl) {
@@ -264,7 +274,7 @@ function getAspectRatio(canvasID) {
 		console.log("Canvas is null");
 		return;
 	}
-	
+
 	let aspect = canvas.scrollWidth / canvas.scrollHeight;
 	console.log("Aspect ratio: " + aspect);
 	return aspect;
