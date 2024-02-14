@@ -71,7 +71,7 @@ class Mesh {
     {
         if (this.vertexStartIndex != -1) {
             // already loaded
-            console.log("Mesh already loaded");
+            // console.log("Mesh already loaded");
             return;
         }
 

@@ -99,7 +99,8 @@ async function main() {
 		}
 	};
 
-	setInterval(tick, 1000 / 60);
+	tick();
+	// setInterval(tick, 1000 / 60);
 }
 
 // Initializes WebGL and the scene

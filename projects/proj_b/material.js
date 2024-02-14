@@ -182,8 +182,8 @@ class MaterialRegistry {
         this.materials = new Map();
         this.shaders = new Map();
         this.materialDescriptors = materialDescriptors;
-        this.currentlyLoadedMaterial = "";
-        this.currentlyLoadedShader = "";
+        this.currentlyLoadedMaterial = new Map(); // maps from canvasID to material name
+        this.currentlyLoadedShader = new Map(); // maps from canvasID to shader name
     }
 
     print() {
@@ -294,11 +294,12 @@ class MaterialRegistry {
     // sets the material to use for the next object
     // name: the name of the material
     setMaterial(name, gl) {
-        if (this.currentlyLoadedMaterial == name) {
+        if (this.currentlyLoadedMaterial.has(gl.canvas.id) && this.currentlyLoadedMaterial.get(gl.canvas.id) == name) {
             return;
         }
+        console.log("Setting material: " + name + " for canvas: " + gl.canvas.id);
 
-        this.currentlyLoadedMaterial = name;
+        this.currentlyLoadedMaterial.set(gl.canvas.id, name);
         let material = this.getMaterial(name);
         if (material == null) {
             console.log("Can't set material, material is null");
@@ -307,14 +308,14 @@ class MaterialRegistry {
 
         // load the shader
         let shader = this.shaders.get(material.shaderName);
-        if (material.shaderName != this.currentlyLoadedShader) {
+        if (material.shaderName != this.currentlyLoadedShader.get(gl.canvas.id)) {
             // console.log("Switching to shader: " + material.shaderName);
             if (shader == null) {
                 console.log("Can't set material, shader is null");
                 return;
             }
             shader.loadShader(gl);
-            this.currentlyLoadedShader = material.shaderName;
+            this.currentlyLoadedShader.set(gl.canvas.id, material.shaderName);
         }
         else {
             // console.log("Skipping shader loading");
@@ -326,7 +327,7 @@ class MaterialRegistry {
     // sets the material parameters for the next object
     // these are all the uniforms that any material should have
     passUniforms(gl, modelMatrix, viewMatrix, projectionMatrix, cameraPosition) {
-        let material = this.getMaterial(this.currentlyLoadedMaterial);
+        let material = this.getMaterial(this.currentlyLoadedMaterial.get(gl.canvas.id));
         // console.log(material);
         if (material == null) {
             console.log("Can't pass uniforms, material is null");
