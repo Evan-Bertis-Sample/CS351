@@ -67,11 +67,8 @@ void main() {
     frensel = pow(frensel, 1.0 / u_frensel_border);
 
     vec4 frenselColor = u_frensel_color * frensel;
-
-    vec4 diffuseColor = u_color;
-
     // calculate the final color
-    vec4 finalColor = (ambientLightColor * diffuseColor) + (lightColor * u_color * diffuseColor) + (lightColor * specular);
+    vec4 finalColor = (ambientLightColor * u_color) + (lightColor * u_color * diffuse) + (lightColor * specular);
     // add the frensel effect
     finalColor = finalColor + (frenselColor * u_frensel_influence);
 
