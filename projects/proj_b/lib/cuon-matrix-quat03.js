@@ -939,6 +939,16 @@ Vector3.prototype.distanceToSq = function(vec) {
   return x*x + y*y + z*z;
 }
 
+Vector3.prototype.crossSelf = function(vec) {
+  var v = this.elements;
+  var vec = vec.elements;
+  var x = v[0], y = v[1], z = v[2];
+  v[0] = y*vec[2] - z*vec[1];
+  v[1] = z*vec[0] - x*vec[2];
+  v[2] = x*vec[1] - y*vec[0];
+  return this;
+}
+
 /** VECTOR NON-SELF-MANIPULATION METHODS */
 /**
  * Adds a vector to this vector and returns a new vector

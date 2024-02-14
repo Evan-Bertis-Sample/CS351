@@ -38,9 +38,15 @@ async function main() {
 	g_meshRegistry = new MeshRegistry();
 	await g_meshRegistry.loadMeshes(c_MESHES);
 	// initialize the input manager
-	buildScene();
 	g_inputManager = new InputManager();
 	g_inputManager.attach();
+
+	// add the terrain
+	let terrain = generateTerrainMesh(200, 200, 10, 10);
+	console.log(terrain)
+	g_meshRegistry.addMesh("terrain", terrain);
+
+	buildScene();
 
 	let ids = c_WEBGL_IDS;
 	for (let i = 0; i < ids.length; i++) {
@@ -135,13 +141,6 @@ async function initialize(canvasID) {
 function loadMeshes(gl) {
 	// load the meshes into the buffers
 	g_sceneGraph.traverse(loadMeshHelper);
-	// now create the buffers that we will send to the GPU
-	// create the vertex buffer
-	// console.log("Loaded Vertex Array: ");
-	// console.log(g_vertexArray);
-
-	// console.log("Loaded Normal Array: ");
-	// console.log(g_normalArray);
 
 	if (g_vertexArray.length == 0) {
 		console.log("Vertex array is empty");

@@ -285,8 +285,10 @@ class CameraDescriptor {
             let right = frustrumWidth / 2;
             let bottom = -frustrumHeight / 2;
             let top = frustrumHeight / 2;
+            let near = cameraDescriptor.near;
+            let far = cameraDescriptor.far;
 
-            return new Matrix4().setOrtho(left, right, bottom, top, this.near, this.far);
+            return new Matrix4().setOrtho(left, right, bottom, top, near, far);
         }
 
         console.log("Error: Invalid camera mode");

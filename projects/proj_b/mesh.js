@@ -104,8 +104,7 @@ class Mesh {
             let uvIndex = this.uvIndices[i];
             let uv = this.uvs[uvIndex];
 
-            uvBuffer.push(uv.elements[0]);
-            uvBuffer.push(uv.elements[1]);
+            uvBuffer.push(new Vector3([uv.elements[0], uv.elements[1], 0]));
         }
     }
 

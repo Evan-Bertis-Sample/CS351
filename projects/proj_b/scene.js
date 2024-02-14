@@ -13,19 +13,16 @@ function buildScene() {
 }
 
 function buildEnviornment() {
-
-	// build the platform
-	let platformScale = c_WALKABLE_RADIUS + 3;
-	let platformEntity = g_ecs.createEntity(
-		entityName = "platform",
+	// build the terrain
+	let terrainEntity = g_ecs.createEntity(
+		entityName = "terrain",
 		parent = null,
-		position = new Vector3([0, -1.5, 0]),
+		position = new Vector3([0, 0, 0]),
 		rotation = new Quaternion(),
-		scale = new Vector3([platformScale, platformScale, platformScale]),
-		meshName = "platform",
-		materialName = "platform",
+		scale = new Vector3([1, 1, 1]),
+		meshName = "terrain",
+		materialName = "gray",
 		components = [
-			new RotateComponent(new Vector3([0, 1, 0]), 5)
 		]
 	);
 
@@ -34,7 +31,7 @@ function buildEnviornment() {
 		parent = null,
 		position = new Vector3([0, 0, 0]),
 		rotation = new Quaternion(),
-		scale = new Vector3([100, 100, 100]),
+		scale = new Vector3([c_FAR_PLANE / 2, c_FAR_PLANE / 2, c_FAR_PLANE / 2]),
 		meshName = "invert_sphere",
 		materialName = "skybox",
 		components = [

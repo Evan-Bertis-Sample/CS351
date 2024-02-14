@@ -15,26 +15,27 @@ var c_WEBGL_IDS = ["webgl", "webgl-2"]; // The id of the canvas elements
 
 // camera configuration
 // maps the camera id to a camera descriptor
+var c_FAR_PLANE = 1000;
 var c_CAMERAS = new Map([
 	[
 		"webgl", new CameraDescriptor(
 			"webgl",
-			new Vector3([0, 1, 60]),
-			new Quaternion(),
+			new Vector3([0, 40, 80]),
+			new Quaternion().setFromAxisAngle(1, 0, 0, 30),
 			{
 				mode: "perspective",
 				allowDynamicReize: true,
 				fov: 35,
 				near: 1,
-				far: 500
+				far: c_FAR_PLANE,
 			}
 		)
 	],
 	[
 		"webgl-2", new CameraDescriptor(
 			"webgl-2",
-			new Vector3([0, 10, 600]),
-			new Quaternion(),
+			new Vector3([0, 600, 0]),
+			new Quaternion().setFromAxisAngle(1, 0, 0, 90),
 			{
 				mode: "orthographic",
 				allowDynamicReize: true,
