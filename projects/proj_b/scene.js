@@ -114,18 +114,18 @@ function buildEnviornment() {
 		components = []
 	);
 
-	// let skyboxEntity = g_ecs.createEntity(
-	// 	entityName = "skybox",
-	// 	parent = null,
-	// 	position = new Vector3([0, 0, 0]),
-	// 	rotation = new Quaternion(),
-	// 	scale = new Vector3([c_FAR_PLANE / 2, c_FAR_PLANE / 2, c_FAR_PLANE / 2]),
-	// 	meshName = "invert_sphere",
-	// 	materialName = "skybox",
-	// 	components = [
-	// 		// new FollowCameraComponent(new Vector3([0, -2, -2])),
-	// 	],
-	// )
+	let skyboxEntity = g_ecs.createEntity(
+		entityName = "skybox",
+		parent = null,
+		position = new Vector3([0, 0, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([c_FAR_PLANE / 2, c_FAR_PLANE / 2, c_FAR_PLANE / 2]),
+		meshName = "invert_sphere",
+		materialName = "skybox",
+		components = [
+			// new FollowCameraComponent(new Vector3([0, -2, -2])),
+		],
+	)
 }
 
 function buildStar(identifier, position, scale, parent, starMaterial) {

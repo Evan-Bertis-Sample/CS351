@@ -20,7 +20,7 @@ class MaterialParameter {
             console.log("Shader parameter location is null");
             return;
         }
-
+        
         if (this.value instanceof Vector3) {
             gl.uniform3fv(location, this.value.elements);
         }
@@ -62,7 +62,7 @@ class ShaderSet {
         this.uLoc_viewMatrix = -1;
         this.uLoc_projectionMatrix = -1;
         this.uLoc_cameraPosition = -1;
-        this.uLoc_params = new Map();
+        this.uLoc_params = new Map(); // map from a canvas id to a map of parameter names to locations
     }
 
     loadShader(gl) {
@@ -139,18 +139,25 @@ class ShaderSet {
                 console.log('Failed to get the storage location of ' + paramName);
                 continue;
             }
-            this.uLoc_params.set(paramName, location);
+            if (!this.uLoc_params.has(gl.program.id)) {
+                // create a new map for this parameter
+                this.uLoc_params.set(gl.program.id, new Map());
+            }
+
+            this.uLoc_params.get(gl.program.id).set(paramName, location);
         }
     }
 
     loadParameters(gl, params) {
         for (let i = 0; i < this.paramNames.length; i++) {
             let param = params[i];
-            let location = this.uLoc_params.get(param.name);
+            // get the location of the parameter
+            let location = this.uLoc_params.get(gl.program.id).get(param.name);
             if (location == null || location < 0) {
                 console.log('Failed to get the storage location of ' + param.name);
                 continue;
             }
+
             param.loadParameter(gl, location);
         }
     }
@@ -297,7 +304,7 @@ class MaterialRegistry {
         if (this.currentlyLoadedMaterial.has(gl.canvas.id) && this.currentlyLoadedMaterial.get(gl.canvas.id) == name) {
             return;
         }
-        console.log("Setting material: " + name + " for canvas: " + gl.canvas.id);
+        // console.log("Setting material: " + name + " for canvas: " + gl.canvas.id);
 
         this.currentlyLoadedMaterial.set(gl.canvas.id, name);
         let material = this.getMaterial(name);
