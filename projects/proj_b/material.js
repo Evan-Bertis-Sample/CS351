@@ -16,6 +16,11 @@ class MaterialParameter {
             return;
         }
 
+        if (location < 0) {
+            console.log("Shader parameter location is null");
+            return;
+        }
+
         if (this.value instanceof Vector3) {
             gl.uniform3fv(location, this.value.elements);
         }
@@ -23,6 +28,7 @@ class MaterialParameter {
             gl.uniform4fv(location, this.value.elements);
         }
         else if (this.value instanceof Matrix4) {
+            console.log("Loading matrix: " + this.name + " into shader");
             gl.uniformMatrix4fv(location, false, this.value.elements);
         }
         else if (Number.isFinite(this.value)) {
