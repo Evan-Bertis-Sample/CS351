@@ -42,7 +42,6 @@ async function main() {
 	g_inputManager = new InputManager();
 	g_inputManager.attach();
 
-
 	let ids = c_WEBGL_IDS;
 	for (let i = 0; i < ids.length; i++) {
 		await initialize(ids[i]);
@@ -52,9 +51,29 @@ async function main() {
 	console.log("Registering cameras");
 	console.log(c_CAMERAS);
 	for (let [key, value] of c_CAMERAS) {
-		let camera = new Camera(key, value.projectionMatrix, value.position, value.rotation);
+		let camera = new Camera(key, value);
 		g_sceneGraph.addCamera(key, camera);
 	}
+
+	// add a listener to resize the cameras when the window is resized
+	window.addEventListener('resize', function () {
+		console.log("Resizing cameras");
+		for (let [key, value] of c_CAMERAS) {
+			let camera = g_sceneGraph.getCamera(key);
+			camera.resize();
+		}
+
+		// set the new viewports
+		for (let [key, value] of g_elementToCanvas) {
+			let canvas = document.getElementById(key);
+			if (canvas == null) {
+				console.log("Canvas is null");
+				return;
+			}
+			let gl = value;
+			gl.viewport(0, 0, canvas.width, canvas.height);
+		}
+	});
 
 	// update loop
 	g_timeElapsed = 0;
@@ -238,5 +257,15 @@ function drawNode(node, modelMatrix, gl) {
 	g_materialRegistry.passUniforms(gl, modelMatrix, camera.getViewMatrix(), camera.getProjectionMatrix(), camera.getPosition());
 	// draw the mesh
 	mesh.draw(gl);
+}
 
+function getAspectRatio(canvasID) {
+	let canvas = document.getElementById(canvasID);
+	if (canvas == null) {
+		console.log("Canvas is null");
+		return;
+	}
+	let aspect = canvas.width / canvas.height;
+	console.log("Aspect ratio: " + aspect);
+	return aspect;
 }

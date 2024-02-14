@@ -21,7 +21,7 @@ class Transform {
         if (scale == null) {
             scale = new Vector3([1, 1, 1]);
         }
-        
+
         this.position = position;
         this.rotation = rotation;
         this.scale = scale;
@@ -234,38 +234,100 @@ class SceneNode {
 }
 
 class CameraDescriptor {
-    constructor(projectionMatrix, position, rotation) {
-        this.projectionMatrix = projectionMatrix;
+    constructor(canvasID, position, rotation, { mode = "perspective", allowDynamicResize = true, fov = 35, near = 1, far = 1000, left = -50, right = 50, top = 50, bottom = -50, linkTo = null }) {
+        this.canvasID = canvasID;
         this.position = position;
         this.rotation = rotation;
+
+        this.allowDynamicResize = allowDynamicResize;
+        this.mode = mode;
+        this.fov = fov;
+        this.near = near;
+        this.far = far;
+        this.linkTo = linkTo;
+        this.left = left;
+        this.right = right;
+        this.top = top;
+        this.bottom = bottom;
+    }
+
+    getProjectionMatrix() {
+        if (this.mode == "perspective") {
+            return new Matrix4().setPerspective(this.fov, getAspectRatio(this.canvasID), this.near, this.far);
+        }
+
+        if (this.mode == "orthographic") {
+            if (this.linkTo != null) {
+                return new Matrix4().setOrtho(this.left, this.right, this.bottom, this.top, this.near, this.far);
+            }
+
+            // link to another camera
+            console.log("Linking to another camera");
+            let cameraName = this.linkTo[0];
+            let depthFactor = this.linkTo[1];
+
+            // grab the camera descriptor
+            let cameraDescriptor = c_CAMERAS.get(cameraName);
+            if (cameraDescriptor.mode == "orthographic")
+            {
+                console.log("Error: Cannot link to an orthographic camera");
+                return new Matrix4().setOrtho(this.left, this.right, this.bottom, this.top, this.near, this.far);
+            }
+
+            // now we should create a new orthographic projection matrix
+            // where the bounds are the same as the linked perspective camera
+            // at the given depth
+            let depth = (cameraDescriptor.far - cameraDescriptor.near) * depthFactor;
+
+            let aspectRatio = getAspectRatio(cameraDescriptor.canvasID);
+            let height = Math.tan(cameraDescriptor.fov / 2) * depth;
+            let width = height * aspectRatio;
+            let left = -width;
+            let right = width;
+            let bottom = -height;
+            let top = height;
+
+            return new Matrix4().setOrtho(left, right, bottom, top, this.near, this.far);
+        }
+
+        console.log("Error: Invalid camera mode");
     }
 }
 
 class Camera {
-    constructor(canvasID, projectionMatrix, position, rotation) {
+    constructor(canvasID, descriptor) {
         // get the canvas
+        this.canvasID = canvasID;
         this.canvasElementID = g_idToElement.get(canvasID);
         this.gl = g_elementToCanvas.get(this.canvasElementID);
-        this.position = position;
-        this.rotation = rotation;
-        this.projectionMatrix = projectionMatrix;
+        this.descriptor = descriptor;
+
+        this.position = descriptor.position;
+        this.rotation = descriptor.rotation;
+        this.projectionMatrix = new Matrix4().set(descriptor.getProjectionMatrix());
     }
 
-    getViewMatrix()
-    {
+    resize() {
+        if (this.descriptor.allowDynamicResize) {
+            console.log("Resizing camera");
+            // now reconstruct the projection matrix such that the aspect ratio is correct
+            // we are assuming that the projection matrix is a perspective matrix
+            this.projectionMatrix.set(this.descriptor.getProjectionMatrix());
+        }
+    }
+
+    getViewMatrix() {
         let viewMatrix = new Matrix4();
         viewMatrix.setFromQuat(this.rotation.x, this.rotation.y, this.rotation.z, this.rotation.w);
         viewMatrix.translate(-this.position.elements[0], -this.position.elements[1], -this.position.elements[2]);
         return viewMatrix;
     }
 
-    getProjectionMatrix()
-    {
+    getProjectionMatrix() {
         return this.projectionMatrix;
     }
 
-    getPosition()
-    {
+    getPosition() {
         return this.position;
     }
 
