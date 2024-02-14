@@ -18,16 +18,18 @@ var c_WEBGL_IDS = ["webgl", "webgl-2"]; // The id of the canvas elements
 var c_CAMERAS = new Map([
 	[
 		"webgl", new CameraDescriptor(
-			new Matrix4().setPerspective(60, 1, 1, 1000),
+			new Matrix4().setPerspective(35, 1, 1, 1000),
 			new Vector3([0, 1, 60]),
 			new Quaternion()
 		)
 	],
 	[
 		"webgl-2", new CameraDescriptor(
-			new Matrix4().setPerspective(60, 1, 1, 1000),
-			new Vector3([0, 40, 40]),
-			new Quaternion().setFromAxisAngle(1, 0, 0, 45)
+			// make sure that the view frustum also matches the size
+			// of the webgl camera descriptor at the -z= (far-near)/3
+			new Matrix4().setOrtho(-40, 40, -40, 40, 1, 1000),
+			new Vector3([0, 10, 600]),
+			new Quaternion()
 		)
 	]
 ]);
