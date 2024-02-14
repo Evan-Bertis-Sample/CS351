@@ -112,7 +112,7 @@ class ShaderSet {
             console.log('Failed to get the storage location of u_modelMatrix');
             return;
         }
-        this.uLoc_modelMatrix.set(gl.program.id, uLoc_modelMatrix);
+        this.uLoc_modelMatrix.set(gl.program, uLoc_modelMatrix);
 
         let uLoc_viewMatrix = gl.getUniformLocation(gl.program, 'u_viewMatrix');
         if (uLoc_viewMatrix < 0) {
@@ -120,7 +120,7 @@ class ShaderSet {
             return;
         }
 
-        this.uLoc_viewMatrix.set(gl.program.id, uLoc_viewMatrix);
+        this.uLoc_viewMatrix.set(gl.program, uLoc_viewMatrix);
 
         let uLoc_projectionMatrix = gl.getUniformLocation(gl.program, 'u_projectionMatrix');
         if (uLoc_projectionMatrix < 0) {
@@ -128,7 +128,7 @@ class ShaderSet {
             return;
         }
 
-        this.uLoc_projectionMatrix.set(gl.program.id, uLoc_projectionMatrix);
+        this.uLoc_projectionMatrix.set(gl.program, uLoc_projectionMatrix);
 
         let uLoc_cameraPosition = gl.getUniformLocation(gl.program, 'u_cameraPosition');
         if (uLoc_cameraPosition < 0) {
@@ -136,7 +136,7 @@ class ShaderSet {
             return;
         }
 
-        this.uLoc_cameraPosition.set(gl.program.id, uLoc_cameraPosition);
+        this.uLoc_cameraPosition.set(gl.program, uLoc_cameraPosition);
 
 
 
@@ -148,12 +148,13 @@ class ShaderSet {
                 console.log('Failed to get the storage location of ' + paramName);
                 continue;
             }
-            if (!this.uLoc_params.has(gl.program.id)) {
+            if (!this.uLoc_params.has(gl.program)) {
                 // create a new map for this parameter
-                this.uLoc_params.set(gl.program.id, new Map());
+                console.log("Creating new map for shader: " + gl.program);
+                this.uLoc_params.set(gl.program, new Map());
             }
 
-            this.uLoc_params.get(gl.program.id).set(paramName, location);
+            this.uLoc_params.get(gl.program).set(paramName, location);
         }
     }
 
@@ -161,7 +162,7 @@ class ShaderSet {
         for (let i = 0; i < this.paramNames.length; i++) {
             let param = params[i];
             // get the location of the parameter
-            let location = this.uLoc_params.get(gl.program.id).get(param.name);
+            let location = this.uLoc_params.get(gl.program).get(param.name);
             if (location == null || location < 0) {
                 console.log('Failed to get the storage location of ' + param.name);
                 continue;
@@ -310,40 +311,43 @@ class MaterialRegistry {
     // sets the material to use for the next object
     // name: the name of the material
     setMaterial(name, gl) {
-        if (this.currentlyLoadedMaterial.has(gl.canvas.id) && this.currentlyLoadedMaterial.get(gl.canvas.id) == name) {
+        if (this.currentlyLoadedMaterial.get(gl) == name) {
+            // console.log("Skipping material loading");
             return;
         }
-        // console.log("Setting material: " + name + " for canvas: " + gl.canvas.id);
+        // console.log("Setting material: " + name + " for canvas: " + gl);
 
-        this.currentlyLoadedMaterial.set(gl.canvas.id, name);
         let material = this.getMaterial(name);
         if (material == null) {
             console.log("Can't set material, material is null");
             return;
         }
 
+        this.currentlyLoadedMaterial.set(gl, name);
+        
         // load the shader
         let shader = this.shaders.get(material.shaderName);
-        if (material.shaderName != this.currentlyLoadedShader.get(gl.canvas.id)) {
+        if (material.shaderName != this.currentlyLoadedShader.get(gl)) {
             // console.log("Switching to shader: " + material.shaderName);
             if (shader == null) {
                 console.log("Can't set material, shader is null");
                 return;
             }
             shader.loadShader(gl);
-            this.currentlyLoadedShader.set(gl.canvas.id, material.shaderName);
+            this.currentlyLoadedShader.set(gl, material.shaderName);
         }
         else {
             // console.log("Skipping shader loading");
         }
 
+        // console.log("Setting material: " + name);
         material.loadParameters(gl, shader);
     }
 
     // sets the material parameters for the next object
     // these are all the uniforms that any material should have
     passUniforms(gl, modelMatrix, viewMatrix, projectionMatrix, cameraPosition) {
-        let material = this.getMaterial(this.currentlyLoadedMaterial.get(gl.canvas.id));
+        let material = this.getMaterial(this.currentlyLoadedMaterial.get(gl));
         // console.log(material);
         if (material == null) {
             console.log("Can't pass uniforms, material is null");
@@ -357,10 +361,10 @@ class MaterialRegistry {
             return;
         }
 
-        let uLoc_modelMatrix = shader.uLoc_modelMatrix.get(gl.program.id);
-        let uLoc_viewMatrix = shader.uLoc_viewMatrix.get(gl.program.id);
-        let uLoc_projectionMatrix = shader.uLoc_projectionMatrix.get(gl.program.id);
-        let uLoc_cameraPosition = shader.uLoc_cameraPosition.get(gl.program.id);
+        let uLoc_modelMatrix = shader.uLoc_modelMatrix.get(gl.program);
+        let uLoc_viewMatrix = shader.uLoc_viewMatrix.get(gl.program);
+        let uLoc_projectionMatrix = shader.uLoc_projectionMatrix.get(gl.program);
+        let uLoc_cameraPosition = shader.uLoc_cameraPosition.get(gl.program);
 
         if (uLoc_modelMatrix < 0) {
             console.log("Material Model Matrix is null");

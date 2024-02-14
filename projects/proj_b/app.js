@@ -34,6 +34,8 @@ async function main() {
 	// Load the materials
 	g_materialRegistry = new MaterialRegistry(c_MATERIALS);
 	await g_materialRegistry.loadMaterials();
+	console.log("Materials loaded");
+	console.log(g_materialRegistry);
 	// Load the meshes
 	g_meshRegistry = new MeshRegistry();
 	await g_meshRegistry.loadMeshes(c_MESHES);
