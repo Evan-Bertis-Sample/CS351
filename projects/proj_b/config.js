@@ -7,7 +7,7 @@ var c_DOWNSAMPLE_FACTOR = 4; // The factor to downsample the screen by
 var c_PLAYER_MOVE_SPEED = 10;
 var c_PLAYER_ROT_SPEED = 10;
 var c_CAMERA_SENSITIVITY = 5;
-var c_WALKABLE_RADIUS = 10; // controls how far the player can move from the origin
+var c_WALKABLE_RADIUS = 15; // controls how far the player can move from the origin
 var c_ENABLE_LIGHTING = 1.0; // 0.0 for no lighting, 1.0 for lighting
 
 // WebGL Configuration
@@ -20,8 +20,8 @@ var c_CAMERAS = new Map([
 	[
 		"webgl", new CameraDescriptor(
 			"webgl",
-			new Vector3([0, 40, 80]),
-			new Quaternion().setFromAxisAngle(1, 0, 0, 30),
+			new Vector3([0, 30, 40]),
+			new Quaternion().setFromAxisAngle(1, 0, 0, 35),
 			{
 				mode: "perspective",
 				allowDynamicReize: true,
@@ -34,12 +34,12 @@ var c_CAMERAS = new Map([
 	[
 		"webgl-2", new CameraDescriptor(
 			"webgl-2",
-			new Vector3([0, 800, 0]),
+			new Vector3([0, 700, 0]),
 			new Quaternion().setFromAxisAngle(1, 0, 0, 90),
 			{
 				mode: "orthographic",
 				allowDynamicReize: true,
-				linkTo: ["webgl", 1/3],
+				linkTo: ["webgl", 1/8],
 			}
 		)
 	]

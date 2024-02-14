@@ -76,7 +76,7 @@ function buildEnviornment() {
 
 	// build the dyson spheres
 	let numSpheres = 10;
-	let sphereRadius = 40;
+	let sphereRadius = 50;
 	let innerMaterial = "black_hole";
 	let outerMaterial = "platform";
 	let sphereScale = new Vector3([1, 1, 1]);
