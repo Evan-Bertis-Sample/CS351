@@ -806,3 +806,42 @@ class ShakerComponent extends Component {
         this.transform.position = output;
     }
 }
+
+class CameraControllerComponent extends Component {
+    constructor(cameraEntityID, { movementSpeed = 1, rotationSpeed = 1, leanAmount = 10, originalRotation = new Quaternion() }) {
+        super();
+        this.cameraEntityID = cameraEntityID;
+        this.movementSpeed = movementSpeed;
+        this.rotationSpeed = rotationSpeed;
+        this.leanAmount = leanAmount;
+        this.originalRotation = originalRotation;
+        this.previousTheta = 0;
+
+        this.camera = g_sceneGraph.getCamera(this.cameraEntityID);
+    }
+
+    start() {
+    }
+
+    update(deltaTime) {
+        let axis = g_inputManager.getAxis(AxisSets.WASD_KEYS);
+
+        // the axis is a vector3 with the direction of movement at x,y
+        // we want to make it a vector3 with the direction of movement at x,z
+        axis.elements[2] = axis.elements[1];
+        axis.elements[1] = 0;
+
+        let moveAmount = deltaTime * this.movementSpeed;
+        let oldPosition = this.camera.getPosition();
+        let newPosition = new Vector3(
+            [
+                // must negate the movement because the camera is the parent of the scene graph
+                // so moving the camera forward is actually moving the scene graph backwards
+                oldPosition.elements[0] + axis.elements[0] * moveAmount,
+                oldPosition.elements[1] + axis.elements[1] * moveAmount,
+                oldPosition.elements[2] - axis.elements[2] * moveAmount,
+            ]
+        )
+        this.camera.setPosition(newPosition);
+    }
+}

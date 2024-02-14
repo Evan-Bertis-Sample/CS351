@@ -53,6 +53,7 @@ async function main() {
 		await initialize(ids[i]);
 	}
 
+
 	// register the cameras
 	console.log("Registering cameras");
 	console.log(c_CAMERAS);
@@ -80,6 +81,8 @@ async function main() {
 			gl.viewport(0, 0, canvas.width, canvas.height);
 		}
 	});
+
+	buildCamera()
 
 	// update loop
 	g_timeElapsed = 0;

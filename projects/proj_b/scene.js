@@ -7,9 +7,34 @@ function buildScene() {
 	g_sceneGraph = new SceneGraph();
 	g_ecs = new ECS(g_sceneGraph);
 
+	// build the camera
+	// buildCamera();
 	buildEnviornment();
 
 	console.log("Scene built");
+}
+
+function buildCamera() {
+	// build the camera
+	let cameraEntity = g_ecs.createEntity(
+		entityName = "camera",
+		parent = null,
+		position = new Vector3([0, 40, 80]),
+		rotation = new Quaternion().setFromAxisAngle(1, 0, 0, 30),
+		scale = new Vector3([1, 1, 1]),
+		meshName = "",
+		materialName = "",
+		components = [
+			new CameraControllerComponent(
+				"webgl",
+				{
+					movementSpeed: 10,
+					originalRotation: new Quaternion().setFromAxisAngle(1, 0, 0, 30),
+				}
+			)
+		]
+	);
+
 }
 
 function buildEnviornment() {
