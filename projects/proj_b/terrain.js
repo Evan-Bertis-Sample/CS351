@@ -18,7 +18,7 @@ function generateTerrainMesh(width, height, amplitude, resolution)
         {
             let x = i - width / 2;
             let z = j - height / 2;
-            let y = Math.sin(x / resolution) * Math.cos(z / resolution) * amplitude;
+            let y = = generateHeightAtPoint(x, z, amplitude, resolution);
             vertices.push(new Vector3([x, y, z]));
             uvs.push(new Vector3([i / width, j / height, 0]));
         }
@@ -89,4 +89,9 @@ function generateTerrainMesh(width, height, amplitude, resolution)
     }
 
     return new Mesh(vertices, normals, uvs, vertexIndices, normalIndices, uvIndices);
+}
+
+function generateHeightAtPoint(x, z, amplitude, resolution)
+{
+    return Math.sin(x / resolution) * Math.cos(z / resolution) * amplitude;
 }

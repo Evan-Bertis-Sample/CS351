@@ -42,9 +42,9 @@ async function main() {
 	g_inputManager.attach();
 
 	// add the terrain
-	let terrain = generateTerrainMesh(200, 200, 10, 10);
-	console.log(terrain)
-	g_meshRegistry.addMesh("terrain", terrain);
+	// let terrain = generateTerrainMesh(200, 200, 10, 10);
+	// console.log(terrain)
+	// g_meshRegistry.addMesh("terrain", terrain);
 
 	buildScene();
 
@@ -64,7 +64,7 @@ async function main() {
 
 	// add a listener to resize the cameras when the window is resized
 	window.addEventListener('resize', function () {
-		console.log("Resizing cameras");
+		// console.log("Resizing cameras");
 		for (let [key, value] of c_CAMERAS) {
 			let camera = g_sceneGraph.getCamera(key);
 			camera.resize();
@@ -126,7 +126,7 @@ async function initialize(canvasID) {
 	// set the viewport to be sized correctly
 
 	gl.viewport(0, 0, canvasElement.width, canvasElement.height);
-	gl.clearColor(1, 1, 1, 1);
+	gl.clearColor(0.05, 0.08, 0.13, 1.0);
 	gl.enable(gl.DEPTH_TEST);
 	gl.clear(gl.COLOR_BUFFER_BIT);
 	// cull
@@ -278,6 +278,6 @@ function getAspectRatio(canvasID) {
 	}
 
 	let aspect = canvas.scrollWidth / canvas.scrollHeight;
-	console.log("Aspect ratio: " + aspect);
+	// console.log("Aspect ratio: " + aspect);
 	return aspect;
 }
