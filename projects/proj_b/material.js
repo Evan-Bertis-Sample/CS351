@@ -58,10 +58,10 @@ class ShaderSet {
         this.vertexShaderSource = vertexShaderSource;
         this.fragmentShaderSource = fragmentShaderSource;
         this.paramNames = paramNames;
-        this.uLoc_modelMatrix = -1;
-        this.uLoc_viewMatrix = -1;
-        this.uLoc_projectionMatrix = -1;
-        this.uLoc_cameraPosition = -1;
+        this.uLoc_modelMatrix = new Map(); // map from a canvas id to the location
+        this.uLoc_viewMatrix = new Map(); // map from a canvas id to the location
+        this.uLoc_projectionMatrix = new Map(); // map from a canvas id to the location
+        this.uLoc_cameraPosition = new Map(); // map from a canvas id to the location
         this.uLoc_params = new Map(); // map from a canvas id to a map of parameter names to locations
     }
 
@@ -107,29 +107,38 @@ class ShaderSet {
         gl.enableVertexAttribArray(aloc_uv);
 
         // get location of the uniform variables
-        this.uLoc_modelMatrix = gl.getUniformLocation(gl.program, 'u_modelMatrix');
-        if (this.uLoc_modelMatrix < 0) {
+        let uLoc_modelMatrix = gl.getUniformLocation(gl.program, 'u_modelMatrix');
+        if (uLoc_modelMatrix < 0) {
             console.log('Failed to get the storage location of u_modelMatrix');
             return;
         }
+        this.uLoc_modelMatrix.set(gl.program.id, uLoc_modelMatrix);
 
-        this.uLoc_viewMatrix = gl.getUniformLocation(gl.program, 'u_viewMatrix');
-        if (this.uLoc_viewMatrix < 0) {
+        let uLoc_viewMatrix = gl.getUniformLocation(gl.program, 'u_viewMatrix');
+        if (uLoc_viewMatrix < 0) {
             console.log('Failed to get the storage location of u_viewMatrix');
             return;
         }
 
-        this.uLoc_projectionMatrix = gl.getUniformLocation(gl.program, 'u_projectionMatrix');
-        if (this.uLoc_projectionMatrix < 0) {
+        this.uLoc_viewMatrix.set(gl.program.id, uLoc_viewMatrix);
+
+        let uLoc_projectionMatrix = gl.getUniformLocation(gl.program, 'u_projectionMatrix');
+        if (uLoc_projectionMatrix < 0) {
             console.log('Failed to get the storage location of u_projectionMatrix');
             return;
         }
 
-        this.uLoc_cameraPosition = gl.getUniformLocation(gl.program, 'u_cameraPosition');
-        if (this.uLoc_cameraPosition < 0) {
+        this.uLoc_projectionMatrix.set(gl.program.id, uLoc_projectionMatrix);
+
+        let uLoc_cameraPosition = gl.getUniformLocation(gl.program, 'u_cameraPosition');
+        if (uLoc_cameraPosition < 0) {
             console.log('Failed to get the storage location of u_cameraPosition');
             return;
         }
+
+        this.uLoc_cameraPosition.set(gl.program.id, uLoc_cameraPosition);
+
+
 
         // now find the locations of the shader parameters
         for (let i = 0; i < this.paramNames.length; i++) {
@@ -348,10 +357,10 @@ class MaterialRegistry {
             return;
         }
 
-        let uLoc_modelMatrix = shader.uLoc_modelMatrix;
-        let uLoc_viewMatrix = shader.uLoc_viewMatrix;
-        let uLoc_projectionMatrix = shader.uLoc_projectionMatrix;
-        let uLoc_cameraPosition = shader.uLoc_cameraPosition;
+        let uLoc_modelMatrix = shader.uLoc_modelMatrix.get(gl.program.id);
+        let uLoc_viewMatrix = shader.uLoc_viewMatrix.get(gl.program.id);
+        let uLoc_projectionMatrix = shader.uLoc_projectionMatrix.get(gl.program.id);
+        let uLoc_cameraPosition = shader.uLoc_cameraPosition.get(gl.program.id);
 
         if (uLoc_modelMatrix < 0) {
             console.log("Material Model Matrix is null");
