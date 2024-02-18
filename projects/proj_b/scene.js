@@ -42,8 +42,8 @@ function buildCamera() {
 function buildEnviornment() {
 	// build the stars
 	let numStars = 1000;
-	let starRadius = 80;
-	let minimumRadius = 50;
+	let starRadius = 100;
+	let minimumRadius = c_WALKABLE_RADIUS + 10;
 	let starMaterial = "star";
 	let starSizeVariation = 0.5;
 
@@ -77,10 +77,10 @@ function buildEnviornment() {
 
 	// build the dyson spheres
 	let numSpheres = 10;
-	let sphereRadius = 50;
+	let sphereRadius = c_WALKABLE_RADIUS + 20;
 	let innerMaterial = "black_hole";
 	let outerMaterial = "platform";
-	let sphereScale = new Vector3([1, 1, 1]);
+	let sphereScale = new Vector3([2, 2, 2]);
 
 	let dysonParent = g_ecs.createEntity(
 		entityName = "dyson_sphere_parent",
@@ -114,6 +114,18 @@ function buildEnviornment() {
 		materialName = "platform",
 		components = []
 	);
+
+	// let planeScale = c_WALKABLE_RADIUS + 3;
+	// let planeEntity = g_ecs.createEntity(
+	// 	entityName = "plane",
+	// 	parent = null,
+	// 	position = new Vector3([0, -1.5, 0]),
+	// 	rotation = new Quaternion(),
+	// 	scale = new Vector3([planeScale, planeScale, planeScale]),
+	// 	meshName = "plane",
+	// 	materialName = "platform",
+	// 	components = []
+	// );
 
 	let skyboxEntity = g_ecs.createEntity(
 		entityName = "skybox",
@@ -157,7 +169,7 @@ function buildDysonSphere(identifier, position, scale, innerMaterial, outerMater
 		meshName = "sphere",
 		materialName = innerMaterial,
 		components = [
-			new ShakerComponent(0.5),
+			new ShakerComponent(2.5),
 		]
 	);
 
@@ -171,7 +183,7 @@ function buildDysonSphere(identifier, position, scale, innerMaterial, outerMater
 		materialName = outerMaterial,
 		components = [
 			new RotateComponent(new Vector3([1, 1, 1]), 30),
-			new ShakerComponent(0.5),
+			new ShakerComponent(1.5),
 		]
 	);
 

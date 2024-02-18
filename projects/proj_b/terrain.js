@@ -1,97 +1,64 @@
-// // terrain.js
-// // used to generate the terrain
-// //
+// terrain.js
+// used to generate the terrain
+//
 
-// function generateTerrainMesh(width, height, amplitude, resolution)
-// {
-//     let vertices = [];
-//     let normals = [];
-//     let uvs = [];
-//     let vertexIndices = [];
-//     let normalIndices = [];
-//     let uvIndices = [];
+// generate a plane mesh with the given width, height, and resolution
+// the resolution refers to the number of subdivisions in the plane
+function generatePlaneMesh(width, height, resolution)
+{
+    let mesh = new Mesh();
+    let vertices = [];
+    let normals = [];
+    let uvs = [];
+    let vertexIndices = [];
+    let normalIndices = [];
+    let uvIndices = [];
 
-//     // add the vertices
-//     for (let i = 0; i < width; i++)
-//     {
-//         for (let j = 0; j < height; j++)
-//         {
-//             let x = i - width / 2;
-//             let z = j - height / 2;
-//             let y = = generateHeightAtPoint(x, z, amplitude, resolution);
-//             vertices.push(new Vector3([x, y, z]));
-//             uvs.push(new Vector3([i / width, j / height, 0]));
-//         }
-//     }
+    // generate the vertices
+    for (let i = 0; i < resolution; i++) {
+        for (let j = 0; j < resolution; j++) {
+            let x = i / resolution * width;
+            let z = j / resolution * height;
+            let y = 0;
+            vertices.push(new Vector4([x, y, z, 1.0]));
+            normals.push(new Vector4([0, 1, 0, 0]));
+            uvs.push(new Vector3([i / resolution, j / resolution, 0]));
+        }
+    }
 
-//     // now calculate the normals
-//     for (let i = 0; i < width; i++)
-//     {
-//         for (let j = 0; j < height; j++)
-//         {
-//             let v1 = i * height + j;
-//             let v2 = i * height + j + 1;
-//             let v3 = (i + 1) * height + j;
-//             let v4 = (i + 1) * height + j + 1;
 
-//             let normal = new Vector3([0, 0, 0]);
-//             if (i > 0 && j > 0 && i < width - 1 && j < height - 1)
-//             {
-//                 let normal1 = vertices[v1].sub(vertices[v2]).cross(vertices[v1].sub(vertices[v3]));
-//                 let normal2 = vertices[v2].sub(vertices[v4]).cross(vertices[v2].sub(vertices[v3]));
-//                 normal = normal1.add(normal2);
-//                 normal = normal.normalize();
-//             }
-//             else
-//             {
-//                 normal = new Vector3([0, 1, 0]);
-//             }
-//             normals.push(normal);
-//         }
-//     }
+    // generate the indices
+    for (let i = 0; i < resolution - 1; i++) {
+        for (let j = 0; j < resolution - 1; j++) {
+            let index = i * resolution + j;
+            vertexIndices.push(index);
+            vertexIndices.push(index + 1);
+            vertexIndices.push(index + resolution);
+            vertexIndices.push(index + 1);
+            vertexIndices.push(index + resolution);
+            vertexIndices.push(index + resolution + 1);
 
-//     // now organize the vertices into triangles
-//     for (let i = 0; i < width - 1; i++)
-//     {
-//         for (let j = 0; j < height - 1; j++)
-//         {
-//             let v1 = i * height + j;
-//             let v2 = i * height + j + 1;
-//             let v3 = (i + 1) * height + j;
-//             let v4 = (i + 1) * height + j + 1;
+            normalIndices.push(index);
+            normalIndices.push(index + 1);
+            normalIndices.push(index + resolution);
+            normalIndices.push(index + 1);
+            normalIndices.push(index + resolution);
+            normalIndices.push(index + resolution + 1);
 
-//             // triangle 1
-//             vertexIndices.push(v1);
-//             vertexIndices.push(v2);
-//             vertexIndices.push(v3);
+            uvIndices.push(index);
+            uvIndices.push(index + 1);
+            uvIndices.push(index + resolution);
+            uvIndices.push(index + 1);
+            uvIndices.push(index + resolution);
+            uvIndices.push(index + resolution + 1);
 
-//             // triangle 2
-//             vertexIndices.push(v2);
-//             vertexIndices.push(v4);
-//             vertexIndices.push(v3);
+        }
+    }
 
-//             // normals
-//             normalIndices.push(v1);
-//             normalIndices.push(v2);
-//             normalIndices.push(v3);
-//             normalIndices.push(v2);
-//             normalIndices.push(v4);
-//             normalIndices.push(v3);
+    mesh.setVertices(vertices);
+    mesh.setNormals(normals);
+    mesh.setvertexIndices(vertexIndices);
+    mesh.setNormalIndices(normalIndices);
 
-//             // uvs
-//             uvIndices.push(v1);
-//             uvIndices.push(v2);
-//             uvIndices.push(v3);
-//             uvIndices.push(v2);
-//             uvIndices.push(v4);
-//             uvIndices.push(v3);
-//         }
-//     }
-
-//     return new Mesh(vertices, normals, uvs, vertexIndices, normalIndices, uvIndices);
-// }
-
-// function generateHeightAtPoint(x, z, amplitude, resolution)
-// {
-//     return Math.sin(x / resolution) * Math.cos(z / resolution) * amplitude;
-// }
+    return mesh;
+}

@@ -46,7 +46,6 @@ async function main() {
 	// add the terrain
 	// let terrain = generateTerrainMesh(200, 200, 10, 10);
 	// console.log(terrain)
-	// g_meshRegistry.addMesh("terrain", terrain);
 
 	buildScene();
 
