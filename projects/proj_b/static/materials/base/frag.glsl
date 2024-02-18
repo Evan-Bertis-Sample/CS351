@@ -6,6 +6,8 @@ const vec4 directionalLight = vec4(1, 2, 1, 0);
 const vec4 ambientLightColor = vec4(0.44, 0.45, 0.49, 1.0);
 const vec4 lightColor = vec4(0.6, 0.54, 0.88, 1.0);
 const float cellShadingWeight = 0.4;
+const float gridSize = 1.0;
+const vec4 gridColor = vec4(0.6, 0.52, 0.85, 1.0);
 
 uniform vec3 u_cameraPosition;
 uniform vec4 u_color;
@@ -23,6 +25,10 @@ varying vec2 v_uv;
 
 float nStep(float x, float numSteps) {
     return floor(x * numSteps) / float(numSteps);
+}
+
+vec4 lerp(vec4 a, vec4 b, float t) {
+    return a * (1.0 - t) + b * t;
 }
 
 void main() {
@@ -71,6 +77,24 @@ void main() {
     vec4 finalColor = (ambientLightColor * u_color) + (lightColor * u_color * diffuse) + (lightColor * specular);
     // add the frensel effect
     finalColor = finalColor + (frenselColor * u_frensel_influence);
+
+    // add a grid to the object, based on x and z coordinates, but only if the normal is pointing up
+    float grid = 0.0;
+    if (mod(v_position.x, gridSize * 10.0) < gridSize || mod(v_position.z, gridSize * 10.0) < gridSize) {
+        grid = 1.0;
+    }
+
+    // multiply it by the dot product of the normal and the up vector
+    grid *= max(dot(normal, vec4(0, 1, 0, 0)), 0.0);
+
+    // multiply the grid by the distance from the origin
+    grid *= 1.0 - (length(v_position) / 50.0);
+
+    // clamp the grid value
+    grid = clamp(grid, 0.0, 1.0);
+
+    // now lerping the grid color with the final color
+    finalColor = lerp(finalColor, gridColor, grid);
 
     gl_FragColor = finalColor;
 }
