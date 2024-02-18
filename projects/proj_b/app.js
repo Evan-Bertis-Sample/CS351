@@ -127,6 +127,11 @@ async function initialize(canvasID) {
 	}
 	// set the viewport to be sized correctly
 
+	let width = canvasElement.scrollWidth;
+	let height = canvasElement.scrollHeight;
+
+	canvasElement.width = width / c_DOWNSAMPLE_FACTOR;
+	canvasElement.height = height / c_DOWNSAMPLE_FACTOR;
 	gl.viewport(0, 0, canvasElement.width, canvasElement.height);
 	gl.clearColor(0.05, 0.08, 0.13, 1.0);
 	gl.enable(gl.DEPTH_TEST);

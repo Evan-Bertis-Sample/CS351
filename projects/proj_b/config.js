@@ -3,7 +3,7 @@
 // this includes the material descriptors, and meshes used
 
 // Constants
-var c_DOWNSAMPLE_FACTOR = 4; // The factor to downsample the screen by
+var c_DOWNSAMPLE_FACTOR = 2; // The factor to downsample the screen by
 var c_PLAYER_MOVE_SPEED = 10;
 var c_PLAYER_ROT_SPEED = 10;
 var c_CAMERA_SENSITIVITY = 5;

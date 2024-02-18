@@ -4,7 +4,7 @@ precision mediump float;
 // constants
 const vec4 directionalLight = vec4(1, 2, 1, 0);
 const vec4 ambientLightColor = vec4(0.44, 0.45, 0.49, 1.0);
-const vec4 lightColor = vec4(0.95, 0.95, 0.72, 1.0);
+const vec4 lightColor = vec4(0.6, 0.54, 0.88, 1.0);
 const float cellShadingWeight = 0.4;
 
 uniform vec3 u_cameraPosition;
@@ -67,22 +67,8 @@ void main() {
     frensel = pow(frensel, 1.0 / u_frensel_border);
 
     vec4 frenselColor = u_frensel_color * frensel;
-
-    vec4 color = u_color;
-
-    // determine the color by the steepness of the normal
-    float steepness = (1.0 - dot(normal, vec4(0.0, 1.0, 0.0, 0.0)));
-
-    if (steepness < 0.15) {
-        color = vec4(0.3, 0.0, 1.0, 1.0);
-    }
-    else {
-        color = vec4(1.0, 0.0, 0.0, 1.0);
-    }
-
-
     // calculate the final color
-    vec4 finalColor = (ambientLightColor * color) + (lightColor * color * diffuse) + (lightColor * specular);
+    vec4 finalColor = (ambientLightColor * u_color) + (lightColor * u_color * diffuse) + (lightColor * specular);
     // add the frensel effect
     finalColor = finalColor + (frenselColor * u_frensel_influence);
 
