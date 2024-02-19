@@ -85,7 +85,7 @@ class Entity {
     // deltaTime : the time since the last frame
     update(deltaTime) {
         for (let i = 0; i < this.components.length; i++) {
-            if (this.components[i].disabled == true) 
+            if (this.components[i].disabled == true)
                 continue;
 
             this.components[i].update(deltaTime);
@@ -833,6 +833,8 @@ class CameraControllerComponent extends Component {
         this.mode = CAMERA_MODE.FOLLOW;
 
         this.playerController = g_ecs.getEntity(this.entityFollowID).getComponent(PlayerController);
+
+        this.lookAtOffset = new Vector3([0, 0, 0]);
     }
 
     start() {
@@ -861,12 +863,14 @@ class CameraControllerComponent extends Component {
             return;
         }
 
-        
+
         if (this.playerController != null)
             this.playerController.disabled = false;
 
         let entityTransform = entity.getTransform();
         let targetPosition = entityTransform.position.add(this.offset);
+
+        this.lookAtOffset = entityTransform.position.sub(this.camera.getPosition());
 
         // lerp between the current position and the target position
         let output = new Vector3();
@@ -913,6 +917,27 @@ class CameraControllerComponent extends Component {
         )
 
         this.camera.setPosition(newPosition);
+
+        // rotate the camera based on the input of the mouse
+        if (g_inputManager.getKeyState("mouse0") == ButtonState.DOWN) {
+            if (g_inputManager.clickedCanvas != this.cameraEntityID) {
+                return;
+            }
+
+            // move the lookAtOffset based on the mouse movement
+            let delta = g_inputManager.getMouseChange();
+            this.lookAtOffset.elements[0] += delta.elements[0] * -this.rotationSpeed * deltaTime;
+            this.lookAtOffset.elements[1] -= delta.elements[1] * -this.rotationSpeed * deltaTime;
+
+            this.lookAtPosition = this.camera.getPosition().add(this.lookAtOffset);
+            this.lookAtOffset.printMe();
+
+            // calculate the new rotation
+            let lookAtMatrix = new Matrix4().setLookAt(this.camera.getPosition().elements[0], this.camera.getPosition().elements[1], this.camera.getPosition().elements[2], this.lookAtPosition.elements[0], this.lookAtPosition.elements[1], this.lookAtPosition.elements[2], 0, 1, 0);
+            let rotation = new Quaternion().setFromRotationMatrix(lookAtMatrix);
+
+            this.camera.setRotation(rotation);
+        }
     }
 }
 
@@ -940,8 +965,7 @@ class MouseRotateComponent extends Component {
     update(deltaTime) {
         if (g_inputManager.getKeyState("mouse0") == ButtonState.DOWN) {
             // check that this is the correct canvas
-            if (g_inputManager.clickedCanvas != this.cameraEntityID)
-            {
+            if (g_inputManager.clickedCanvas != this.cameraEntityID) {
                 return;
             }
 
