@@ -49,7 +49,7 @@ function buildCamera() {
 					movementSpeed: 30,
 					offset: new Vector3([0, 30, 40]),
 					originalRotation: new Quaternion().setFromAxisAngle(1, 0, 0, 30),
-					rotationSpeed: 10,
+					rotationSpeed: 0.5,
 				}
 			),
 			new MouseRotateComponent(

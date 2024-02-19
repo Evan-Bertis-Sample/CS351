@@ -834,7 +834,9 @@ class CameraControllerComponent extends Component {
 
         this.playerController = g_ecs.getEntity(this.entityFollowID).getComponent(PlayerController);
 
-        this.lookAtOffset = new Vector3([0, 0, 0]);
+        this.lookAtRadius = 10;
+        this.phi = 0;
+        this.theta = 0;
     }
 
     start() {
@@ -870,7 +872,15 @@ class CameraControllerComponent extends Component {
         let entityTransform = entity.getTransform();
         let targetPosition = entityTransform.position.add(this.offset);
 
-        this.lookAtOffset = entityTransform.position.sub(this.camera.getPosition());
+        // remove the bobbing effect
+        targetPosition.elements[1] = this.offset.elements[1];
+
+        // calculate phi and theta, based upon the target position
+        // such that when the camera is in airplane mode, it will look at the target
+        let lookAtDirection = entityTransform.position.sub(this.camera.getPosition()).normalize();
+        // now calculate the theta and phi
+        this.theta = Math.atan2(lookAtDirection.elements[2], lookAtDirection.elements[0]);
+        this.phi = Math.acos(lookAtDirection.elements[1]);
 
         // lerp between the current position and the target position
         let output = new Vector3();
@@ -884,7 +894,7 @@ class CameraControllerComponent extends Component {
         let targetRotation = this.originalRotation;
 
         let outputRotation = new Quaternion();
-        Quaternion.slerp(rotation, targetRotation, outputRotation, this.rotationSpeed * deltaTime);
+        Quaternion.slerp(rotation, targetRotation, outputRotation, 3.0 * deltaTime);
 
         this.camera.setRotation(outputRotation);
 
@@ -924,20 +934,33 @@ class CameraControllerComponent extends Component {
                 return;
             }
 
-            // move the lookAtOffset based on the mouse movement
             let delta = g_inputManager.getMouseChange();
-            this.lookAtOffset.elements[0] += delta.elements[0] * -this.rotationSpeed * deltaTime;
-            this.lookAtOffset.elements[1] -= delta.elements[1] * -this.rotationSpeed * deltaTime;
 
-            this.lookAtPosition = this.camera.getPosition().add(this.lookAtOffset);
-            this.lookAtOffset.printMe();
-
-            // calculate the new rotation
-            let lookAtMatrix = new Matrix4().setLookAt(this.camera.getPosition().elements[0], this.camera.getPosition().elements[1], this.camera.getPosition().elements[2], this.lookAtPosition.elements[0], this.lookAtPosition.elements[1], this.lookAtPosition.elements[2], 0, 1, 0);
-            let rotation = new Quaternion().setFromRotationMatrix(lookAtMatrix);
-
-            this.camera.setRotation(rotation);
+            // calculate the new theta and phi
+            this.theta += delta.elements[0] * -this.rotationSpeed * deltaTime;
+            this.phi += delta.elements[1] * -this.rotationSpeed * deltaTime;
         }
+
+        // clamp the phi
+        if (this.phi < 0.1) {
+            this.phi = 0.1;
+        }
+
+        if (this.phi > Math.PI - 0.1) {
+            this.phi = Math.PI - 0.1;
+        } 
+
+        // now calculate the look at position, based upon the theta and phi
+        let x = this.lookAtRadius * Math.sin(this.phi) * Math.cos(this.theta);
+        let y = this.lookAtRadius * Math.cos(this.phi);
+        let z = this.lookAtRadius * Math.sin(this.phi) * Math.sin(this.theta);
+
+        let lookAtPosition = new Vector3([x, y, z]).add(newPosition);
+        // now look at the target
+        let lookAtMatrix = new Matrix4().setLookAt(newPosition.elements[0], newPosition.elements[1], newPosition.elements[2], lookAtPosition.elements[0], lookAtPosition.elements[1], lookAtPosition.elements[2], 0, 1, 0);
+        let rotation = new Quaternion().setFromRotationMatrix(lookAtMatrix);
+
+        this.camera.setRotation(rotation);
     }
 }
 
