@@ -52,7 +52,7 @@ function buildCamera() {
 					rotationSpeed: 0.5,
 				}
 			),
-			new MouseRotateComponent(
+			new OrthographicCameraControllerComponent(
 				"webgl-2",
 				{
 					rotationSpeed: 1,
@@ -519,7 +519,7 @@ function buildCrystals()
 		meshName = "",
 		materialName = "",
 		components = [
-			new RotateComponent(new Vector3([0, 1, 0]), 0.5),
+			new RotateOnMouseDragComponent(),
 			new BobComponent(0.2, 5),
 		]
 	);

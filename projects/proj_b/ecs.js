@@ -948,7 +948,7 @@ class CameraControllerComponent extends Component {
 
         if (this.phi > Math.PI - 0.1) {
             this.phi = Math.PI - 0.1;
-        } 
+        }
 
         // now calculate the look at position, based upon the theta and phi
         let x = this.lookAtRadius * Math.sin(this.phi) * Math.cos(this.theta);
@@ -964,7 +964,7 @@ class CameraControllerComponent extends Component {
     }
 }
 
-class MouseRotateComponent extends Component {
+class OrthographicCameraControllerComponent extends Component {
     constructor(cameraEntityID, { rotationSpeed = 1, lookAtPosition = new Vector3([0, 0, 0]) }) {
         super();
         this.cameraEntityID = cameraEntityID;
@@ -1025,4 +1025,42 @@ class MouseRotateComponent extends Component {
         this.camera.setRotation(rotation);
     }
 
+}
+
+class RotateOnMouseDragComponent extends Component {
+    constructor(canvasID = "webgl", camerControllerEntity = "camera controller", rotationSpeed = 10) {
+        super();
+        this.rotationSpeed = rotationSpeed;
+        this.previousMousePosition = new Vector3([0, 0, 0]);
+
+        this.camerControllerEntity = camerControllerEntity;
+        this.canvasID = canvasID;
+    }
+
+    start() {
+    }
+
+    update(deltaTime) {
+        if (this.cameraController == null) {
+            this.cameraController = g_ecs.getEntity(this.camerControllerEntity).getComponent(CameraControllerComponent);
+        }
+        if (this.cameraController != null) {
+            if (this.cameraController.mode == CAMERA_MODE.AIRPLANE) {
+                return;
+            }
+        }
+
+        if (g_inputManager.getKeyState("mouse0") == ButtonState.DOWN) {
+
+            // check that this is the correct canvas
+            if (g_inputManager.clickedCanvas != this.canvasID) {
+                return;
+            }
+
+            let delta = g_inputManager.getMouseChange();
+
+            let rotation = new Quaternion().setFromAxisAngle(0, 1, 0, delta.elements[0] * -this.rotationSpeed * deltaTime);
+            this.transform.rotation = rotation.multiplySelf(this.transform.rotation);
+        }
+    }
 }
