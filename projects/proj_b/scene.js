@@ -139,6 +139,21 @@ function buildEnviornment() {
 		components = []
 	);
 
+	// build a crystal below the platform
+	let crystalEntity = g_ecs.createEntity(
+		entityName = "crystal_below_platform",
+		parent = null,
+		position = new Vector3([0, -60, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([10, 10, 10]),
+		meshName = "crystal",
+		materialName = "crystal_blue",
+		components = [
+			new RotateComponent(new Vector3([0, 1, 0]), 100),
+			new BobComponent(0.2, 5),
+		]
+	);
+
 	// let planeScale = c_WALKABLE_RADIUS + 3;
 	// let planeEntity = g_ecs.createEntity(
 	// 	entityName = "plane",
