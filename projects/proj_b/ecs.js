@@ -807,6 +807,11 @@ class ShakerComponent extends Component {
     }
 }
 
+const CAMERA_MODE = {
+    FOLLOW: 0,
+    AIRPLANE: 1,
+}
+
 class CameraControllerComponent extends Component {
     constructor(cameraEntityID, entityFollowID, { movementSpeed = 1, rotationSpeed = 1, leanAmount = 10, originalRotation = new Quaternion(), offset = new Vector3([0, 0, 0]) }) {
         super();
@@ -820,12 +825,30 @@ class CameraControllerComponent extends Component {
         this.entityFollowID = entityFollowID;
 
         this.camera = g_sceneGraph.getCamera(this.cameraEntityID);
+
+        this.mode = CAMERA_MODE.FOLLOW;
     }
 
     start() {
     }
 
     update(deltaTime) {
+        if (g_inputManager.getKeyState(" ") == ButtonState.DOWN_THIS_FRAME) {
+            console.log("Switching camera mode");
+            this.mode = (this.mode + 1) % 2;
+        }
+
+        switch (this.mode) {
+            case CAMERA_MODE.FOLLOW:
+                this.handleFollowMode(deltaTime);
+                break;
+            case CAMERA_MODE.AIRPLANE:
+                this.handleAirplaneMode(deltaTime);
+                break;
+        }
+    }
+
+    handleFollowMode(deltaTime) {
         // follow the entity
         let entity = g_ecs.getEntity(this.entityFollowID);
         if (entity == null) {
@@ -841,6 +864,10 @@ class CameraControllerComponent extends Component {
 
         // now set the camera position to the target position
         this.camera.setPosition(output);
+    }
+
+    handleAirplaneMode(deltaTime) {
+
     }
 }
 

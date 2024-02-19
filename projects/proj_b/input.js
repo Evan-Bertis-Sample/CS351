@@ -3,9 +3,9 @@
 
 // Enum for button states
 const ButtonState = {
-    UP_THIS_FRAME: 0,
-    DOWN_THIS_FRAME: 1,
-    DOWN: 2,
+    DOWN_THIS_FRAME: 0,
+    DOWN: 1,
+    UP_THIS_FRAME: 2,
     UP: 3,
 };
 
@@ -162,7 +162,6 @@ class InputManager {
         // check for mouse movement
         this.mouseChange.elements[0] *= 0.5;
         this.mouseChange.elements[1] *= 0.5;
-
     }
 
 
@@ -171,30 +170,30 @@ class InputManager {
     getAxis(axisSet) {
         let axis = new Vector3([0, 0, 0]);
         if (axisSet == AxisSets.ARROW_KEYS) {
-            if (this.getKeyState("ArrowUp") == ButtonState.DOWN) {
+            if (this.getKeyState("ArrowUp") <= ButtonState.DOWN) {
                 axis.elements[1] += 1;
             }
-            if (this.getKeyState("ArrowDown") == ButtonState.DOWN) {
+            if (this.getKeyState("ArrowDown") <= ButtonState.DOWN) {
                 axis.elements[1] -= 1;
             }
-            if (this.getKeyState("ArrowLeft") == ButtonState.DOWN) {
+            if (this.getKeyState("ArrowLeft") <= ButtonState.DOWN) {
                 axis.elements[0] -= 1;
             }
-            if (this.getKeyState("ArrowRight") == ButtonState.DOWN) {
+            if (this.getKeyState("ArrowRight") <= ButtonState.DOWN) {
                 axis.elements[0] += 1;
             }
         }
         else if (axisSet == AxisSets.WASD_KEYS) {
-            if (this.getKeyState("w") == ButtonState.DOWN) {
+            if (this.getKeyState("w") <= ButtonState.DOWN) {
                 axis.elements[1] += 1;
             }
-            if (this.getKeyState("s") == ButtonState.DOWN) {
+            if (this.getKeyState("s") <= ButtonState.DOWN) {
                 axis.elements[1] -= 1;
             }
-            if (this.getKeyState("a") == ButtonState.DOWN) {
+            if (this.getKeyState("a") <= ButtonState.DOWN) {
                 axis.elements[0] -= 1;
             }
-            if (this.getKeyState("d") == ButtonState.DOWN) {
+            if (this.getKeyState("d") <= ButtonState.DOWN) {
                 axis.elements[0] += 1;
             }
         }

@@ -93,8 +93,8 @@ async function main() {
 		let newTime = Date.now();
 		g_deltaTime = (newTime - g_timeElapsed) / 1000;
 		g_timeElapsed = newTime;
-		g_inputManager.update();
 		g_ecs.update(g_deltaTime);
+		g_inputManager.update();
 		for (let [key, value] of g_elementToCanvas) {
 			drawAll(value);
 		}
