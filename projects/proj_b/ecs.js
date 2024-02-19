@@ -861,10 +861,10 @@ class MouseDragRotationComponent extends Component {
     update(deltaTime) {
         if (g_inputManager.getKeyState("mouse0") == ButtonState.DOWN) {
             console.log("Mouse down");
-            let mousePosition = g_inputManager.getMousePos();
-            let delta = mousePosition.sub(this.previousMousePosition);
-            let rotation = new Quaternion().setFromAxisAngle(this.rotationAxis.elements[0], this.rotationAxis.elements[1], this.rotationAxis.elements[2], this.rotationSpeed * deltaTime * delta.elements[0]);
-            // this.camera.setRotation(rotation.multiply(this.camera.getRotation()));
+            let delta = g_inputManager.getMouseChange();
+
+            let rotation = new Quaternion().setFromAxisAngle(this.rotationAxis.elements[0], this.rotationAxis.elements[1], this.rotationAxis.elements[2], this.rotationSpeed * delta.elements[0]);
+            this.camera.setRotation(rotation.multiplySelf(this.camera.getRotation()));
         }
     }
 }
