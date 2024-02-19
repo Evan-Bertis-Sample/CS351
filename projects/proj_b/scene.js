@@ -14,6 +14,8 @@ function buildScene() {
 	buildArrows();
 	buildCrystals();
 
+	buildPlanet();
+
 	// build an arrow set for the orthographic camera
 	let arrowParent = g_ecs.createEntity(
 		entityName = "ortho_arrow_parent",
@@ -612,4 +614,61 @@ function buildCrystal(identifier, position, scale, parent) {
 	}
 
 	return crystalEntity;
+}
+
+function buildPlanet(position)
+{
+	let parentEntity = g_ecs.createEntity(
+		entityName = "planet_parent",
+		parent = null,
+		position = new Vector3([0, 0, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([1, 1, 1]),
+		meshName = "",
+		materialName = "",
+		components = [
+			new RotateComponent(new Vector3([0, 1, 0]), 10),
+		]
+	);
+
+	let planetEntity = g_ecs.createEntity(
+		entityName = "planet",
+		parent = parentEntity,
+		position = new Vector3([0, 0, 200]),
+		rotation = new Quaternion(),
+		scale = new Vector3([30, 30, 30]),
+		meshName = "hex_sphere",
+		materialName = "crystal_pink",
+		components = [
+			new RotateComponent(new Vector3([0, 1, 0]), 4),
+		]
+	);
+
+	// add a moon rotating around the planet
+	let moonEntity = g_ecs.createEntity(
+		entityName = "moon",
+		parent = planetEntity,
+		position = new Vector3([0, 0, 2]),
+		rotation = new Quaternion(),
+		scale = new Vector3([0.3, 0.3, 0.3]),
+		meshName = "hex_sphere",
+		materialName = "crystal_blue",
+		components = [
+			new RotateComponent(new Vector3([1, 0, 0]), 100),
+		]
+	);
+
+	// add a moon rotating around the mooon
+	let moonMoonEntity = g_ecs.createEntity(
+		entityName = "moon_moon",
+		parent = moonEntity,
+		position = new Vector3([0, 2, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([.5, .5, .5]),
+		meshName = "hex_sphere",
+		materialName = "crystal_purple",
+		components = [
+			new RotateComponent(new Vector3([0, 1, 0]), 0.5),
+		]
+	);
 }
