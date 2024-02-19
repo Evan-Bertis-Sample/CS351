@@ -26,6 +26,8 @@ class InputManager {
         // Callbacks are a function that takes the new state of the button
         this.buttonCallbacks = {};
         this.axisCallbacks = {};
+
+        this.clickedCanvas = ""
     }
 
     // Ataches the input manager to the document
@@ -52,6 +54,9 @@ class InputManager {
 
     mouseDownHandler(event) {
         this.keyStates["mouse0"] = ButtonState.DOWN_THIS_FRAME;
+        // get the canvas that was clicked
+        this.clickedCanvas = event.target.id;
+        
         // call the callbacks
         if (this.buttonCallbacks["mouse0"] != undefined) {
             for (let i = 0; i < this.buttonCallbacks["mouse0"].length; i++) {

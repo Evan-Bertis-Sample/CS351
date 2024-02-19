@@ -890,7 +890,7 @@ class CameraControllerComponent extends Component {
 
         if (this.playerController != null)
             this.playerController.disabled = true;
-        
+
         // allow the user to move the camera around with WASD, and rotate with the mouse
         let xzAxis = g_inputManager.getAxis(AxisSets.WASD_KEYS);
         let delta = g_inputManager.getMouseChange();
@@ -939,11 +939,17 @@ class MouseRotateComponent extends Component {
 
     update(deltaTime) {
         if (g_inputManager.getKeyState("mouse0") == ButtonState.DOWN) {
+            // check that this is the correct canvas
+            if (g_inputManager.clickedCanvas != this.cameraEntityID)
+            {
+                return;
+            }
+
             console.log("Mouse down");
             let delta = g_inputManager.getMouseChange();
 
             // calculate the new theta
-            this.theta += delta.elements[0] * this.rotationSpeed * deltaTime;
+            this.theta += delta.elements[0] * -this.rotationSpeed * deltaTime;
 
             this.setPositionAndRotation();
 
