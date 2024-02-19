@@ -16,6 +16,7 @@ uniform float u_specular_influence;
 uniform float u_frensel_influence;
 uniform vec4 u_frensel_color;
 uniform float u_frensel_border;
+uniform float u_show_grid;
 
 // varying variables -- passed from vertex shader
 varying vec4 v_position;
@@ -35,7 +36,7 @@ void main() {
     // normalize the normal vector
     vec4 normal = normalize(v_normal);
 
-    if (v_enable_lighting == 0.0) {
+    if(v_enable_lighting == 0.0) {
         vec4 normalColor = vec4(normal.x, normal.y, normal.z, 1.0) * 0.5 + 0.5;
         // mix the normal color with the object color
         gl_FragColor = normalColor;
@@ -80,21 +81,24 @@ void main() {
 
     // add a grid to the object, based on x and z coordinates, but only if the normal is pointing up
     float grid = 0.0;
-    if (mod(v_position.x, gridSize * 10.0) < gridSize || mod(v_position.z, gridSize * 10.0) < gridSize) {
+    if(mod(v_position.x, gridSize * 10.0) < gridSize || mod(v_position.z, gridSize * 10.0) < gridSize) {
         grid = 1.0;
     }
 
     // multiply it by the dot product of the normal and the up vector
-    grid *= max(dot(normal, vec4(0, 1, 0, 0)), 0.0);
 
-    // multiply the grid by the distance from the origin
-    grid *= 1.0 - (length(v_position) / 50.0);
+    if(u_show_grid > 0.0) {
+        grid *= max(dot(normal, vec4(0, 1, 0, 0)), 0.0);
 
-    // clamp the grid value
-    grid = clamp(grid, 0.0, 1.0);
+        // multiply the grid by the distance from the origin
+        grid *= 1.0 - (length(v_position) / 50.0);
 
-    // now lerping the grid color with the final color
-    finalColor = lerp(finalColor, gridColor, grid);
+        // clamp the grid value
+        grid = clamp(grid, 0.0, 1.0);
+
+        // now lerping the grid color with the final color
+        finalColor = lerp(finalColor, gridColor, grid);
+    }
 
     gl_FragColor = finalColor;
 }
