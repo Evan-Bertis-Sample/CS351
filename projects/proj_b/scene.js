@@ -51,10 +51,10 @@ function buildCamera() {
 					originalRotation: new Quaternion().setFromAxisAngle(1, 0, 0, 30),
 				}
 			),
-			new MouseDragRotationComponent(
+			new MouseRotateComponent(
 				"webgl-2",
 				{
-					rotationSpeed: 0.1,
+					rotationSpeed: 1,
 				}
 			)
 		]

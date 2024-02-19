@@ -34,7 +34,7 @@ var c_CAMERAS = new Map([
 	[
 		"webgl-2", new CameraDescriptor(
 			"webgl-2",
-			new Vector3([400, 550, 400]),
+			new Vector3([100, 650, 100]),
 			new Quaternion().setFromAxisAngle(1, 0, 0, 45).multiplySelf(new Quaternion().setFromAxisAngle(0, 1, 0, -45)),
 			{
 				mode: "orthographic",

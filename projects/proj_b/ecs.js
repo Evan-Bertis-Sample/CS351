@@ -844,15 +844,22 @@ class CameraControllerComponent extends Component {
     }
 }
 
-class MouseDragRotationComponent extends Component {
-    constructor(cameraEntityID, { rotationSpeed = 1, rotationAxis = new Vector3([0, 1, 0]) }) {
+class MouseRotateComponent extends Component {
+    constructor(cameraEntityID, { rotationSpeed = 1, lookAtPosition = new Vector3([0, 0, 0]) }) {
         super();
         this.cameraEntityID = cameraEntityID;
         this.rotationSpeed = rotationSpeed;
-        this.rotationAxis = rotationAxis;
+        this.lookAtPosition = lookAtPosition;
         this.previousMousePosition = new Vector3([0, 0, 0]);
-
         this.camera = g_sceneGraph.getCamera(this.cameraEntityID);
+        this.initalPosition = this.camera.getPosition();
+        this.radius = this.initalPosition.distanceTo(this.lookAtPosition);
+        console.log("Radius: " + this.radius);
+
+        // calculate the inital theta
+        this.theta = Math.atan2(this.initalPosition.elements[0], this.initalPosition.elements[2]);
+
+        this.setPositionAndRotation();
     }
 
     start() {
@@ -863,8 +870,34 @@ class MouseDragRotationComponent extends Component {
             console.log("Mouse down");
             let delta = g_inputManager.getMouseChange();
 
-            let rotation = new Quaternion().setFromAxisAngle(this.rotationAxis.elements[0], this.rotationAxis.elements[1], this.rotationAxis.elements[2], this.rotationSpeed * delta.elements[0]);
-            this.camera.setRotation(rotation.multiplySelf(this.camera.getRotation()));
+            // calculate the new theta
+            this.theta += delta.elements[0] * this.rotationSpeed * deltaTime;
+
+            this.setPositionAndRotation();
+
+            // // now look at the target
+            // let lookAtRotation = new Quaternion().setFromUnitVectors(new Vector3([0, 1, 0]), this.lookAtPosition.sub(newPosition).normalize());
+            // this.camera.setRotation(lookAtRotation);
         }
     }
+
+    setPositionAndRotation() {
+        // calculate the new position
+        let x = this.radius * Math.sin(this.theta);
+        let z = this.radius * Math.cos(this.theta);
+
+        let newPosition = new Vector3([x, this.initalPosition.elements[1], z]);
+
+        // add the look at position
+        newPosition = newPosition.add(this.lookAtPosition);
+        // set the new position
+        this.camera.setPosition(newPosition)
+
+        // now calculate the rotation
+        let lookAtMatrix = new Matrix4().setLookAt(newPosition.elements[0], newPosition.elements[1], newPosition.elements[2], this.lookAtPosition.elements[0], this.lookAtPosition.elements[1], this.lookAtPosition.elements[2], 0, 1, 0);
+        let rotation = new Quaternion().setFromRotationMatrix(lookAtMatrix);
+
+        this.camera.setRotation(rotation);
+    }
+
 }
