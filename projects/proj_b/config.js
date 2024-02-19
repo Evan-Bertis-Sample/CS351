@@ -66,6 +66,48 @@ var c_MATERIALS = [
 		]
 	),
 	new MaterialDescriptor(
+		"red",
+		"static/materials/base",
+		[
+			new MaterialParameter("u_color", new Vector4([1.0, 0.0, 0.0, 1.0])),
+			new MaterialParameter("u_diffuse_influence", 0.8),
+			new MaterialParameter("u_specular_influence", 0.2),
+			new MaterialParameter("u_frensel_influence", 0.0),
+			new MaterialParameter("u_frensel_color", new Vector4([0.0, 0.0, 0.0, 1.0])),
+			new MaterialParameter("u_frensel_border", 1.0),
+			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
+			new MaterialParameter("u_show_grid", 0.0),
+		]
+	),
+	new MaterialDescriptor(
+		"green",
+		"static/materials/base",
+		[
+			new MaterialParameter("u_color", new Vector4([0.0, 1.0, 0.0, 1.0])),
+			new MaterialParameter("u_diffuse_influence", 0.8),
+			new MaterialParameter("u_specular_influence", 0.2),
+			new MaterialParameter("u_frensel_influence", 0.0),
+			new MaterialParameter("u_frensel_color", new Vector4([0.0, 0.0, 0.0, 1.0])),
+			new MaterialParameter("u_frensel_border", 1.0),
+			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
+			new MaterialParameter("u_show_grid", 0.0),
+		]
+	),
+	new MaterialDescriptor(
+		"blue",
+		"static/materials/base",
+		[
+			new MaterialParameter("u_color", new Vector4([0.0, 0.0, 1.0, 1.0])),
+			new MaterialParameter("u_diffuse_influence", 0.8),
+			new MaterialParameter("u_specular_influence", 0.2),
+			new MaterialParameter("u_frensel_influence", 0.0),
+			new MaterialParameter("u_frensel_color", new Vector4([0.0, 0.0, 0.0, 1.0])),
+			new MaterialParameter("u_frensel_border", 1.0),
+			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
+			new MaterialParameter("u_show_grid", 0.0),
+		]
+	),
+	new MaterialDescriptor(
 		"robot_inners",
 		"static/materials/base",
 		[
@@ -171,6 +213,7 @@ var c_MESHES = [
 	"./static/meshes/gyro.obj",
 	"./static/meshes/platform.obj",
 	"./static/meshes/plane.obj",
+	"./static/meshes/arrow.obj"
 ];
 
 

@@ -11,6 +11,7 @@ function buildScene() {
 	// buildCamera();
 	buildEnviornment();
 	buildRobot();
+	buildArrows();
 
 	console.log("Scene built");
 }
@@ -30,7 +31,7 @@ function buildCamera() {
 				"webgl", "Robot Parent",
 				{
 					movementSpeed: 10,
-					offset : new Vector3([0, 30, 40]),
+					offset: new Vector3([0, 30, 40]),
 					originalRotation: new Quaternion().setFromAxisAngle(1, 0, 0, 30),
 				}
 			)
@@ -145,8 +146,7 @@ function buildStar(identifier, position, scale, parent, starMaterial) {
 	return starEntity;
 }
 
-function buildDysonSphere(identifier, position, scale, innerMaterial, outerMaterial, parent)
-{
+function buildDysonSphere(identifier, position, scale, innerMaterial, outerMaterial, parent) {
 	let sphereEntity = g_ecs.createEntity(
 		entityName = identifier,
 		parent = parent,
@@ -202,6 +202,20 @@ function buildRobot() {
 			),
 		]
 	);
+
+	// add an arrow ontop of the robot
+	let arrowParent = g_ecs.createEntity(
+		entityName = "arrow_parent",
+		parent = robotBaseEntity,
+		position = new Vector3([0, 2, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([1, 1, 1]),
+		meshName = "",
+		materialName = "",
+		components = []
+	);
+
+	buildArrows(arrowParent);
 
 	let robotInnersEntity = g_ecs.createEntity(
 		entityName = "robot_inners",
@@ -383,6 +397,57 @@ function buildLeg(i, numLegs, legDistance, segmentLength, robotBaseEntity, groun
 		scale = new Vector3([segmentSize, segmentSize, segmentSize]),
 		meshName = "sphere",
 		materialName = "robot_outers",
+		components = []
+	);
+}
+
+function buildArrows(parent) {
+	if (parent == undefined || parent == null) {
+		parent = g_ecs.createEntity(
+			entityName = "arrow_parent",
+			parent = null,
+			position = new Vector3([0, 0, 0]),
+			rotation = new Quaternion(),
+			scale = new Vector3([4, 4, 4]),
+			meshName = "",
+			materialName = "",
+			components = []
+		);
+	}
+
+	// create the forward arrow
+	let forwardArrow = g_ecs.createEntity(
+		entityName = "forward_arrow",
+		parent = parent,
+		position = new Vector3([0, 0, 0]),
+		rotation = new Quaternion().setFromAxisAngle(1, 0, 0, -90),
+		scale = new Vector3([1, 1, 1]),
+		meshName = "arrow",
+		materialName = "blue",
+		components = []
+	);
+
+	// create the up arrow
+	let upwardArrow = g_ecs.createEntity(
+		entityName = "upward_arrow",
+		parent = parent,
+		position = new Vector3([0, 0, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([1, 1, 1]),
+		meshName = "arrow",
+		materialName = "green",
+		components = []
+	);
+
+	// create the right arrow
+	let rightArrow = g_ecs.createEntity(
+		entityName = "right_arrow",
+		parent = parent,
+		position = new Vector3([0, 0, 0]),
+		rotation = new Quaternion().setFromAxisAngle(0, 0, 1, -90),
+		scale = new Vector3([1, 1, 1]),
+		meshName = "arrow",
+		materialName = "red",
 		components = []
 	);
 }
