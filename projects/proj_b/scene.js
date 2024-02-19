@@ -12,6 +12,7 @@ function buildScene() {
 	buildEnviornment();
 	buildRobot();
 	buildArrows();
+	buildCrystals();
 
 	console.log("Scene built");
 }
@@ -479,4 +480,99 @@ function buildArrows(parent) {
 		materialName = "red",
 		components = []
 	);
+}
+
+function buildCrystals()
+{
+	// build the crystals
+	let numCrystalsPerLayer = 12;
+	let layerRadii = [30, 40, 50];
+
+	let crystalParent = g_ecs.createEntity(
+		entityName = "crystal_parent",
+		parent = null,
+		position = new Vector3([0, 1, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([1, 1, 1]),
+		meshName = "",
+		materialName = "",
+		components = [
+			new RotateComponent(new Vector3([0, 1, 0]), 0.5),
+			new BobComponent(0.2, 5),
+		]
+	);
+
+	// build the crystals
+	// such that they spiral outwards
+	for (let i = 0; i < layerRadii.length; i++) {
+		let radius = layerRadii[i];
+		// calculate the offset for the spriral based on the radius
+		let thetaOffset = radius * 0.5;
+		let height = i * 5;
+
+		for (let j = 0; j < numCrystalsPerLayer; j++) {
+			let theta = (j / numCrystalsPerLayer) * 2 * Math.PI + thetaOffset;
+			let x = Math.cos(theta) * radius;
+			let z = Math.sin(theta) * radius;
+			let y = height;
+			let pos = new Vector3([x, y, z]);
+			let scale = new Vector3([1, 1, 1]);
+			let identifier = "crystal_" + i + "_" + j;
+			let entity = buildCrystal(identifier, pos, scale, crystalParent);
+		}
+	}
+}
+
+function buildCrystal(identifier, position, scale, parent) {
+	let crystalMaterials = [
+		"crystal_blue",
+		"crystal_purple",
+		"crystal_pink",
+	];
+
+	// choose a random material
+	let materialIndex = Math.floor(Math.random() * crystalMaterials.length);
+	let material = crystalMaterials[materialIndex];
+
+	console.log(material)
+
+	let crystalEntity = g_ecs.createEntity(
+		entityName = identifier,
+		parent = parent,
+		position = position,
+		rotation = new Quaternion(),
+		scale = scale,
+		meshName = "crystal",
+		materialName = material,
+		components = [
+			new RotateComponent(new Vector3([0, 1, 0]), 100),
+		]
+	);
+
+	// add 3 more crystals around the crystal
+	let crystalOffset = 3;
+	let crystalScale = 0.5;
+	for (let i = 0; i < 3; i++) {
+		let theta = (i / 3) * 2 * Math.PI;
+		let x = Math.cos(theta) * crystalOffset;
+		let z = Math.sin(theta) * crystalOffset;
+		let y = 0;
+		let pos = new Vector3([x, y, z]);
+		let scale = new Vector3([crystalScale, crystalScale, crystalScale]);
+		let identifier = "crystal_" + i + "_" + i;
+		let entity = g_ecs.createEntity(
+			entityName = identifier,
+			parent = crystalEntity,
+			position = pos,
+			rotation = new Quaternion(),
+			scale = scale,
+			meshName = "crystal",
+			materialName = material,
+			components = [
+				new RotateComponent(new Vector3([0, 1, 0]), 100),
+			]
+		);
+	}
+
+	return crystalEntity;
 }

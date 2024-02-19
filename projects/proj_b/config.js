@@ -183,6 +183,48 @@ var c_MATERIALS = [
 		]
 	),
 	new MaterialDescriptor(
+		"crystal_blue",
+		"static/materials/base",
+		[
+			new MaterialParameter("u_color", new Vector4([0.0, 0.8, 1.0, 1.0])),
+			new MaterialParameter("u_diffuse_influence", 1.0),
+			new MaterialParameter("u_specular_influence", 1.0),
+			new MaterialParameter("u_frensel_influence", 1.0),
+			new MaterialParameter("u_frensel_color", new Vector4([1.0, 1.0, 1.0, 1.0])),
+			new MaterialParameter("u_frensel_border", 1.5),
+			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
+			new MaterialParameter("u_show_grid", 0.0),
+		]
+	),
+	new MaterialDescriptor(
+		"crystal_purple",
+		"static/materials/base",
+		[
+			new MaterialParameter("u_color", new Vector4([0.3, 0.0, 1.0, 1.0])),
+			new MaterialParameter("u_diffuse_influence", 1.0),
+			new MaterialParameter("u_specular_influence", 1.0),
+			new MaterialParameter("u_frensel_influence", 1.0),
+			new MaterialParameter("u_frensel_color", new Vector4([1.0, 1.0, 1.0, 1.0])),
+			new MaterialParameter("u_frensel_border", 1.5),
+			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
+			new MaterialParameter("u_show_grid", 0.0),
+		]
+	),
+	new MaterialDescriptor(
+		"crystal_pink",
+		"static/materials/base",
+		[
+			new MaterialParameter("u_color", new Vector4([0.7, 0.0, 1.0, 1.0])),
+			new MaterialParameter("u_diffuse_influence", 1.0),
+			new MaterialParameter("u_specular_influence", 1.0),
+			new MaterialParameter("u_frensel_influence", 1.0),
+			new MaterialParameter("u_frensel_color", new Vector4([1.0, 1.0, 1.0, 1.0])),
+			new MaterialParameter("u_frensel_border", 1.5),
+			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
+			new MaterialParameter("u_show_grid", 0.0),
+		]
+	),
+	new MaterialDescriptor(
 		"platform",
 		"static/materials/base",
 		[
@@ -215,6 +257,7 @@ var c_MESHES = [
 	"./static/meshes/plane.obj",
 	"./static/meshes/arrow.obj",
 	"./static/meshes/robot_head.obj",
+	"./static/meshes/crystal.obj",
 ];
 
 
