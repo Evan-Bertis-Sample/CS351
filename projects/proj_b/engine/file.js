@@ -33,6 +33,8 @@ function loadFile(path)
 // path: the path to the resource
 async function loadFileFetch(path)
 {
+    // add a ./ to go back to the root directory
+    path = "./" + path;
     let resource = await fetch(path);
     if (!resource.ok) {
         console.log("Resource not found: " + path);

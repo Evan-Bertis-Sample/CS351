@@ -6,8 +6,8 @@
 # I don't know whether testing will be conducted with an internet connection or not
 
 # CONFIG
-STATIC_DIR = './static'
-OUTPUT = 'static.js'
+STATIC_DIR = '././static'
+OUTPUT = 'engine/static.js'
 DICT_NAME = 'g_static'
 ALLOWED_FILE_TYPES = ['.css', '.glsl', '.obj']
 
