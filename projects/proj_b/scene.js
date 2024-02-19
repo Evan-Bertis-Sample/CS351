@@ -14,6 +14,21 @@ function buildScene() {
 	buildArrows();
 	buildCrystals();
 
+	// build an arrow set for the orthographic camera
+	let arrowParent = g_ecs.createEntity(
+		entityName = "ortho_arrow_parent",
+		parent = null,
+		position = new Vector3([-120, -40, 90]),
+		rotation = new Quaternion(),
+		scale = new Vector3([20, 20, 20]),
+		meshName = "",
+		materialName = "",
+		components = []
+	);
+
+	buildArrows(arrowParent);
+
+
 	console.log("Scene built");
 }
 

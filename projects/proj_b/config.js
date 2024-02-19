@@ -34,8 +34,8 @@ var c_CAMERAS = new Map([
 	[
 		"webgl-2", new CameraDescriptor(
 			"webgl-2",
-			new Vector3([0, 700, 0]),
-			new Quaternion().setFromAxisAngle(1, 0, 0, 90),
+			new Vector3([400, 550, 400]),
+			new Quaternion().setFromAxisAngle(1, 0, 0, 45).multiplySelf(new Quaternion().setFromAxisAngle(0, 1, 0, -45)),
 			{
 				mode: "orthographic",
 				allowDynamicReize: true,
@@ -231,7 +231,7 @@ var c_MATERIALS = [
 			new MaterialParameter("u_color", new Vector4([1.0, 1.0, 1.0, 1.0])),
 			new MaterialParameter("u_diffuse_influence", 0.8),
 			new MaterialParameter("u_specular_influence", 0.2),
-			new MaterialParameter("u_frensel_influence", 1.0),
+			new MaterialParameter("u_frensel_influence", 0.1),
 			new MaterialParameter("u_frensel_color", new Vector4([1.0, 1.0, 1.0, 1.0])),
 			new MaterialParameter("u_frensel_border", 0.5),
 			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),

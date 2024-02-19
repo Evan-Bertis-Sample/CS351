@@ -91,7 +91,7 @@ void main() {
         grid *= max(dot(normal, vec4(0, 1, 0, 0)), 0.0);
 
         // multiply the grid by the distance from the origin
-        grid *= 1.0 - (length(v_position) / 50.0);
+        grid *= 1.0 - (length(v_position) / 60.0);
 
         // clamp the grid value
         grid = clamp(grid, 0.0, 1.0);
