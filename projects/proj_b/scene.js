@@ -182,7 +182,7 @@ function buildRobot() {
 	let robotBaseEntity = g_ecs.createEntity(
 		entityName = "Robot Parent",
 		parent = null,
-		position = new Vector3([0, 0, 0]),
+		position = new Vector3([0, 0, 15]),
 		rotation = new Quaternion(),
 		scale = new Vector3([1, 1, 1]),
 		meshName = "",
@@ -486,7 +486,7 @@ function buildCrystals()
 {
 	// build the crystals
 	let numCrystalsPerLayer = 12;
-	let layerRadii = [30, 40, 50];
+	let layerRadii = [40, 50];
 
 	let crystalParent = g_ecs.createEntity(
 		entityName = "crystal_parent",
