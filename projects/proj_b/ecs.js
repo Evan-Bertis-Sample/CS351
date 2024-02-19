@@ -849,7 +849,7 @@ class CameraControllerComponent extends Component {
             this.mode = (this.mode + 1) % 2;
 
             // now update the camera mode being displayed
-            let cameraModeText = (this.mode == CAMERA_MODE.FOLLOW) ? "Follow" : "Airplane";
+            let cameraModeText = (this.mode == CAMERA_MODE.FOLLOW) ? "Follow" : "Free";
             document.getElementById(this.cameraHTMLID).innerText = "Camera Mode: " + cameraModeText;
         }
 

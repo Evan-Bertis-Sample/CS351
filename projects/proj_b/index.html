@@ -2,86 +2,154 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8" />
-  <title>Project B</title>
+    <meta charset="utf-8" />
+    <title>Project B</title>
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="static/css/base.css" />
-  <link rel="stylesheet" href="static/css/footer.css" />
+    <!-- CSS -->
+    <link rel="stylesheet" href="static/css/base.css" />
+    <link rel="stylesheet" href="static/css/footer.css" />
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&display=swap" rel="stylesheet">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&display=swap" rel="stylesheet">
 
 </head>
 
 <body onload="main()">
-  <div class="webgl-container">
-    <canvas id="webgl">
-      Please use a browser that supports "canvas"
-    </canvas>
+    <div class="webgl-container">
+        <canvas id="webgl">
+            Please use a browser that supports "canvas"
+        </canvas>
 
-    <canvas id="webgl-2">
-      Please use a browser that supports "canvas"
-    </canvas>
-  </div>
-
-  <div class="subtitle-container">
-    <b id="camera"> Camera Mode: Follow </b>
-  </div>
-
-  <div class="body-container">
-    <div>
-      <h1>Project B: 3D Views</h1>
-      <h3>Evan Bertis-Sample</h3>
-      <h4>
-        Controls: WASD to move.
-      </h4>
-
-      <button onclick="invertLightingSetting()">
-        Toggle Lighting
-      </button>
-
+        <canvas id="webgl-2">
+            Please use a browser that supports "canvas"
+        </canvas>
     </div>
-  </div>
 
-  <!-- Scripts -->
-  <script src="lib/webgl-utils.js"></script>
-  <script src="lib/webgl-debug.js"></script>
-  <script src="lib/cuon-utils.js"></script>
-  <script src="lib/cuon-matrix-quat03.js"></script>
+    <div class="subtitle-container">
+        <b id="camera"> Camera Mode: Follow </b>
+    </div>
 
-  <!-- Static Files/File Loading-->
-  <script src="static.js"></script>
-  <script src="file.js"></script>
+    <div class="modal" id="controls">
+        <div class="modal-content">
+            <div class="modal-actions-container">
+                <h2>Controls</h2>
 
-  <!-- Modules -->
-  <script src="terrain.js"></script>
-  <script src="material.js"></script>
-  <script src="mesh.js"></script>
-  <script src="scene_graph.js"></script>
-  <script src="scene.js"></script>
-  <script src="input.js"></script>
-  <script src="ecs.js"></script>
-  <script src="config.js"></script>
+                <div class="mini-button" onclick="hideModal()">
+                    <span class="close">&times;</span>
+                </div>
+            </div>
 
-  <!-- Entry point, defer it-->
-  <script src="app.js" defer></script>
+            <h4>General</h4>
+            <ul>
+                <li>WASD to move</li>
+                <li>Space to Switch Camera Modes (only used in the left viewport) </li>
+            </ul>
 
-  <!-- Controls points-->
-  <script>
-    function invertLightingSetting() {
-      console.log("Toggling lighting");
-      if (c_ENABLE_LIGHTING == 1.0) {
-        c_ENABLE_LIGHTING = 0.0;
-      }
-      else {
-        c_ENABLE_LIGHTING = 1.0;
-      }
+            <h4>Camera Modes (left viewport) </h4>
 
-      g_materialRegistry.setGlobalParam("u_enable_lighting", c_ENABLE_LIGHTING);
-    }
-  </script>
-  </div>
+            <ul>
+                <li>Follow: Camera follows the player. It is fixed to a preset rotation</li>
+                <li>Free: Camera moves independent of the player</li>
+                <ul>
+                    <li>WASD to move forward, left, back, right</li>
+                    <li>Q and E to move up and down</li>
+                    <li>Mouse Drag to look around</li>
+                </ul>
+            </ul>
+
+            <h4>Camera Controls (right viewport)</h4>
+
+            <ul>
+                <li>Mouse Drag to rotate camera about origin</li>
+            </ul>
+
+            <h4>Interactions</h4>
+            <ul>
+                <li>When in follow camera mode, mouse drag on the left viewport to move the crystals around</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="body-container">
+        <div>
+            <h1>Project B: 3D Views</h1>
+            <h3>Evan Bertis-Sample</h3>
+
+            <p>
+                Explore this strange space scene. The left viewport is a third person view of the player, while the right viewport is a free camera that can be rotated around the scene. The scene is populated with crystals that can be moved around by clicking and dragging them. The scene is also lit by a directional light source.
+            </p>
+
+            <br>
+
+            
+            <button onclick="showModal()">
+                Controls
+            </button>
+
+            <button onclick="invertLightingSetting()">
+                Toggle Lighting
+            </button>
+
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="lib/webgl-utils.js"></script>
+    <script src="lib/webgl-debug.js"></script>
+    <script src="lib/cuon-utils.js"></script>
+    <script src="lib/cuon-matrix-quat03.js"></script>
+
+    <!-- Static Files/File Loading-->
+    <script src="static.js"></script>
+    <script src="file.js"></script>
+
+    <!-- Modules -->
+    <script src="terrain.js"></script>
+    <script src="material.js"></script>
+    <script src="mesh.js"></script>
+    <script src="scene_graph.js"></script>
+    <script src="scene.js"></script>
+    <script src="input.js"></script>
+    <script src="ecs.js"></script>
+    <script src="config.js"></script>
+
+    <!-- Entry point, defer it-->
+    <script src="app.js" defer></script>
+
+    <!-- Controls points-->
+    <script>
+        function invertLightingSetting() {
+            console.log("Toggling lighting");
+            if (c_ENABLE_LIGHTING == 1.0) {
+                c_ENABLE_LIGHTING = 0.0;
+            }
+            else {
+                c_ENABLE_LIGHTING = 1.0;
+            }
+
+            g_materialRegistry.setGlobalParam("u_enable_lighting", c_ENABLE_LIGHTING);
+        }
+
+        function showModal() {
+            var modal = document.getElementById("controls");
+            modal.style.display = "block";
+        }
+
+        function hideModal() {
+            var modal = document.getElementById("controls");
+            modal.style.display = "none";
+        }
+
+        // add a listener for when the user clicks outside of the modal
+        window.onclick = function (event) {
+            var modal = document.getElementById("controls");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+    </script>
+    </div>
 </body>
 
 </html>

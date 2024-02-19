@@ -65,9 +65,9 @@ function buildCamera() {
 
 function buildEnviornment() {
 	// build the stars
-	let numStars = 1000;
-	let starRadius = 100;
-	let minimumRadius = c_WALKABLE_RADIUS + 10;
+	let numStars = 4000;
+	let starRadius = 400;
+	let minimumRadius = c_WALKABLE_RADIUS + 40;
 	let starMaterial = "star";
 	let starSizeVariation = 0.5;
 

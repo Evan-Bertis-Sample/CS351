@@ -200,3 +200,69 @@ button:hover {
     border: var(--dark-secondary);
     cursor: pointer;
 }
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: var(--light-primary);
+    /* center the modal */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border-radius: 1rem;
+    width: 30vw;
+    box-shadow: 0 4px 8px 0 var(--shadow-color);
+    animation-name: modalopen;
+    animation-duration: 0.4s;
+}
+
+/* top right corner of the modal */
+.modal-actions-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* make first child align to the left */
+.modal-actions-container > *:first-child {
+    margin-right: auto;
+}
+
+.mini-button {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--light-primary);
+    border-radius: 1rem;
+    padding: 0.1rem 0.5rem;
+    margin: 0.25rem;
+    background-color: var(--dark-primary);
+    transition: 0.2s ease-in-out;
+    
+}
+
+.mini-button:hover {
+    background-color: var(--dark-secondary);
+    border: var(--dark-secondary);
+    cursor: pointer;
+}
+
+@keyframes modalopen {
+    from {opacity: 0}
+    to {opacity: 1}
+}
+
+
