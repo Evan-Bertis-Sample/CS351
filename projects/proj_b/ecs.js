@@ -843,3 +843,28 @@ class CameraControllerComponent extends Component {
         this.camera.setPosition(output);
     }
 }
+
+class MouseDragRotationComponent extends Component {
+    constructor(cameraEntityID, { rotationSpeed = 1, rotationAxis = new Vector3([0, 1, 0]) }) {
+        super();
+        this.cameraEntityID = cameraEntityID;
+        this.rotationSpeed = rotationSpeed;
+        this.rotationAxis = rotationAxis;
+        this.previousMousePosition = new Vector3([0, 0, 0]);
+
+        this.camera = g_sceneGraph.getCamera(this.cameraEntityID);
+    }
+
+    start() {
+    }
+
+    update(deltaTime) {
+        if (g_inputManager.getKeyState("mouse0") == ButtonState.DOWN) {
+            console.log("Mouse down");
+            let mousePosition = g_inputManager.getMousePos();
+            let delta = mousePosition.sub(this.previousMousePosition);
+            let rotation = new Quaternion().setFromAxisAngle(this.rotationAxis.elements[0], this.rotationAxis.elements[1], this.rotationAxis.elements[2], this.rotationSpeed * deltaTime * delta.elements[0]);
+            // this.camera.setRotation(rotation.multiply(this.camera.getRotation()));
+        }
+    }
+}

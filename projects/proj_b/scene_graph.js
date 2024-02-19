@@ -340,6 +340,14 @@ class Camera {
         this.rotation = rotation;
     }
 
+    getPosition() {
+        return this.position;
+    }
+
+    getRotation() {
+        return this.rotation;
+    }
+
     setRotationFromEulerAngles(pitch, yaw, roll) {
         this.rotation.setFromEuler(pitch, yaw, roll);
     }

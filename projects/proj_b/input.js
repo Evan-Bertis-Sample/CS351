@@ -33,6 +33,10 @@ class InputManager {
         document.addEventListener('keydown', this.keyDownHandler.bind(this));
         document.addEventListener('keyup', this.keyUpHandler.bind(this));
         document.addEventListener('mousemove', this.mouseMoveHandler.bind(this));
+
+        // handle the mouse0 button
+        document.addEventListener('mousedown', this.mouseDownHandler.bind(this));
+        document.addEventListener('mouseup', this.mouseUpHandler.bind(this));
     }
 
     // Handles key down events
@@ -46,6 +50,16 @@ class InputManager {
         }
     }
 
+    mouseDownHandler(event) {
+        this.keyStates["mouse0"] = ButtonState.DOWN_THIS_FRAME;
+        // call the callbacks
+        if (this.buttonCallbacks["mouse0"] != undefined) {
+            for (let i = 0; i < this.buttonCallbacks["mouse0"].length; i++) {
+                this.buttonCallbacks["mouse0"][i](ButtonState.DOWN_THIS_FRAME);
+            }
+        }
+    }
+
     // Handles key up events
     keyUpHandler(event) {
         this.keyStates[event.key] = ButtonState.UP_THIS_FRAME;
@@ -53,6 +67,16 @@ class InputManager {
         if (this.buttonCallbacks[event.key] != undefined) {
             for (let i = 0; i < this.buttonCallbacks[event.key].length; i++) {
                 this.buttonCallbacks[event.key][i](ButtonState.UP_THIS_FRAME);
+            }
+        }
+    }
+
+    mouseUpHandler(event) {
+        this.keyStates["mouse0"] = ButtonState.UP_THIS_FRAME;
+        // call the callbacks
+        if (this.buttonCallbacks["mouse0"] != undefined) {
+            for (let i = 0; i < this.buttonCallbacks["mouse0"].length; i++) {
+                this.buttonCallbacks["mouse0"][i](ButtonState.UP_THIS_FRAME);
             }
         }
     }
