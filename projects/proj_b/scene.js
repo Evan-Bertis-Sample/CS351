@@ -46,7 +46,7 @@ function buildCamera() {
 			new CameraControllerComponent(
 				"webgl", "Robot Parent",
 				{
-					movementSpeed: 10,
+					movementSpeed: 30,
 					offset: new Vector3([0, 30, 40]),
 					originalRotation: new Quaternion().setFromAxisAngle(1, 0, 0, 30),
 				}

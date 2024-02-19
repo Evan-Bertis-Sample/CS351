@@ -15,6 +15,7 @@ class Component {
 
         this.node = node;
         this.transform = node.transform;
+        this.disabled = false;
     }
 
     // Start is called before the first frame update
@@ -84,6 +85,9 @@ class Entity {
     // deltaTime : the time since the last frame
     update(deltaTime) {
         for (let i = 0; i < this.components.length; i++) {
+            if (this.components[i].disabled == true) 
+                continue;
+
             this.components[i].update(deltaTime);
         }
     }
@@ -813,20 +817,22 @@ const CAMERA_MODE = {
 }
 
 class CameraControllerComponent extends Component {
-    constructor(cameraEntityID, entityFollowID, { movementSpeed = 1, rotationSpeed = 1, leanAmount = 10, originalRotation = new Quaternion(), offset = new Vector3([0, 0, 0]) }) {
+    constructor(cameraEntityID, entityFollowID, { movementSpeed = 1, rotationSpeed = 1, leanAmount = 10, offset = new Vector3([0, 0, 0]) }) {
         super();
         this.cameraEntityID = cameraEntityID;
         this.movementSpeed = movementSpeed;
         this.rotationSpeed = rotationSpeed;
         this.leanAmount = leanAmount;
-        this.originalRotation = originalRotation;
         this.previousTheta = 0;
         this.offset = offset;
         this.entityFollowID = entityFollowID;
 
         this.camera = g_sceneGraph.getCamera(this.cameraEntityID);
 
+        this.originalRotation = this.camera.getRotation();
         this.mode = CAMERA_MODE.FOLLOW;
+
+        this.playerController = g_ecs.getEntity(this.entityFollowID).getComponent(PlayerController);
     }
 
     start() {
@@ -855,6 +861,10 @@ class CameraControllerComponent extends Component {
             return;
         }
 
+        
+        if (this.playerController != null)
+            this.playerController.disabled = false;
+
         let entityTransform = entity.getTransform();
         let targetPosition = entityTransform.position.add(this.offset);
 
@@ -864,10 +874,45 @@ class CameraControllerComponent extends Component {
 
         // now set the camera position to the target position
         this.camera.setPosition(output);
+
+        // lerp to the original rotation
+        let rotation = this.camera.getRotation();
+        let targetRotation = this.originalRotation;
+
+        let outputRotation = new Quaternion();
+        Quaternion.slerp(rotation, targetRotation, outputRotation, this.rotationSpeed * deltaTime);
+
+        this.camera.setRotation(outputRotation);
+
     }
 
     handleAirplaneMode(deltaTime) {
 
+        if (this.playerController != null)
+            this.playerController.disabled = true;
+        
+        // allow the user to move the camera around with WASD, and rotate with the mouse
+        let xzAxis = g_inputManager.getAxis(AxisSets.WASD_KEYS);
+        let delta = g_inputManager.getMouseChange();
+
+        // determine if we should move up or down
+        let up = (g_inputManager.getKeyState("q") <= ButtonState.DOWN) ? 1 : 0;
+        let down = (g_inputManager.getKeyState("e") <= ButtonState.DOWN) ? 1 : 0;
+
+        let yMovement = up - down;
+
+        let moveAmount = deltaTime * this.movementSpeed;
+        let oldPosition = this.camera.getPosition();
+
+        let newPosition = new Vector3(
+            [
+                oldPosition.elements[0] + xzAxis.elements[0] * moveAmount,
+                oldPosition.elements[1] + yMovement * moveAmount,
+                oldPosition.elements[2] - xzAxis.elements[1] * moveAmount,
+            ]
+        )
+
+        this.camera.setPosition(newPosition);
     }
 }
 
