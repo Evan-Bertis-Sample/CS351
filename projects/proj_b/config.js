@@ -7,7 +7,7 @@ var c_DOWNSAMPLE_FACTOR = 2; // The factor to downsample the screen by
 var c_PLAYER_MOVE_SPEED = 10;
 var c_PLAYER_ROT_SPEED = 10;
 var c_CAMERA_SENSITIVITY = 5;
-var c_WALKABLE_RADIUS = 50; // controls how far the player can move from the origin
+var c_WALKABLE_RADIUS = 60; // controls how far the player can move from the origin
 var c_ENABLE_LIGHTING = 1.0; // 0.0 for no lighting, 1.0 for lighting
 
 // WebGL Configuration
@@ -39,7 +39,7 @@ var c_CAMERAS = new Map([
 			{
 				mode: "orthographic",
 				allowDynamicReize: true,
-				linkTo: ["webgl", 1/4],
+				linkTo: ["webgl", 1/3],
 			}
 		)
 	]
@@ -213,7 +213,8 @@ var c_MESHES = [
 	"./static/meshes/gyro.obj",
 	"./static/meshes/platform.obj",
 	"./static/meshes/plane.obj",
-	"./static/meshes/arrow.obj"
+	"./static/meshes/arrow.obj",
+	"./static/meshes/robot_head.obj",
 ];
 
 

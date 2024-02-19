@@ -207,7 +207,7 @@ function buildRobot() {
 	let arrowParent = g_ecs.createEntity(
 		entityName = "arrow_parent",
 		parent = robotBaseEntity,
-		position = new Vector3([0, 2, 0]),
+		position = new Vector3([0, 4, 0]),
 		rotation = new Quaternion(),
 		scale = new Vector3([1, 1, 1]),
 		meshName = "",
@@ -216,6 +216,35 @@ function buildRobot() {
 	);
 
 	buildArrows(arrowParent);
+
+	// add the head
+	let robotHeadEntity = g_ecs.createEntity(
+		entityName = "robot_head",
+		parent = robotBaseEntity,
+		position = new Vector3([0, 3, 0]),
+		rotation = new Quaternion().setFromAxisAngle(1, 0, 0, 180),
+		scale = new Vector3([1, 1, 1]),
+		meshName = "robot_head",
+		materialName = "robot_outers",
+		components = [
+			new RotateComponent(new Vector3([0, 1, 0]), 100),
+			new BobComponent(0.2, 5),
+		]
+	);
+
+	// add a black hole to the head
+	let blackHoleEntity = g_ecs.createEntity(
+		entityName = "black_hole",
+		parent = robotHeadEntity,
+		position = new Vector3([0, 0, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([0.5, 0.5, 0.5]),
+		meshName = "sphere",
+		materialName = "black_hole",
+		components = [
+			new ShakerComponent(0.5),
+		]
+	);
 
 	let robotInnersEntity = g_ecs.createEntity(
 		entityName = "robot_inners",
