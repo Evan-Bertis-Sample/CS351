@@ -23,7 +23,21 @@ body {
     width: 100%;
     height: auto;
     margin: 0;
-    padding: 2rem 20rem;
+    padding: 1rem 20rem;
+    display: flex; 
+    flex-direction: row;
+    gap: 0.5rem;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+.subtitle-container
+{
+    box-sizing: border-box;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 1rem 20rem;
     display: flex; 
     flex-direction: row;
     gap: 0.5rem;
@@ -53,7 +67,7 @@ body {
     height: 66vh;
     margin: 0;
     padding: 0;
-    margin: 2rem 0;
+    margin: 0rem 0;
     display: flex;
     flex-direction: row;
     gap: 0;

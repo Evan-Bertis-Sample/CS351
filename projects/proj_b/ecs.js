@@ -817,7 +817,7 @@ const CAMERA_MODE = {
 }
 
 class CameraControllerComponent extends Component {
-    constructor(cameraEntityID, entityFollowID, { movementSpeed = 1, rotationSpeed = 1, leanAmount = 10, offset = new Vector3([0, 0, 0]) }) {
+    constructor(cameraEntityID, entityFollowID, { movementSpeed = 1, rotationSpeed = 1, leanAmount = 10, offset = new Vector3([0, 0, 0]), cameraHTMLID = "camera"}) {
         super();
         this.cameraEntityID = cameraEntityID;
         this.movementSpeed = movementSpeed;
@@ -837,6 +837,7 @@ class CameraControllerComponent extends Component {
         this.lookAtRadius = 10;
         this.phi = 0;
         this.theta = 0;
+        this.cameraHTMLID = cameraHTMLID;
     }
 
     start() {
@@ -846,6 +847,10 @@ class CameraControllerComponent extends Component {
         if (g_inputManager.getKeyState(" ") == ButtonState.DOWN_THIS_FRAME) {
             console.log("Switching camera mode");
             this.mode = (this.mode + 1) % 2;
+
+            // now update the camera mode being displayed
+            let cameraModeText = (this.mode == CAMERA_MODE.FOLLOW) ? "Follow" : "Airplane";
+            document.getElementById(this.cameraHTMLID).innerText = "Camera Mode: " + cameraModeText;
         }
 
         switch (this.mode) {
