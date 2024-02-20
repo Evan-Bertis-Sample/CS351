@@ -921,13 +921,18 @@ class CameraControllerComponent extends Component {
         let yMovement = up - down;
 
         let moveAmount = deltaTime * this.movementSpeed;
+
+        let moveDirection = new Vector3([xzAxis.elements[0], yMovement, xzAxis.elements[1]]).normalize();
+        // rotate the move direction based upon the camera's rotation
+        moveDirection = this.camera.getRotation().multiplyVector3(moveDirection, moveDirection)
+        moveDirection.printMe();
         let oldPosition = this.camera.getPosition();
 
         let newPosition = new Vector3(
             [
-                oldPosition.elements[0] + xzAxis.elements[0] * moveAmount,
-                oldPosition.elements[1] + yMovement * moveAmount,
-                oldPosition.elements[2] - xzAxis.elements[1] * moveAmount,
+                oldPosition.elements[0] + moveDirection.elements[0] * moveAmount,
+                oldPosition.elements[1] + moveDirection.elements[1] * moveAmount,
+                oldPosition.elements[2] - moveDirection.elements[2] * moveAmount,
             ]
         )
 

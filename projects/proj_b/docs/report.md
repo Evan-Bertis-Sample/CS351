@@ -1,18 +1,17 @@
-## The "Hello World!" of a 3D Graphics Engine
+## Cameras, Cameras, Cameras
 ```
 Author    : Evan Bertis-Sample
 NetID     : eab0652
-Date      : 1-29-2024
+Date      : 2-19-2024
 Course    : CS 351 - Introduction to Computer Graphics
-Assignment: Project A - Moving, Jointed 3D Assemblies
+Assignment: Project B - 3D Views
 ```
 
-![Current Scene](./images/current_scene.png)
+![Current Scene](./images/final.png)
 
 *A render of the final scene, featuring a cube robot with 8 legs on a platform that multiple dyson spheres orbit around.*
 
 ### Goals and Ambitions
-*I'm going to keep it pretty casual for this report, while explaining my otherwise overengineered first project.*
 
 Coming from the game development world, I was extremely excited to take this class, especially after seeing the syllabus. I grew up as an artist, but a few years back, I pivoted towards programming and game development. As such, I figured that this first project would be a great oppurtunity to show my guns as an artist, and a game developer.
 
