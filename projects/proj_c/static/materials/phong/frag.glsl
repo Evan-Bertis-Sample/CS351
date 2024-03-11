@@ -1,6 +1,19 @@
 // floating point precision
 precision mediump float;
 
+struct Light {
+    vec3 position;
+    vec3 color;
+    float intensity;
+    int lightType; // 0 for point light, 1 for directional light
+};
+
+struct LightBuffer
+{
+    Light lights[10];
+    int numLights;
+};
+
 // constants
 const vec4 directionalLight = vec4(1, 2, 1, 0);
 const vec4 ambientLightColor = vec4(0.44, 0.45, 0.49, 1.0);
@@ -17,6 +30,8 @@ uniform float u_frensel_influence;
 uniform vec4 u_frensel_color;
 uniform float u_frensel_border;
 uniform float u_show_grid;
+uniform LightBuffer u_lightBuffer;
+
 
 // varying variables -- passed from vertex shader
 varying vec4 v_position;

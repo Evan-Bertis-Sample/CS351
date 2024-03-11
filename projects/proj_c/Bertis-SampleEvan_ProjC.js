@@ -15,6 +15,7 @@ var g_materialRegistry; // The material registry for the application
 var g_meshRegistry; // The mesh registry for the application
 var g_inputManager; // The input manager for the application
 var g_ecs; // The entity component system for the application
+var g_lightRegistry; // The lighting system for the application
 
 // These buffers aren't actually sent to the GPU
 // Rather, they are used to store the vertices, normals, and indices, then used create the buffers
@@ -42,6 +43,8 @@ async function main() {
 	// initialize the input manager
 	g_inputManager = new InputManager();
 	g_inputManager.attach();
+
+	g_lightRegistry = new LightingRegistry(c_LIGHTS)
 
 	// add the terrain
 	// let terrain = generateTerrainMesh(200, 200, 10, 10);

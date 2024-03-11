@@ -154,8 +154,6 @@ class ShaderSet {
 
         this.uLoc_cameraPosition.set(gl.program, uLoc_cameraPosition);
 
-
-
         // now find the locations of the shader parameters
         for (let i = 0; i < this.paramNames.length; i++) {
             let paramName = this.paramNames[i];
@@ -184,9 +182,10 @@ class ShaderSet {
                 console.log('Failed to get the storage location of ' + param.name);
                 continue;
             }
-
             param.loadParameter(gl, location);
         }
+
+        g_lightRegistry.loadLights(gl)
     }
 }
 

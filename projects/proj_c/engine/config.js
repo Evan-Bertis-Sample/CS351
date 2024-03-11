@@ -36,6 +36,22 @@ var c_CAMERAS = new Map([
 // Debugging
 var g_USE_FETCH = true; // Used to grab files via the fetch method, not usable using the file:// protocol
 
+var c_LIGHTS = [
+	new Light(
+		LIGHT_TYPE.DIRECTIONAL, 
+		new Vector3([1.0, 1.0, 1.0]), 
+		1.0, 
+		new Vector3([0.0, 1.0, 0.0])
+	),
+	new Light(
+		LIGHT_TYPE.POINT,
+		new Vector3([1.0, 1.0, 1.0]),
+		1.0, 
+		new Vector3([0.0, 1.0, 0.0])
+	),
+];
+
+
 var c_DEFAULT_SHADER_PARAMS = new Map([
 	[
 		"phong",
