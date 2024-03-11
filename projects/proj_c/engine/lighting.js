@@ -53,6 +53,7 @@ class LightingRegistry {
 
 
     findLightLocations(gl) {
+        console.log("Finding light locations");
         let mapLocation = new Map();
         for (let i = 0; i < this.MAX_LIGHTS; i++) {
             let positionName = "u_lightBuffer.lights[0].position".replace("0", i);

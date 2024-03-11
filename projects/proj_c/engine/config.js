@@ -46,7 +46,7 @@ var c_LIGHTS = [
 	new Light(
 		LIGHT_TYPE.POINT,
 		new Vector3([1.0, 1.0, 1.0]),
-		1.0, 
+		10.0, 
 		new Vector3([0.0, 1.0, 0.0])
 	),
 ];
@@ -63,7 +63,7 @@ var c_DEFAULT_SHADER_PARAMS = new Map([
 			new MaterialParameter("u_frensel_color", new Vector4([1.0, 1.0, 1.0, 1.0])),
 			new MaterialParameter("u_frensel_border", 1.0),
 			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
-			new MaterialParameter("u_show_grid", 0.0),
+			// new MaterialParameter("u_show_grid", 0.0),
 		]
 	]
 ])

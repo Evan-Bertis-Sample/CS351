@@ -29,7 +29,6 @@ uniform float u_specular_influence;
 uniform float u_frensel_influence;
 uniform vec4 u_frensel_color;
 uniform float u_frensel_border;
-uniform float u_show_grid;
 uniform LightBuffer u_lightBuffer;
 
 
@@ -120,8 +119,18 @@ void main() {
         }
     }
 
+    // calculate the frensel effect
+    vec4 viewDirection = normalize(vec4(u_cameraPosition, 1.0) - v_position);
+    float frensel = 1.0 - dot(normal, viewDirection);
+    // make sure that the frensel effect is positive
+    // sqrt(pow)
+    frensel = sqrt(frensel * frensel);
+    frensel = pow(frensel, 1.0 / u_frensel_border);
+
+    vec4 frenselColor = u_frensel_color * frensel;
     // calculate the final color
     color = color * (ambientLight + diffuseLight * u_diffuse_influence + specularLight * u_specular_influence);
 
+    color += frenselColor * u_frensel_influence;
     gl_FragColor = color;
 }
