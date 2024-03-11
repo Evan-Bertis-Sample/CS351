@@ -36,6 +36,22 @@ var c_CAMERAS = new Map([
 // Debugging
 var g_USE_FETCH = true; // Used to grab files via the fetch method, not usable using the file:// protocol
 
+var c_DEFAULT_SHADER_PARAMS = new Map([
+	[
+		"phong",
+		[
+			new MaterialParameter("u_color", new Vector4([0.65, 0.65, 0.65, 1.0])),
+			new MaterialParameter("u_diffuse_influence", 0.8),
+			new MaterialParameter("u_specular_influence", 0.2),
+			new MaterialParameter("u_frensel_influence", 0.0),
+			new MaterialParameter("u_frensel_color", new Vector4([0.0, 0.0, 0.0, 1.0])),
+			new MaterialParameter("u_frensel_border", 1.0),
+			new MaterialParameter("u_enable_lighting", 1.0),
+			new MaterialParameter("u_show_grid", 0.0),
+		]
+	]
+])
+
 // Rendering Configuration
 // Used by the MaterialRegistry to create materials
 var c_MATERIALS = [
@@ -44,13 +60,6 @@ var c_MATERIALS = [
 		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.65, 0.65, 0.65, 1.0])),
-			new MaterialParameter("u_diffuse_influence", 0.8),
-			new MaterialParameter("u_specular_influence", 0.2),
-			new MaterialParameter("u_frensel_influence", 0.0),
-			new MaterialParameter("u_frensel_color", new Vector4([0.0, 0.0, 0.0, 1.0])),
-			new MaterialParameter("u_frensel_border", 1.0),
-			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
-			new MaterialParameter("u_show_grid", 0.0),
 		]
 	),
 	new MaterialDescriptor(
@@ -58,13 +67,6 @@ var c_MATERIALS = [
 		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([1.0, 0.0, 0.0, 1.0])),
-			new MaterialParameter("u_diffuse_influence", 0.8),
-			new MaterialParameter("u_specular_influence", 0.2),
-			new MaterialParameter("u_frensel_influence", 0.0),
-			new MaterialParameter("u_frensel_color", new Vector4([0.0, 0.0, 0.0, 1.0])),
-			new MaterialParameter("u_frensel_border", 1.0),
-			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
-			new MaterialParameter("u_show_grid", 0.0),
 		]
 	),
 	new MaterialDescriptor(
@@ -72,13 +74,6 @@ var c_MATERIALS = [
 		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.0, 1.0, 0.0, 1.0])),
-			new MaterialParameter("u_diffuse_influence", 0.8),
-			new MaterialParameter("u_specular_influence", 0.2),
-			new MaterialParameter("u_frensel_influence", 0.0),
-			new MaterialParameter("u_frensel_color", new Vector4([0.0, 0.0, 0.0, 1.0])),
-			new MaterialParameter("u_frensel_border", 1.0),
-			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
-			new MaterialParameter("u_show_grid", 0.0),
 		]
 	),
 	new MaterialDescriptor(
@@ -86,13 +81,6 @@ var c_MATERIALS = [
 		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.0, 0.0, 1.0, 1.0])),
-			new MaterialParameter("u_diffuse_influence", 0.8),
-			new MaterialParameter("u_specular_influence", 0.2),
-			new MaterialParameter("u_frensel_influence", 0.0),
-			new MaterialParameter("u_frensel_color", new Vector4([0.0, 0.0, 0.0, 1.0])),
-			new MaterialParameter("u_frensel_border", 1.0),
-			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
-			new MaterialParameter("u_show_grid", 0.0),
 		]
 	),
 	new MaterialDescriptor(
@@ -100,13 +88,6 @@ var c_MATERIALS = [
 		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.5, 0.5, 0.5, 1.0])),
-			new MaterialParameter("u_diffuse_influence", 0.8),
-			new MaterialParameter("u_specular_influence", 0.2),
-			new MaterialParameter("u_frensel_influence", 0.0),
-			new MaterialParameter("u_frensel_color", new Vector4([0.0, 0.0, 0.0, 1.0])),
-			new MaterialParameter("u_frensel_border", 1.0),
-			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
-			new MaterialParameter("u_show_grid", 0.0),
 		]
 	),
 	new MaterialDescriptor(
@@ -114,13 +95,6 @@ var c_MATERIALS = [
 		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.7, 0.7, 0.7, 1.0])),
-			new MaterialParameter("u_diffuse_influence", 0.8),
-			new MaterialParameter("u_specular_influence", 0.2),
-			new MaterialParameter("u_frensel_influence", 0.0),
-			new MaterialParameter("u_frensel_color", new Vector4([0.0, 0.0, 0.0, 1.0])),
-			new MaterialParameter("u_frensel_border", 1.0),
-			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
-			new MaterialParameter("u_show_grid", 0.0),
 		]
 	),
 	new MaterialDescriptor(
@@ -128,13 +102,6 @@ var c_MATERIALS = [
 		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.8, 0.4, 0.6, 1.0])),
-			new MaterialParameter("u_diffuse_influence", 0.8),
-			new MaterialParameter("u_specular_influence", 0.2),
-			new MaterialParameter("u_frensel_influence", 0.0),
-			new MaterialParameter("u_frensel_color", new Vector4([0.0, 0.0, 0.0, 1.0])),
-			new MaterialParameter("u_frensel_border", 1.0),
-			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
-			new MaterialParameter("u_show_grid", 0.0),
 		]
 	),
 	new MaterialDescriptor(

@@ -20,7 +20,7 @@ class MaterialParameter {
             console.log("Shader parameter location is null");
             return;
         }
-        
+
         if (this.value instanceof Vector3) {
             gl.uniform3fv(location, this.value.elements);
         }
@@ -47,6 +47,20 @@ class MaterialDescriptor {
         this.name = name;
         this.shaderDirectory = shaderDirectory;
         this.params = params;
+    }
+
+    // Finds whether or not a material has a parameter of a given name
+    hasParam(name) {
+        for (let i = 0; i < this.params.length; i++) {
+            if (this.params[i].name == name) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    addParam(param) {
+        this.params.push(param);
     }
 }
 
@@ -195,12 +209,13 @@ class Material {
 // Used to load and store materials and shaders
 // Also used to set the current material and pass uniforms to the shader
 class MaterialRegistry {
-    constructor(materialDescriptors = new Array()) {
+    constructor(materialDescriptors = new Array(), defaultParams = new Map()) {
         this.materials = new Map();
         this.shaders = new Map();
         this.materialDescriptors = materialDescriptors;
         this.currentlyLoadedMaterial = new Map(); // maps from canvasID to material name
         this.currentlyLoadedShader = new Map(); // maps from canvasID to shader name
+        this.defaultParams = defaultParams; // maps from shader name to list of material descriptors
     }
 
     print() {
@@ -261,10 +276,34 @@ class MaterialRegistry {
                     // console.log(vertSource)
                     // console.log(fragSource)
 
+                    console.log(materialDescriptors[i])
+
                     let paramNames = new Array();
                     for (let j = 0; j < materialDescriptors[i].params.length; j++) {
                         paramNames.push(materialDescriptors[i].params[j].name);
                     }
+
+                    // add parameters into the material descriptor params, if they aren't listed
+                    // add the missing parameters
+                    let defaultParams = this.defaultParams.get(shaderName);
+                    if (defaultParams != null) {
+                        for (let j = 0; j < defaultParams.length; j++) {
+                            let defaultParamName = defaultParams[j].name;
+                            // add this to the param names if it is not in there
+                            let found = false;
+                            for (let k = 0; k < paramNames; k++) {
+                                let cur = defaultParamName[k]
+                                if (cur == defaultParamName) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            if (!found) 
+                                paramNames.push(defaultParamName)
+                        }
+                    }
+                    console.log(paramNames)
 
                     // add the shader to the registry
                     let shader = new ShaderSet(shaderName, vertSource, fragSource, paramNames);
@@ -274,6 +313,21 @@ class MaterialRegistry {
                 catch (error) {
                     console.log("Failed to load material: " + materialName);
                     console.log(error);
+                }
+            }
+
+            // add parameters into the material descriptor params, if they aren't listed
+            // add the missing parameters
+            console.log(materialDescriptors[i])
+            let defaultParams = this.defaultParams.get(shaderName);
+            if (defaultParams != null) {
+                for (let j = 0; j < defaultParams.length; j++) {
+                    let defaultParam = defaultParams[j];
+                    // console.log(defaultParam);
+                    if (!materialDescriptors[i].hasParam(defaultParam)) {
+                        console.log(`Adding default parameter ${defaultParam.name} of value ${defaultParam.value} to material ${materialName}`)
+                        materialDescriptors[i].addParam(defaultParam)
+                    }
                 }
             }
 
@@ -324,7 +378,7 @@ class MaterialRegistry {
         }
 
         this.currentlyLoadedMaterial.set(gl, name);
-        
+
         // load the shader
         let shader = this.shaders.get(material.shaderName);
         if (material.shaderName != this.currentlyLoadedShader.get(gl)) {

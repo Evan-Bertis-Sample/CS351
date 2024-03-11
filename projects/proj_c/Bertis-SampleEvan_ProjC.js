@@ -32,7 +32,7 @@ var g_deltaTime = 0;
 
 async function main() {
 	// Load the materials
-	g_materialRegistry = new MaterialRegistry(c_MATERIALS);
+	g_materialRegistry = new MaterialRegistry(c_MATERIALS, c_DEFAULT_SHADER_PARAMS);
 	await g_materialRegistry.loadMaterials();
 	console.log("Materials loaded");
 	console.log(g_materialRegistry);
