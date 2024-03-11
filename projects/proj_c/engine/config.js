@@ -34,14 +34,14 @@ var c_CAMERAS = new Map([
 ]);
 
 // Debugging
-var g_USE_FETCH = false; // Used to grab files via the fetch method, not usable using the file:// protocol
+var g_USE_FETCH = true; // Used to grab files via the fetch method, not usable using the file:// protocol
 
 // Rendering Configuration
 // Used by the MaterialRegistry to create materials
 var c_MATERIALS = [
 	new MaterialDescriptor(
 		"gray",
-		"static/materials/base",
+		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.65, 0.65, 0.65, 1.0])),
 			new MaterialParameter("u_diffuse_influence", 0.8),
@@ -55,7 +55,7 @@ var c_MATERIALS = [
 	),
 	new MaterialDescriptor(
 		"red",
-		"static/materials/base",
+		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([1.0, 0.0, 0.0, 1.0])),
 			new MaterialParameter("u_diffuse_influence", 0.8),
@@ -69,7 +69,7 @@ var c_MATERIALS = [
 	),
 	new MaterialDescriptor(
 		"green",
-		"static/materials/base",
+		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.0, 1.0, 0.0, 1.0])),
 			new MaterialParameter("u_diffuse_influence", 0.8),
@@ -83,7 +83,7 @@ var c_MATERIALS = [
 	),
 	new MaterialDescriptor(
 		"blue",
-		"static/materials/base",
+		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.0, 0.0, 1.0, 1.0])),
 			new MaterialParameter("u_diffuse_influence", 0.8),
@@ -97,7 +97,7 @@ var c_MATERIALS = [
 	),
 	new MaterialDescriptor(
 		"robot_inners",
-		"static/materials/base",
+		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.5, 0.5, 0.5, 1.0])),
 			new MaterialParameter("u_diffuse_influence", 0.8),
@@ -111,7 +111,7 @@ var c_MATERIALS = [
 	),
 	new MaterialDescriptor(
 		"robot_outers",
-		"static/materials/base",
+		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.7, 0.7, 0.7, 1.0])),
 			new MaterialParameter("u_diffuse_influence", 0.8),
@@ -125,7 +125,7 @@ var c_MATERIALS = [
 	),
 	new MaterialDescriptor(
 		"robot_veins",
-		"static/materials/base",
+		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.8, 0.4, 0.6, 1.0])),
 			new MaterialParameter("u_diffuse_influence", 0.8),
@@ -144,7 +144,7 @@ var c_MATERIALS = [
 	),
 	new MaterialDescriptor(
 		"black_hole",
-		"static/materials/base",
+		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.0, 0.0, 0.0, 1.0])),
 			new MaterialParameter("u_diffuse_influence", 0.0),
@@ -158,7 +158,7 @@ var c_MATERIALS = [
 	),
 	new MaterialDescriptor(
 		"star",
-		"static/materials/base",
+		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.7, 0.0, 1.0, 1.0])),
 			new MaterialParameter("u_diffuse_influence", 1.0),
@@ -172,7 +172,7 @@ var c_MATERIALS = [
 	),
 	new MaterialDescriptor(
 		"crystal_blue",
-		"static/materials/base",
+		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.0, 0.8, 1.0, 1.0])),
 			new MaterialParameter("u_diffuse_influence", 1.0),
@@ -186,7 +186,7 @@ var c_MATERIALS = [
 	),
 	new MaterialDescriptor(
 		"crystal_purple",
-		"static/materials/base",
+		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.3, 0.0, 1.0, 1.0])),
 			new MaterialParameter("u_diffuse_influence", 1.0),
@@ -200,7 +200,7 @@ var c_MATERIALS = [
 	),
 	new MaterialDescriptor(
 		"crystal_pink",
-		"static/materials/base",
+		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.7, 0.0, 1.0, 1.0])),
 			new MaterialParameter("u_diffuse_influence", 1.0),
@@ -214,7 +214,7 @@ var c_MATERIALS = [
 	),
 	new MaterialDescriptor(
 		"platform",
-		"static/materials/base",
+		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([1.0, 1.0, 1.0, 1.0])),
 			new MaterialParameter("u_diffuse_influence", 0.8),
