@@ -11,7 +11,6 @@ function buildScene() {
 	// buildCamera();
 	buildEnviornment();
 	buildRobot();
-	buildArrows();
 	buildCrystals();
 
 	buildPlanet();
@@ -575,11 +574,11 @@ function buildCrystal(identifier, position, scale, parent) {
 		materialName = material,
 		components = [
 			new RotateComponent(new Vector3([0, 1, 0]), 100),
-			new BobComponent(0.2, 5, true),
+			new BobComponent(0.3, 5, true),
 			new LightComponent(
 				LIGHT_TYPE.POINT, 
 				lightColor,
-				1.0
+				1.5
 			)
 		]
 	);

@@ -72,12 +72,6 @@
             <h1>Project C: Better Lighting and Materials</h1>
             <h3>Evan Bertis-Sample</h3>
 
-            <p>
-                Explore this strange space scene. The left viewport is a third person view of the player, while the right viewport is a free camera that can be rotated around the scene. The scene is populated with crystals that can be moved around by clicking and dragging them. The scene is also lit by a directional light source.
-            </p>
-
-            <br>
-
             
             <button onclick="showModal()">
                 Controls
@@ -86,6 +80,12 @@
             <button onclick="invertLightingSetting()">
                 Toggle Lighting
             </button>
+
+            <!-- Dropdown for choosing lighting type -->
+            <select id="lighting-type" onchange="changeLightingType()">
+                <option value="phong">Phong</option>
+                <option value="test">Test</option>
+            </select>
 
         </div>
     </div>
@@ -135,6 +135,13 @@
         function hideModal() {
             var modal = document.getElementById("controls");
             modal.style.display = "none";
+        }
+
+        async function changeLightingType() {
+            var e = document.getElementById("lighting-type");
+            var value = e.options[e.selectedIndex].value;
+            console.log("Changing lighting type to: " + value);
+            await g_materialRegistry.setGlobalShader(value)
         }
 
         // add a listener for when the user clicks outside of the modal

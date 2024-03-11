@@ -38,7 +38,7 @@ class LightingRegistry {
                 if (light.lightType == LIGHT_TYPE.POINT) {
                     // set the position to the transform's position
                     let position = transform.worldPosition;
-                    position.printMe()
+                    // position.printMe()
 
                     light.position.elements[0] = position.elements[0];
                     light.position.elements[1] = position.elements[1];
@@ -62,7 +62,7 @@ class LightingRegistry {
     // load the lights into the gl buffers
     loadLights(gl) {
         let numLights = this.lights.length;
-        if (!this.lightLocations.has(gl)) {
+        if (!this.lightLocations.has(gl.program)) {
             this.findLightLocations(gl)
         }
 
@@ -88,7 +88,7 @@ class LightingRegistry {
     }
 
     passLight(gl, light, index) {
-        let lightLocations = this.lightLocations.get(gl);
+        let lightLocations = this.lightLocations.get(gl.program);
         let positionLocation = lightLocations.get(`position[${index}]`);
         let colorLocation = lightLocations.get(`color[${index}]`);
         let intensityLocation = lightLocations.get(`intensity[${index}]`);
@@ -121,7 +121,7 @@ class LightingRegistry {
             mapLocation.set(`lightType[${i}]`, lightTypeLocation);
         }
 
-        this.lightLocations.set(gl, mapLocation);
+        this.lightLocations.set(gl.program, mapLocation);
 
         // find the light number locations
         let numLocation = gl.getUniformLocation(gl.program, "u_lightBuffer.numLights");

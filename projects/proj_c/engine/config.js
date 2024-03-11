@@ -25,7 +25,7 @@ var c_CAMERAS = new Map([
 			{
 				mode: "perspective",
 				allowDynamicReize: true,
-				fov: 35,
+				fov: 40,
 				near: 1,
 				far: c_FAR_PLANE,
 			}
@@ -55,6 +55,19 @@ var c_LIGHTS = [
 var c_DEFAULT_SHADER_PARAMS = new Map([
 	[
 		"phong",
+		[
+			new MaterialParameter("u_color", new Vector4([0.65, 0.65, 0.65, 1.0])),
+			new MaterialParameter("u_diffuse_influence", 0.8),
+			new MaterialParameter("u_specular_influence", 0.2),
+			new MaterialParameter("u_frensel_influence", 0.1),
+			new MaterialParameter("u_frensel_color", new Vector4([1.0, 1.0, 1.0, 1.0])),
+			new MaterialParameter("u_frensel_border", 1.0),
+			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
+			new MaterialParameter("u_show_grid", 0.0),
+		]
+	],
+	[
+		"test",
 		[
 			new MaterialParameter("u_color", new Vector4([0.65, 0.65, 0.65, 1.0])),
 			new MaterialParameter("u_diffuse_influence", 0.8),

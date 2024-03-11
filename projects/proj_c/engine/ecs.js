@@ -364,7 +364,7 @@ class RobotLegOrchestratorComponent extends Component {
         }
 
         this.activeLegSet = ACTIVE_LEG_SET.EVEN;
-        this.setLegStates(this.activeLegSet);
+    this.setLegStates(this.activeLegSet);
     }
 
     // Updates the component
@@ -864,6 +864,9 @@ class CameraControllerComponent extends Component {
                 this.handleAirplaneMode(deltaTime);
                 break;
         }
+
+        // set the posiition of this object to the camera
+        this.transform.position = this.camera.getPosition();
     }
 
     handleFollowMode(deltaTime) {

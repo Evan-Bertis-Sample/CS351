@@ -206,15 +206,14 @@ class Material {
         shader.loadParameters(gl, this.params);
     }
 
-    getParam(paramName)
-    {
+    getParam(paramName) {
         for (let i = 0; i < this.params.length; i++) {
             if (this.params[i].name == paramName) {
                 return this.params[i];
             }
         }
         return null;
-    
+
     }
 }
 
@@ -310,7 +309,7 @@ class MaterialRegistry {
                                 }
                             }
 
-                            if (!found) 
+                            if (!found)
                                 paramNames.push(defaultParamName)
                         }
                     }
@@ -375,6 +374,64 @@ class MaterialRegistry {
         }
     }
 
+    async setGlobalShader(name) {
+        // set the shaderName for all materials
+        this.loadShaderSource(name)
+        for (let [key, material] of this.materials) {
+            material.shaderName = name;
+        }
+    }
+
+    async loadShaderSource(shaderName) {
+        // loads a shaderset
+        // load the shader because it hasn't been loaded yet
+        if (this.shaders.has(shaderName)) return;
+        let shaderLocation = "static/materials/" + shaderName;
+        // load the shader from the path
+        let vertexShaderPath = shaderLocation + "/vert.glsl";
+        let fragmentShaderPath = shaderLocation + "/frag.glsl";
+
+        console.log(vertexShaderPath)
+
+        // check if these files exist using fetch
+        try {
+            console.log("Loading shader: " + shaderName);
+            const vertSource = await loadFile(vertexShaderPath);
+            const fragSource = await loadFile(fragmentShaderPath);
+
+            // add parameters into the material descriptor params, if they aren't listed
+            // add the missing parameters
+            let paramNames = []
+            let defaultParams = this.defaultParams.get(shaderName);
+            if (defaultParams != null) {
+                for (let j = 0; j < defaultParams.length; j++) {
+                    let defaultParamName = defaultParams[j].name;
+                    // add this to the param names if it is not in there
+                    let found = false;
+                    for (let k = 0; k < paramNames; k++) {
+                        let cur = defaultParamName[k]
+                        if (cur == defaultParamName) {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found)
+                        paramNames.push(defaultParamName)
+                }
+            }
+            // add the shader to the registry
+            let shader = new ShaderSet(shaderName, vertSource, fragSource, paramNames);
+            this.addShader(shader);
+
+        }
+        catch (error) {
+            console.log("Failed to load shader: " + shaderName);
+            console.log(error);
+        }
+    }
+
+
     // sets the material to use for the next object
     // name: the name of the material
     setMaterial(name, gl) {
@@ -386,7 +443,7 @@ class MaterialRegistry {
 
         let material = this.getMaterial(name);
         if (material == null) {
-            console.log("Can't set material, material is null");
+            // console.log("Can't set material, material is null");
             return;
         }
 
@@ -397,7 +454,7 @@ class MaterialRegistry {
         if (material.shaderName != this.currentlyLoadedShader.get(gl)) {
             // console.log("Switching to shader: " + material.shaderName);
             if (shader == null) {
-                console.log("Can't set material, shader is null");
+                // console.log("Can't set material, shader is null");
                 return;
             }
             shader.loadShader(gl);
