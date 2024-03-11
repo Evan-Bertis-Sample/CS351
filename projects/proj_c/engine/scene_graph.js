@@ -23,6 +23,7 @@ class Transform {
         }
 
         this.position = position;
+        this.worldPosition = position;
         this.rotation = rotation;
         this.scale = scale;
         this.parent = parent;
@@ -389,6 +390,10 @@ class SceneGraph {
     _traverseHelper(node, callback, cl, parentModelMatrix, depth) {
         let localModelMatrix = node.transform.getLocalModelMatrix();
         let modelMatrix = parentModelMatrix.multiply(localModelMatrix);
+
+        let worldPos = modelMatrix.multiplyVector3(node.transform.position)
+        node.transform.worldPosition = worldPos;
+
         // console.log("Depth: " + depth);
         // console.log(node);
         // modelMatrix.printMe();

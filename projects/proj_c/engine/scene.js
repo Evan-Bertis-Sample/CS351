@@ -265,6 +265,11 @@ function buildRobot() {
 		materialName = "black_hole",
 		components = [
 			new ShakerComponent(0.5),
+			new LightComponent(
+				LIGHT_TYPE.POINT,
+				new Vector3([1.0, 0.0, 1.0]),
+				5.0
+			)
 		]
 	);
 
@@ -506,8 +511,8 @@ function buildArrows(parent) {
 function buildCrystals()
 {
 	// build the crystals
-	let numCrystalsPerLayer = 12;
-	let layerRadii = [40, 50];
+	let numCrystalsPerLayer = 1;
+	let layerRadii = [40];
 
 	let crystalParent = g_ecs.createEntity(
 		entityName = "crystal_parent",
@@ -518,7 +523,6 @@ function buildCrystals()
 		meshName = "",
 		materialName = "",
 		components = [
-			new RotateOnMouseDragComponent(),
 			new BobComponent(0.2, 5),
 		]
 	);
@@ -555,7 +559,11 @@ function buildCrystal(identifier, position, scale, parent) {
 	let materialIndex = Math.floor(Math.random() * crystalMaterials.length);
 	let material = crystalMaterials[materialIndex];
 
-	console.log(material)
+	// grab the color of the material
+	let color = g_materialRegistry.getMaterial(material).getParam("u_color").value;
+	console.log(color)
+
+	let lightColor = new Vector3(color.elements)
 
 	let crystalEntity = g_ecs.createEntity(
 		entityName = identifier,
@@ -569,8 +577,8 @@ function buildCrystal(identifier, position, scale, parent) {
 			new RotateComponent(new Vector3([0, 1, 0]), 100),
 			new LightComponent(
 				LIGHT_TYPE.POINT, 
-				new Vector3([1.0, 1.0, 1.0]),
-				1.0
+				lightColor,
+				10.0
 			)
 		]
 	);
@@ -585,7 +593,7 @@ function buildCrystal(identifier, position, scale, parent) {
 		let y = 0;
 		let pos = new Vector3([x, y, z]);
 		let scale = new Vector3([crystalScale, crystalScale, crystalScale]);
-		let identifier = "crystal_" + i + "_" + i;
+		let identifier = "child_crystal_" + i + "_" + i;
 		let entity = g_ecs.createEntity(
 			entityName = identifier,
 			parent = crystalEntity,

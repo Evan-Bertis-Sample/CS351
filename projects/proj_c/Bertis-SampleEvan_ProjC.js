@@ -100,12 +100,12 @@ async function main() {
 		g_deltaTime = (newTime - g_timeElapsed) / 1000;
 		g_timeElapsed = newTime;
 		g_ecs.update(g_deltaTime);
-		g_lightRegistry.updateLights();
 		g_inputManager.update();
 		for (let [key, value] of g_elementToCanvas) {
 			drawAll(value);
 		}
-
+		g_lightRegistry.updateLights();
+		
 		fps = 1 / g_deltaTime;
 		fpsCounter.innerHTML = "FPS: " + fps.toFixed(0);
 	};
@@ -283,6 +283,7 @@ function drawNode(node, modelMatrix, gl) {
 
 	// pass the uniforms
 	g_materialRegistry.passUniforms(gl, modelMatrix, camera.getViewMatrix(), camera.getProjectionMatrix(), camera.getPosition());
+
 	// draw the mesh
 	mesh.draw(gl);
 }

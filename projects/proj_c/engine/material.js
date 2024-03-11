@@ -205,6 +205,17 @@ class Material {
     loadParameters(gl, shader) {
         shader.loadParameters(gl, this.params);
     }
+
+    getParam(paramName)
+    {
+        for (let i = 0; i < this.params.length; i++) {
+            if (this.params[i].name == paramName) {
+                return this.params[i];
+            }
+        }
+        return null;
+    
+    }
 }
 
 // A registry of materials and shaders

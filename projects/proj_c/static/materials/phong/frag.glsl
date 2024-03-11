@@ -10,7 +10,7 @@ struct Light {
 
 struct LightBuffer
 {
-    Light lights[10];
+    Light lights[16];
     int numLights;
 };
 
@@ -98,10 +98,14 @@ void main() {
     vec4 diffuseLight = vec4(0.0, 0.0, 0.0, 1.0);
     vec4 specularLight = vec4(0.0, 0.0, 0.0, 1.0);
 
-    const int numLights = 10;
 
-    for (int i = 0; i < numLights; i++)
+    for (int i = 0; i < 16; i++)
     {
+        if (i >= u_lightBuffer.numLights)
+        {
+            break;
+        }
+
         Light light = u_lightBuffer.lights[i];
         if (light.lightType == 0)
         {

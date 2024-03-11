@@ -26,7 +26,7 @@ class LightingRegistry {
         this.lights = lights;
         this.lightLocations = new Map(); // map from gl to map of string to gl locations for each light attribute
         this.lightNumLocations = new Map(); // map from gl to numLights locations
-        this.MAX_LIGHTS = 10;
+        this.MAX_LIGHTS = 16;
     }
 
     updateLights() {
@@ -37,9 +37,12 @@ class LightingRegistry {
                 let transform = light.transformBinding;
                 if (light.lightType == LIGHT_TYPE.POINT) {
                     // set the position to the transform's position
-                    light.position.elements[0] = transform.position.elements[0];
-                    light.position.elements[1] = transform.position.elements[1];
-                    light.position.elements[2] = transform.position.elements[2];
+                    let position = transform.worldPosition;
+                    position.printMe()
+
+                    light.position.elements[0] = position.elements[0];
+                    light.position.elements[1] = position.elements[1];
+                    light.position.elements[2] = position.elements[2];
                 }
                 else {
                     // set the position to the direction of the transform
@@ -73,7 +76,7 @@ class LightingRegistry {
 
     addLight(color, intensity, position, lightType) {
         // check if we are at our limit
-        if (this.lights.length >= this.MAX_LIGHTS) {
+        if (this.lights.length > this.MAX_LIGHTS) {
             console.log("Max lights reached");
             return null;
         }
