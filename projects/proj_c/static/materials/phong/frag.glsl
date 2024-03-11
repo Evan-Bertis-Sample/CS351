@@ -47,6 +47,42 @@ vec4 lerp(vec4 a, vec4 b, float t) {
     return a * (1.0 - t) + b * t;
 }
 
+float calculatePointLightDiffuse(Light light, vec4 position, vec4 normal) {
+    vec3 lightDirection = normalize(light.position - position.xyz);
+    float lightDistance = length(light.position - position.xyz);
+    float attenuation = 1.0 / (1.0 + 0.1 * lightDistance + 0.01 * lightDistance * lightDistance);
+    float diffuse = max(dot(normal.xyz, lightDirection), 0.0);
+    return diffuse * attenuation * light.intensity;
+}
+
+float calculatePointLightSpecular(Light light, vec4 v_position, vec4 normal)
+{
+    vec3 lightDirection = normalize(light.position - v_position.xyz);
+    vec3 viewDirection = normalize(u_cameraPosition - v_position.xyz);
+    vec3 reflectDirection = reflect(-lightDirection, normal.xyz);
+    float specular = pow(max(dot(viewDirection, reflectDirection), 0.0), 32.0);
+    float lightDistance = length(light.position - v_position.xyz);
+    float attenuation = 1.0 / (1.0 + 0.1 * lightDistance + 0.01 * lightDistance * lightDistance);
+    return specular * attenuation * light.intensity;
+}
+
+float calculateDirectionalLightDiffuse(Light light, vec4 position, vec4 normal)
+{
+    vec3 lightDirection = normalize(-light.position);
+    float diffuse = max(dot(normal.xyz, lightDirection), 0.0);
+    return diffuse * light.intensity;
+}
+
+
+float calculateDirectionalLightSpecular(Light light, vec4 position, vec4 normal)
+{
+    vec3 lightDirection = normalize(-light.position);
+    vec3 viewDirection = normalize(u_cameraPosition - position.xyz);
+    vec3 reflectDirection = reflect(-lightDirection, normal.xyz);
+    float specular = pow(max(dot(viewDirection, reflectDirection), 0.0), 32.0);
+    return specular * light.intensity;
+}
+
 void main() {
     // normalize the normal vector
     vec4 normal = normalize(v_normal);
@@ -58,62 +94,34 @@ void main() {
         return;
     }
 
-    vec4 lightingDirection = normalize(directionalLight);
-    // calculate the dot product of the normal and the lighting direction
-    float diffuse = max(dot(normal, lightingDirection), 0.0);
+    vec4 color = u_color;
 
-    // calculate the specular component
-    vec4 reflectionDirection = reflect(-lightingDirection, normal);
-    vec4 viewDirection = normalize(vec4(u_cameraPosition, 1.0) - v_position);
-    float specular = pow(max(dot(reflectionDirection, viewDirection), 0.0), 16.0);
+    // calculate the ambient light
+    vec4 ambientLight = ambientLightColor * color;
 
-    diffuse = nStep(diffuse, 5.0) * cellShadingWeight + diffuse * (1.0 - cellShadingWeight);
-    specular = nStep(specular, 3.0) * cellShadingWeight + specular * (1.0 - cellShadingWeight);
+    // calculate the diffuse light
+    vec4 diffuseLight = vec4(0.0, 0.0, 0.0, 1.0);
+    vec4 specularLight = vec4(0.0, 0.0, 0.0, 1.0);
 
-    // calculate the diffuse and specular components
-    diffuse = diffuse * 0.8 + 0.2;
-    specular = specular * 0.8 + 0.2;
+    const int numLights = 2;
 
-    diffuse = diffuse * u_diffuse_influence;
-    specular = specular * u_specular_influence;
+    for (int i = 0; i < numLights; i++)
+    {
+        Light light = u_lightBuffer.lights[i];
+        if (light.lightType == 0)
+        {
+            diffuseLight += vec4(calculatePointLightDiffuse(light, v_position, normal), 0.0, 0.0, 1.0);
+            specularLight += vec4(calculatePointLightSpecular(light, v_position, normal), 0.0, 0.0, 1.0);
+        }
+        else
+        {
+            diffuseLight += vec4(calculateDirectionalLightDiffuse(light, v_position, normal), 0.0, 0.0, 1.0);
+            specularLight += vec4(calculateDirectionalLightSpecular(light, v_position, normal), 0.0, 0.0, 1.0);
+        }
+    }
 
-    // ensure that the specular lighting is muted in shadow
-    specular = specular * diffuse;
-    specular = specular * specular;
-
-    // calculate the frensel effect
-    float frensel = 1.0 - dot(normal, viewDirection);
-    // make sure that the frensel effect is positive
-    // sqrt(pow)
-    frensel = sqrt(frensel * frensel);
-    frensel = pow(frensel, 1.0 / u_frensel_border);
-
-    vec4 frenselColor = u_frensel_color * frensel;
     // calculate the final color
-    vec4 finalColor = (ambientLightColor * u_color) + (lightColor * u_color * diffuse) + (lightColor * specular);
-    // add the frensel effect
-    finalColor = finalColor + (frenselColor * u_frensel_influence);
+    color = color * (ambientLight + diffuseLight * u_diffuse_influence + specularLight * u_specular_influence);
 
-    // add a grid to the object, based on x and z coordinates, but only if the normal is pointing up
-    float grid = 0.0;
-    if(mod(v_position.x, gridSize * 10.0) < gridSize || mod(v_position.z, gridSize * 10.0) < gridSize) {
-        grid = 1.0;
-    }
-
-    // multiply it by the dot product of the normal and the up vector
-
-    if(u_show_grid > 0.0) {
-        grid *= max(dot(normal, vec4(0, 1, 0, 0)), 0.0);
-
-        // multiply the grid by the distance from the origin
-        grid *= 1.0 - (length(v_position) / 60.0);
-
-        // clamp the grid value
-        grid = clamp(grid, 0.0, 1.0);
-
-        // now lerping the grid color with the final color
-        finalColor = lerp(finalColor, gridColor, grid);
-    }
-
-    gl_FragColor = finalColor;
+    gl_FragColor = color;
 }
