@@ -89,6 +89,9 @@ async function main() {
 	g_timeElapsed = 0;
 	g_ecs.start();
 
+	let fpsCounter = document.getElementById("fps");
+	let fps = 0;
+
 	var tick = function () {
 		let newTime = Date.now();
 		g_deltaTime = (newTime - g_timeElapsed) / 1000;
@@ -98,6 +101,9 @@ async function main() {
 		for (let [key, value] of g_elementToCanvas) {
 			drawAll(value);
 		}
+
+		fps = 1 / g_deltaTime;
+		fpsCounter.innerHTML = "FPS: " + fps.toFixed(0);
 	};
 
 	// tick();
