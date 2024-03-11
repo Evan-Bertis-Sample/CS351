@@ -117,9 +117,9 @@ Matrix4.prototype.multiplyVector3 = function (pos) {
   var v = new Vector3();
   var result = v.elements;
 
-  result[0] = p[0] * e[0] + p[1] * e[4] + p[2] * e[8] + e[11]; // note the added 4th column
-  result[1] = p[0] * e[1] + p[1] * e[5] + p[2] * e[9] + e[12]; // (presumes hidden 4th vector element w==1)
-  result[2] = p[0] * e[2] + p[1] * e[6] + p[2] * e[10] + e[13];
+  result[0] = p[0] * e[0] + p[1] * e[4] + p[2] * e[8] + e[12]; // note the added 4th column
+  result[1] = p[0] * e[1] + p[1] * e[5] + p[2] * e[9] + e[13]; // (presumes hidden 4th vector element w==1)
+  result[2] = p[0] * e[2] + p[1] * e[6] + p[2] * e[10] + e[14];
 
   return v;
 };

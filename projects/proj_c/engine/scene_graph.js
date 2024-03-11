@@ -388,11 +388,12 @@ class SceneGraph {
     // callback: the function to call on each node, takes in a TransformNode, and the model matrix of the node
     // parentModelMatrix: the model matrix of the parent node
     _traverseHelper(node, callback, cl, parentModelMatrix, depth) {
+        let worldPos = parentModelMatrix.multiplyVector3(node.transform.position)
+        node.transform.worldPosition = worldPos;
+
+        
         let localModelMatrix = node.transform.getLocalModelMatrix();
         let modelMatrix = parentModelMatrix.multiply(localModelMatrix);
-
-        let worldPos = modelMatrix.multiplyVector3(node.transform.position)
-        node.transform.worldPosition = worldPos;
 
         // console.log("Depth: " + depth);
         // console.log(node);

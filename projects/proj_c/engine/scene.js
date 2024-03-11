@@ -268,7 +268,7 @@ function buildRobot() {
 			new LightComponent(
 				LIGHT_TYPE.POINT,
 				new Vector3([1.0, 0.0, 1.0]),
-				5.0
+				0.5
 			)
 		]
 	);
@@ -511,7 +511,7 @@ function buildArrows(parent) {
 function buildCrystals()
 {
 	// build the crystals
-	let numCrystalsPerLayer = 1;
+	let numCrystalsPerLayer = 12;
 	let layerRadii = [40];
 
 	let crystalParent = g_ecs.createEntity(
@@ -578,7 +578,7 @@ function buildCrystal(identifier, position, scale, parent) {
 			new LightComponent(
 				LIGHT_TYPE.POINT, 
 				lightColor,
-				10.0
+				1.0
 			)
 		]
 	);
