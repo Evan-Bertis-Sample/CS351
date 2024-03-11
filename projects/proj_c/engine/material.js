@@ -376,7 +376,7 @@ class MaterialRegistry {
 
     async setGlobalShader(name) {
         // set the shaderName for all materials
-        this.loadShaderSource(name)
+        await this.loadShaderSource(name)
         for (let [key, material] of this.materials) {
             material.shaderName = name;
         }

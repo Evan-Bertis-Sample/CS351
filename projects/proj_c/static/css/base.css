@@ -265,4 +265,27 @@ button:hover {
     to {opacity: 1}
 }
 
+.col-container
+{
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+}
 
+select {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--light-primary);
+    border: var(--dark-primary);
+    border-radius: 1rem;
+    padding: 0.5rem 1.5rem;
+    margin: 0.25rem 0.5rem;
+    background-color: var(--dark-primary);
+    transition: 0.2s ease-in-out;
+}
+
+select:hover {
+    background-color: var(--dark-secondary);
+    border: var(--dark-secondary);
+    cursor: pointer;
+}

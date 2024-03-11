@@ -71,22 +71,30 @@
         <div>
             <h1>Project C: Better Lighting and Materials</h1>
             <h3>Evan Bertis-Sample</h3>
-
             
-            <button onclick="showModal()">
-                Controls
-            </button>
+            <div class="col-container">
+                <div>
+                    <h4>Information</h4>
+                    <button onclick="showModal()">
+                        Controls
+                    </button>
 
-            <button onclick="invertLightingSetting()">
-                Toggle Lighting
-            </button>
+                    <button onclick="invertLightingSetting()">
+                        Toggle Lighting
+                    </button>
 
-            <!-- Dropdown for choosing lighting type -->
-            <select id="lighting-type" onchange="changeLightingType()">
-                <option value="phong">Phong</option>
-                <option value="test">Test</option>
-            </select>
+                    <!-- Dropdown for choosing lighting type -->
+                    <select id="lighting-type" onchange="changeLightingType()">
+                        <option value="phong">Phong</option>
+                        <option value="test">Test</option>
+                    </select>
 
+                </div>
+
+                <div>
+                    <h4>Lighting Controls</h4>
+                </div>
+            </div>
         </div>
     </div>
 
