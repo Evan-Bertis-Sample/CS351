@@ -52,7 +52,9 @@ class MaterialDescriptor {
     // Finds whether or not a material has a parameter of a given name
     hasParam(name) {
         for (let i = 0; i < this.params.length; i++) {
+            // console.log("Checking parameter: " + this.params[i].name + " against " + name);
             if (this.params[i].name == name) {
+                // console.log("Found parameter: " + name);
                 return true;
             }
         }
@@ -175,6 +177,7 @@ class ShaderSet {
     loadParameters(gl, params) {
         for (let i = 0; i < this.paramNames.length; i++) {
             let param = params[i];
+            if (param == null) continue;
             // get the location of the parameter
             let location = this.uLoc_params.get(gl.program).get(param.name);
             if (location == null || location < 0) {
@@ -276,8 +279,6 @@ class MaterialRegistry {
                     // console.log(vertSource)
                     // console.log(fragSource)
 
-                    console.log(materialDescriptors[i])
-
                     let paramNames = new Array();
                     for (let j = 0; j < materialDescriptors[i].params.length; j++) {
                         paramNames.push(materialDescriptors[i].params[j].name);
@@ -318,21 +319,23 @@ class MaterialRegistry {
 
             // add parameters into the material descriptor params, if they aren't listed
             // add the missing parameters
+            let finalParams = materialDescriptors[i].params.slice()
             console.log(materialDescriptors[i])
             let defaultParams = this.defaultParams.get(shaderName);
             if (defaultParams != null) {
                 for (let j = 0; j < defaultParams.length; j++) {
                     let defaultParam = defaultParams[j];
                     // console.log(defaultParam);
-                    if (!materialDescriptors[i].hasParam(defaultParam)) {
-                        console.log(`Adding default parameter ${defaultParam.name} of value ${defaultParam.value} to material ${materialName}`)
-                        materialDescriptors[i].addParam(defaultParam)
+                    if (!materialDescriptors[i].hasParam(defaultParam.name)) {
+                        // console.log(`Adding default parameter ${defaultParam.name} of value ${defaultParam.value} to material ${materialName}`)
+                        finalParams.push(defaultParam)
                     }
                 }
             }
-
             // add the material to the registry
-            var material = new Material(materialName, shaderName, materialDescriptors[i].params);
+            console.log(finalParams)
+
+            var material = new Material(materialName, shaderName, finalParams);
             this.addMaterial(material);
         }
     }
