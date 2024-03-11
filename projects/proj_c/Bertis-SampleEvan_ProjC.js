@@ -100,6 +100,7 @@ async function main() {
 		g_deltaTime = (newTime - g_timeElapsed) / 1000;
 		g_timeElapsed = newTime;
 		g_ecs.update(g_deltaTime);
+		g_lightRegistry.updateLights();
 		g_inputManager.update();
 		for (let [key, value] of g_elementToCanvas) {
 			drawAll(value);

@@ -10,7 +10,14 @@ class Light {
         this.lightType = lightType;
         this.color = color;
         this.intensity = intensity;
-        this.position = position;
+
+        // make sure that the position is a vec3
+        this.position = new Vector3(position.elements)
+        this.transformBinding = null
+    }
+
+    bindTransform(transform) {
+        this.transformBinding = transform;
     }
 }
 
@@ -22,13 +29,40 @@ class LightingRegistry {
         this.MAX_LIGHTS = 10;
     }
 
+    updateLights() {
+        for (let i = 0; i < this.lights.length; i++) {
+            // update the position
+            let light = this.lights[i];
+            if (light.transformBinding != null) {
+                let transform = light.transformBinding;
+                if (light.lightType == LIGHT_TYPE.POINT) {
+                    // set the position to the transform's position
+                    light.position.elements[0] = transform.position.elements[0];
+                    light.position.elements[1] = transform.position.elements[1];
+                    light.position.elements[2] = transform.position.elements[2];
+                }
+                else {
+                    // set the position to the direction of the transform
+                    let rotationQuat = transform.rotation;
+                    let rotationMatrix = new Matrix4();
+                    rotationMatrix.setFromQuat(rotationQuat);
+                    let direction = new Vector3([0, 0, 1]);
+                    direction = rotationMatrix.multiplyVector3(direction);
+                    light.position.elements[0] = direction.elements[0];
+                    light.position.elements[1] = direction.elements[1];
+                    light.position.elements[2] = direction.elements[2];
+                }
+            }
+        }
+    }
+
     // load the lights into the gl buffers
     loadLights(gl) {
         let numLights = this.lights.length;
         if (!this.lightLocations.has(gl)) {
             this.findLightLocations(gl)
         }
-        
+
         let lightLocation = this.lightNumLocations.get(gl);
         gl.uniform1i(lightLocation, numLights);
 
@@ -37,8 +71,20 @@ class LightingRegistry {
         }
     }
 
-    passLight(gl, light, index)
-    {
+    addLight(color, intensity, position, lightType) {
+        // check if we are at our limit
+        if (this.lights.length >= this.MAX_LIGHTS) {
+            console.log("Max lights reached");
+            return null;
+        }
+
+        let light = new Light(lightType, color, intensity, position);
+        this.lights.push(light);
+
+        return light;
+    }
+
+    passLight(gl, light, index) {
         let lightLocations = this.lightLocations.get(gl);
         let positionLocation = lightLocations.get(`position[${index}]`);
         let colorLocation = lightLocations.get(`color[${index}]`);

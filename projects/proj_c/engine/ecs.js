@@ -1074,3 +1074,26 @@ class RotateOnMouseDragComponent extends Component {
         }
     }
 }
+
+class LightComponent extends Component
+{
+    constructor(type, color, intensity)
+    {
+        super()
+        this.type = type
+        this.color = color
+        this.intensity = intensity
+    }
+
+    start()
+    {
+        // add a point light, and bind it to the transform
+        let light = g_lightRegistry.addLight(this.color, this.intensity, this.transform.position, this.type)
+
+        if (light != null)
+        {
+            this.light = light
+            this.light.bindTransform(this.transform)
+        }
+    }
+}

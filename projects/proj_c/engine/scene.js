@@ -149,18 +149,6 @@ function buildEnviornment() {
 			new BobComponent(0.2, 5),
 		]
 	);
-
-	// let planeScale = c_WALKABLE_RADIUS + 3;
-	// let planeEntity = g_ecs.createEntity(
-	// 	entityName = "plane",
-	// 	parent = null,
-	// 	position = new Vector3([0, -1.5, 0]),
-	// 	rotation = new Quaternion(),
-	// 	scale = new Vector3([planeScale, planeScale, planeScale]),
-	// 	meshName = "plane",
-	// 	materialName = "platform",
-	// 	components = []
-	// );
 }
 
 function buildStar(identifier, position, scale, parent, starMaterial) {
@@ -249,7 +237,7 @@ function buildRobot() {
 		components = []
 	);
 
-	buildArrows(arrowParent);
+	// buildArrows(arrowParent);
 
 	// add the head
 	let robotHeadEntity = g_ecs.createEntity(
@@ -579,6 +567,11 @@ function buildCrystal(identifier, position, scale, parent) {
 		materialName = material,
 		components = [
 			new RotateComponent(new Vector3([0, 1, 0]), 100),
+			new LightComponent(
+				LIGHT_TYPE.POINT, 
+				new Vector3([1.0, 1.0, 1.0]),
+				1.0
+			)
 		]
 	);
 
