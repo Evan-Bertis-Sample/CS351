@@ -39,13 +39,13 @@ var g_USE_FETCH = true; // Used to grab files via the fetch method, not usable u
 var c_LIGHTS = [
 	new Light(
 		LIGHT_TYPE.DIRECTIONAL, 
-		new Vector3([1.0, 1.0, 1.0]), 
-		1.0, 
-		new Vector3([0.0, 1.0, 0.0])
+		new Vector3([0.1, 0.0, 1.0]), 
+		0.1, 
+		new Vector3([-1.0, -1.0, -1.0])
 	),
 	new Light(
 		LIGHT_TYPE.POINT,
-		new Vector3([1.0, 1.0, 1.0]),
+		new Vector3([0.2, 0.0, 1.0]),
 		10.0, 
 		new Vector3([0.0, 1.0, 0.0])
 	),
@@ -187,7 +187,7 @@ var c_MATERIALS = [
 		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([1.0, 1.0, 1.0, 1.0])),
-			new MaterialParameter("u_show_grid", 1.0),
+			// new MaterialParameter("u_show_grid", 1.0),
 		]
 	),
 ];

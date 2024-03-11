@@ -45,8 +45,8 @@ class LightingRegistry {
         let intensityLocation = lightLocations.get(`intensity[${index}]`);
         let lightTypeLocation = lightLocations.get(`lightType[${index}]`);
 
-        gl.uniform4fv(positionLocation, light.position.elements);
-        gl.uniform4fv(colorLocation, light.color.elements);
+        gl.uniform3fv(positionLocation, light.position.elements);
+        gl.uniform3fv(colorLocation, light.color.elements);
         gl.uniform1f(intensityLocation, light.intensity);
         gl.uniform1i(lightTypeLocation, light.lightType);
     }
