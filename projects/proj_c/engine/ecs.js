@@ -210,11 +210,14 @@ class ECS {
 // bobbing component
 // makes an object bob up and down
 class BobComponent extends Component {
-    constructor(amplitude = 1, frequency = 1) {
+    constructor(amplitude = 1, frequency = 1, randomOffset = false) {
         super();
         this.amplitude = amplitude;
         this.frequency = frequency;
         this.time = 0;
+        if (randomOffset == true) {
+            this.time = (Math.random() * 2 - 1) * Math.PI;
+        }
     }
 
     start() {
@@ -1077,12 +1080,15 @@ class RotateOnMouseDragComponent extends Component {
 
 class LightComponent extends Component
 {
-    constructor(type, color, intensity)
+    constructor(type, color, intensity, flickerSpeed = 5, flickerAmount = 0.05)
     {
         super()
         this.type = type
         this.color = color
         this.intensity = intensity
+        this.flickerSpeed = flickerSpeed + Math.random() * 0.5
+        this.flickerAmount = flickerAmount + Math.random() * 0.05
+        this.offset = Math.random() * flickerSpeed
     }
 
     start()
@@ -1094,6 +1100,17 @@ class LightComponent extends Component
         {
             this.light = light
             this.light.bindTransform(this.transform)
+            this.time = 0
+        }
+    }
+
+    update(deltaTime)
+    {
+        if (this.light != null)
+        {
+            // flicker the light based on the time
+            this.time += deltaTime;
+            this.light.intensity = Math.sin(this.time * this.flickerSpeed + this.offset) * this.flickerAmount + this.intensity;
         }
     }
 }

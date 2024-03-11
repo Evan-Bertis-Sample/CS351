@@ -523,7 +523,7 @@ function buildCrystals()
 		meshName = "",
 		materialName = "",
 		components = [
-			new BobComponent(0.2, 5),
+			new RotateComponent(new Vector3([0, 1, 0]), 10),
 		]
 	);
 
@@ -575,6 +575,7 @@ function buildCrystal(identifier, position, scale, parent) {
 		materialName = material,
 		components = [
 			new RotateComponent(new Vector3([0, 1, 0]), 100),
+			new BobComponent(0.2, 5, true),
 			new LightComponent(
 				LIGHT_TYPE.POINT, 
 				lightColor,
