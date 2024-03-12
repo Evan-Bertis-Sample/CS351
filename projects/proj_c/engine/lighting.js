@@ -30,6 +30,10 @@ class LightingRegistry {
         this.lights = lights;
         this.lightLocations = new Map(); // map from gl to map of string to gl locations for each light attribute
         this.lightNumLocations = new Map(); // map from gl to numLights locations
+        this.ambientLightLocations = new Map(); // map from gl to ambient light locations
+        this.ambientLightIntensityLocations = new Map(); // map from gl to ambient light intensity locations
+        this.ambientLight = new Vector3([0.6, 0.52, 0.85]);
+        this.ambientLightIntensity = 0.5;
         this.MAX_LIGHTS = 16;
     }
 
@@ -72,6 +76,12 @@ class LightingRegistry {
 
         let lightLocation = this.lightNumLocations.get(gl.program);
         gl.uniform1i(lightLocation, numLights);
+
+        let ambientLocation = this.ambientLightLocations.get(gl.program);
+        gl.uniform3fv(ambientLocation, this.ambientLight.elements);
+
+        let ambientIntensityLocation = this.ambientLightIntensityLocations.get(gl.program);
+        gl.uniform1f(ambientIntensityLocation, this.ambientLightIntensity);
 
         for (let i = 0; i < numLights; i++) {
             this.passLight(gl, this.lights[i], i);
@@ -153,5 +163,12 @@ class LightingRegistry {
         // find the light number locations
         let numLocation = gl.getUniformLocation(gl.program, "u_lightBuffer.numLights");
         this.lightNumLocations.set(gl.program, numLocation);
+
+        // find the ambient light locations
+        let ambientLocation = gl.getUniformLocation(gl.program, "u_lightBuffer.ambientLight");
+        this.ambientLightLocations.set(gl.program, ambientLocation);
+
+        let ambientIntensityLocation = gl.getUniformLocation(gl.program, "u_lightBuffer.ambientIntensity");
+        this.ambientLightIntensityLocations.set(gl.program, ambientIntensityLocation);
     }
 }

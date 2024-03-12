@@ -14,10 +14,10 @@ struct LightBuffer
 {
     Light lights[16];
     int numLights;
+    vec3 ambientLight;
+    float ambientIntensity;
 };
 
-// constants
-const vec4 ambientLightColor = vec4(0.44, 0.45, 0.49, 1.0);
 const float cellShadingWeight = 0.4;
 const float gridSize = 0.5;
 const vec4 gridColor = vec4(0.6, 0.52, 0.85, 1.0);
@@ -65,7 +65,7 @@ float calculateAttenuation(Light light, float lightDistance)
     {
         return 1.0;
     }
-}
+}  
 
 vec3 calculatePointLightDiffuse(Light light, vec4 position, vec4 normal) {
     vec3 lightDirection = normalize(light.position - position.xyz);
@@ -151,7 +151,9 @@ void main() {
     frensel = pow(frensel, 1.0 / u_frensel_border);
 
     vec4 frenselColor = u_frensel_color * frensel;
-    color = color * (ambientLightColor + diffuseLight * u_diffuse_influence);
+
+    color = u_color * vec4(u_lightBuffer.ambientLight * u_lightBuffer.ambientIntensity, 1.0);
+    color += (diffuseLight * u_diffuse_influence);
     color += frenselColor * u_frensel_influence;
     color += specularLight * u_specular_influence;
 

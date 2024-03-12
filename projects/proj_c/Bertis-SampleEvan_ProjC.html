@@ -83,11 +83,17 @@
                         <!-- light color -->
                         <label>Global Ambient Color</label>
                         <label>R</label>
-                        <input type="range" id="ambient-light-color-r" min="0" max="1" value="1" step="0.1" oninput="setDiffuseLightColor()">
+                        <input type="range" id="ambient-light-color-r" min="0" max="1" value="1" step="0.1" oninput="setAmbientLightColor()">
                         <label>G</label>
-                        <input type="range" id="ambient-light-color-g" min="0" max="1" value="1" step="0.1" oninput="setDiffuseLightColor()">
+                        <input type="range" id="ambient-light-color-g" min="0" max="1" value="1" step="0.1" oninput="setAmbientLightColor()">
                         <label>B</label>
-                        <input type="range" id="ambient-light-color-b" min="0" max="1" value="1" step="0.1" oninput="setDiffuseLightColor()">
+                        <input type="range" id="ambient-light-color-b" min="0" max="1" value="1" step="0.1" oninput="setAmbientLightColor()">
+                    </div>
+
+                    <div class="vector-container">
+                        <label for="ambient-light-intensity">Ambient Light Intensity</label>
+                        <input type="range" id="ambient-light-intensity" min="0" max="2" value="1" step="0.05" oninput="setAmbientLightIntensity()">
+                        <input type="number" id="ambient-light-intensity-number" value="1" step="0.05" oninput="setAmbientLightIntensity()">
                     </div>
 
                     <div class="vector-container">
@@ -284,6 +290,23 @@
             light.specularColor = new Vector3([r, g, b]);
         }
 
+        function setAmbientLightColor()
+        {
+            let r = document.getElementById("ambient-light-color-r").value;
+            let g = document.getElementById("ambient-light-color-g").value;
+            let b = document.getElementById("ambient-light-color-b").value;
+            g_lightRegistry.ambientLight = new Vector3([r, g, b]);
+        }
+
+        function setAmbientLightIntensity()
+        {
+            let intensity = document.getElementById("ambient-light-intensity").value;
+            g_lightRegistry.ambientLightIntensity = intensity;
+
+            let label = document.getElementById("ambient-light-intensity-number");
+            label.value = intensity;
+        }
+
         function setupLightingControls()
         {
             let position = g_lightRegistry.getLight(0).position;
@@ -312,6 +335,14 @@
             document.getElementById("specular-light-color-r").value = specularColor.elements[0];
             document.getElementById("specular-light-color-g").value = specularColor.elements[1];
             document.getElementById("specular-light-color-b").value = specularColor.elements[2];
+
+            let ambientLight = g_lightRegistry.ambientLight;
+            document.getElementById("ambient-light-color-r").value = ambientLight.elements[0];
+            document.getElementById("ambient-light-color-g").value = ambientLight.elements[1];
+            document.getElementById("ambient-light-color-b").value = ambientLight.elements[2];
+
+            document.getElementById("ambient-light-intensity").value = g_lightRegistry.ambientLightIntensity;
+            document.getElementById("ambient-light-intensity-number").value = g_lightRegistry.ambientLightIntensity;
         }
 
         async function changeLightingType() {
