@@ -114,7 +114,15 @@
                             <option value="0">Linear (1/dist)</option>
                             <option value="1">Quadratic (1/dist*dist)</option>
                             <option value="3">None</option>
+                        </select>
 
+                        <!-- Drop down for material type -->
+                        <select id="material-type" onchange="changeMaterialType()">
+                            <option value="center_sphere">Default</option>
+                            <option value="red">Red</option>
+                            <option value="black_hole">Black Hole</option>
+                            <option value="star">Star</option>
+                            <!-- <option value="test">Test</option> -->
                         </select>
                     </div>
 
@@ -323,6 +331,15 @@
             const set = (light) => light.attenuationFunction = value;
 
             g_lightRegistry.foreachLight(set);
+        }
+
+        function changeMaterialType()
+        {
+            let entityName = "central_sphere";
+            let material = document.getElementById("material-type").value;
+            // find the entity
+            let entity = g_ecs.getEntity(entityName);
+            entity.node.renderInfo.material = material;
         }
 
         function setupLightingControls()

@@ -59,7 +59,7 @@ var c_DEFAULT_SHADER_PARAMS = new Map([
 		"phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.65, 0.65, 0.65, 1.0])),
-			new MaterialParameter("u_shininess", 32.0),
+			new MaterialParameter("u_shininess", 8.0),
 			new MaterialParameter("u_diffuse_influence", 0.8),
 			new MaterialParameter("u_specular_influence", 0.2),
 			new MaterialParameter("u_frensel_influence", 0.1),
@@ -121,7 +121,8 @@ var c_MATERIALS = [
 		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.8, 0.4, 0.6, 1.0])),
-			new MaterialParameter("u_specular_influence", 3.5)
+			new MaterialParameter("u_specular_influence", 3.5),
+			new MaterialParameter("u_shininess", 64.0),
 		]
 	),
 	new MaterialDescriptor(
