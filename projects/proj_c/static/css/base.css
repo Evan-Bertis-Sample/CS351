@@ -23,12 +23,13 @@ body {
     width: 100%;
     height: auto;
     margin: 0;
-    padding: 0.5rem 20rem;
+    padding: 0.5rem 10rem;
     display: flex; 
     flex-direction: row;
     gap: 0.5rem;
     overflow-x: hidden;
     overflow-y: hidden;
+    justify-content: center;
 }
 
 .subtitle-container
@@ -270,6 +271,12 @@ button:hover {
     display: flex;
     flex-direction: row;
     gap: 1.5rem;
+    justify-content: center;
+}
+
+.col-container > *
+{
+    flex: 1 1 auto;
 }
 
 select {

@@ -68,7 +68,7 @@ class LightingRegistry {
             this.findLightLocations(gl)
         }
 
-        let lightLocation = this.lightNumLocations.get(gl);
+        let lightLocation = this.lightNumLocations.get(gl.program);
         gl.uniform1i(lightLocation, numLights);
 
         for (let i = 0; i < numLights; i++) {
@@ -139,6 +139,6 @@ class LightingRegistry {
 
         // find the light number locations
         let numLocation = gl.getUniformLocation(gl.program, "u_lightBuffer.numLights");
-        this.lightNumLocations.set(gl, numLocation);
+        this.lightNumLocations.set(gl.program, numLocation);
     }
 }

@@ -82,7 +82,7 @@ class ShaderSet {
     }
 
     loadShader(gl) {
-        // console.log("Loading shader: " + this.name);
+        console.log("Loading shader: " + this.name);
         initShaders(gl, this.vertexShaderSource, this.fragmentShaderSource);
         // set the attributes
         var aLoc_position = gl.getAttribLocation(gl.program, 'a_position');
@@ -157,6 +157,7 @@ class ShaderSet {
         // now find the locations of the shader parameters
         for (let i = 0; i < this.paramNames.length; i++) {
             let paramName = this.paramNames[i];
+            console.log("Finding parameter " + paramName);
             let location = gl.getUniformLocation(gl.program, paramName);
             if (location == null || location < 0) {
                 console.log('Failed to get the storage location of ' + paramName);
@@ -173,10 +174,12 @@ class ShaderSet {
     }
 
     loadParameters(gl, params) {
-        for (let i = 0; i < this.paramNames.length; i++) {
+        for (let i = 0; i < params.length; i++) {
             let param = params[i];
-            if (param == null) continue;
+            // console.log("Loading parameter: " + param.name);
             // get the location of the parameter
+            if (this.uLoc_params.get(gl.program) == null) continue;
+            
             let location = this.uLoc_params.get(gl.program).get(param.name);
             if (location == null || location < 0) {
                 console.log('Failed to get the storage location of ' + param.name);
@@ -443,7 +446,7 @@ class MaterialRegistry {
 
         let material = this.getMaterial(name);
         if (material == null) {
-            // console.log("Can't set material, material is null");
+            console.log("Can't set material, material is null");
             return;
         }
 
@@ -454,7 +457,7 @@ class MaterialRegistry {
         if (material.shaderName != this.currentlyLoadedShader.get(gl)) {
             // console.log("Switching to shader: " + material.shaderName);
             if (shader == null) {
-                // console.log("Can't set material, shader is null");
+                console.log("Can't set material, shader is null");
                 return;
             }
             shader.loadShader(gl);
