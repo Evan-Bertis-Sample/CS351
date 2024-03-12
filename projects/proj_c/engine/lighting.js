@@ -6,9 +6,10 @@ const LIGHT_TYPE = {
 }
 
 class Light {
-    constructor(lightType, color, intensity, position) {
+    constructor(lightType, diffuseColor, specularColor, intensity, position) {
         this.lightType = lightType;
-        this.color = color;
+        this.diffuseColor = diffuseColor;
+        this.specularColor = specularColor
         this.intensity = intensity;
 
         // make sure that the position is a vec3
@@ -76,14 +77,14 @@ class LightingRegistry {
         }
     }
 
-    addLight(color, intensity, position, lightType) {
+    addLight(diffuseColor, specularColor, intensity, position, lightType) {
         // check if we are at our limit
         if (this.lights.length > this.MAX_LIGHTS) {
             console.log("Max lights reached");
             return null;
         }
 
-        let light = new Light(lightType, color, intensity, position);
+        let light = new Light(lightType, diffuseColor, specularColor, intensity, position);
         this.lights.push(light);
 
         return light;
@@ -100,12 +101,14 @@ class LightingRegistry {
     passLight(gl, light, index) {
         let lightLocations = this.lightLocations.get(gl.program);
         let positionLocation = lightLocations.get(`position[${index}]`);
-        let colorLocation = lightLocations.get(`color[${index}]`);
+        let diffuseLocation = lightLocations.get(`diffuseColor[${index}]`);
+        let specularLocation = lightLocations.get(`specularColor[${index}]`)
         let intensityLocation = lightLocations.get(`intensity[${index}]`);
         let lightTypeLocation = lightLocations.get(`lightType[${index}]`);
 
         gl.uniform3fv(positionLocation, light.position.elements);
-        gl.uniform3fv(colorLocation, light.color.elements);
+        gl.uniform3fv(diffuseLocation, light.diffuseColor.elements);
+        gl.uniform3fv(specularLocation, light.specularColor.elements);
 
         if (light.active)
             gl.uniform1f(intensityLocation, light.intensity);
@@ -120,17 +123,20 @@ class LightingRegistry {
         let mapLocation = new Map();
         for (let i = 0; i < this.MAX_LIGHTS; i++) {
             let positionName = "u_lightBuffer.lights[0].position".replace("0", i);
-            let colorName = "u_lightBuffer.lights[0].color".replace("0", i);
+            let diffuseName = "u_lightBuffer.lights[0].diffuseColor".replace("0", i);
+            let specularName = "u_lightingBuffer.lights[0].specularColor".replace("0", i)
             let intensityName = "u_lightBuffer.lights[0].intensity".replace("0", i);
             let lightTypeName = "u_lightBuffer.lights[0].lightType".replace("0", i);
 
             let positionLocation = gl.getUniformLocation(gl.program, positionName);
-            let colorLocation = gl.getUniformLocation(gl.program, colorName);
+            let diffuseLocation = gl.getUniformLocation(gl.program, diffuseName);
+            let specularLocation = gl.getUniformLocation(gl.program, specularName);
             let intensityLocation = gl.getUniformLocation(gl.program, intensityName);
             let lightTypeLocation = gl.getUniformLocation(gl.program, lightTypeName);
 
             mapLocation.set(`position[${i}]`, positionLocation);
-            mapLocation.set(`color[${i}]`, colorLocation);
+            mapLocation.set(`diffuseColor[${i}]`, diffuseLocation);
+            mapLocation.set(`specularColor[${i}]`, specularLocation);
             mapLocation.set(`intensity[${i}]`, intensityLocation);
             mapLocation.set(`lightType[${i}]`, lightTypeLocation);
         }

@@ -281,6 +281,7 @@ function buildRobot() {
 			new LightComponent(
 				LIGHT_TYPE.POINT,
 				new Vector3([1.0, 0.0, 1.0]),
+				new Vector3([1, 1, 1]),
 				0.5
 			)
 		]
@@ -591,6 +592,7 @@ function buildCrystal(identifier, position, scale, parent) {
 			new LightComponent(
 				LIGHT_TYPE.POINT,
 				lightColor,
+				new Vector3([1, 1, 1]),
 				1.5
 			)
 		]

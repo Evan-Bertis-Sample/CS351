@@ -324,12 +324,16 @@ label {
     color: var(--dark-primary);
     margin: 0.5rem 0;
     height: 0.8rem;
+    /* ensure no wrapping */
+    text-wrap: nowrap;
+    text-align: center;
 }
 
 /* range inputs */
 input[type=range] {
     -webkit-appearance: none;
     width: 100%;
+    min-width: 5rem;
     height: 0.8rem;
     background: var(--light-secondary);
     outline: none;
@@ -387,11 +391,15 @@ input[type=number] {
 input[type=checkbox] {
     -webkit-appearance: none;
     -moz-appearance: none;
+    box-sizing: border-box;
     appearance: none;
-    width: 0.8rem;
-    height: 0.8rem;
-    border-radius: 0.25em;
-    outline: none;
+    width: 1rem;
+    height: 1rem;
+    margin: 0;
+    padding: 0;
+    border-radius: 1rem;
+    border-color: var(--dark-primary);
+    border-width: 1rem;
     background: var(--light-secondary);
 }
 

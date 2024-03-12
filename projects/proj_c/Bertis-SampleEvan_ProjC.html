@@ -79,22 +79,33 @@
                         This version of the renderer supports up to 16 lights, and supports different lighting techniques.
                     </p>
 
-                    <br>
+                    <div class="vector-container">
+                        <!-- light color -->
+                        <label>Global Ambient Color</label>
+                        <label>R</label>
+                        <input type="range" id="ambient-light-color-r" min="0" max="1" value="1" step="0.1" oninput="setDiffuseLightColor()">
+                        <label>G</label>
+                        <input type="range" id="ambient-light-color-g" min="0" max="1" value="1" step="0.1" oninput="setDiffuseLightColor()">
+                        <label>B</label>
+                        <input type="range" id="ambient-light-color-b" min="0" max="1" value="1" step="0.1" oninput="setDiffuseLightColor()">
+                    </div>
 
-                    <button onclick="showModal()">
-                        Controls
-                    </button>
+                    <div class="vector-container">
+                        <button onclick="showModal()">
+                            Controls
+                        </button>
 
-                    <button onclick="invertLightingSetting()">
-                        Toggle Lighting
-                    </button>
+                        <button onclick="invertLightingSetting()">
+                            Toggle Lighting
+                        </button>
 
-                    <!-- Dropdown for choosing lighting type -->
-                    <select id="lighting-type" onchange="changeLightingType()">
-                        <option value="phong">Phong</option>
-                        <option value="gouraud">Gouraud</option>
-                        <option value="test">Test</option>
-                    </select>
+                        <!-- Dropdown for choosing lighting type -->
+                        <select id="lighting-type" onchange="changeLightingType()">
+                            <option value="phong">Phong</option>
+                            <option value="gouraud">Gouraud</option>
+                            <option value="test">Test</option>
+                        </select>
+                    </div>
 
                 </div>
 
@@ -107,7 +118,7 @@
                     <!-- Vector 3 Input for position of light -->
                     <!-- 3 floating point fields with sliders -->
                     <div class="vector-container">
-                        <label>Position</label>
+                        <label>Light Position</label>
 
                         <label for="light-position-x">X</label>
                         <input type="range" id="light-position-x" min="-25" max="25" value="0" step="0.1" oninput="changeLightPosition()">
@@ -124,7 +135,7 @@
 
                     <div class="vector-container">
                         <!-- light intensity -->
-                        <label for="light-intensity">Intensity</label>
+                        <label for="light-intensity">Light Intensity</label>
                         <input type="range" id="light-intensity" min="0" max="10" value="10" step="0.1" oninput="changeLightIntensity()">
                         <input type="number" id="light-intensity-number" value="10" step="0.1" oninput="changeLightIntensity()">
 
@@ -135,23 +146,25 @@
 
                     <div class="vector-container">
                         <!-- light color -->
+                        <label>Diffuse Color</label>
                         <label>R</label>
-                        <input type="range" id="light-color-r" min="0" max="1" value="1" step="0.1" oninput="setLightColor()">
+                        <input type="range" id="diffuse-light-color-r" min="0" max="1" value="1" step="0.1" oninput="setDiffuseLightColor()">
                         <label>G</label>
-                        <input type="range" id="light-color-g" min="0" max="1" value="1" step="0.1" oninput="setLightColor()">
+                        <input type="range" id="diffuse-light-color-g" min="0" max="1" value="1" step="0.1" oninput="setDiffuseLightColor()">
                         <label>B</label>
-                        <input type="range" id="light-color-b" min="0" max="1" value="1" step="0.1" oninput="setLightColor()">
+                        <input type="range" id="diffuse-light-color-b" min="0" max="1" value="1" step="0.1" oninput="setDiffuseLightColor()">
                     </div>
 
                     
                     <div class="vector-container">
                         <!-- light color -->
+                        <label>Specular Color</label>
                         <label>R</label>
-                        <input type="range" id="light-color-r" min="0" max="1" value="1" step="0.1" oninput="setLightColor()">
+                        <input type="range" id="specular-light-color-r" min="0" max="1" value="1" step="0.1" oninput="setDiffuseLightColor()">
                         <label>G</label>
-                        <input type="range" id="light-color-g" min="0" max="1" value="1" step="0.1" oninput="setLightColor()">
+                        <input type="range" id="specular-light-color-g" min="0" max="1" value="1" step="0.1" oninput="setDiffuseLightColor()">
                         <label>B</label>
-                        <input type="range" id="light-color-b" min="0" max="1" value="1" step="0.1" oninput="setLightColor()">
+                        <input type="range" id="specular-light-color-b" min="0" max="1" value="1" step="0.1" oninput="setDiffuseLightColor()">
                     </div>
 
                 </div>
@@ -253,16 +266,15 @@
             light.active = !light.active;
         }
 
-        function setLightColor()
+        function setDiffuseLightColor()
         {
-            let r = document.getElementById("light-color-r").value;
-            let g = document.getElementById("light-color-g").value;
-            let b = document.getElementById("light-color-b").value;
+            let r = document.getElementById("diffuse-light-color-r").value;
+            let g = document.getElementById("diffuse-light-color-g").value;
+            let b = document.getElementById("diffuse-light-color-b").value;
 
             let light = g_lightRegistry.getLight(0)
 
-            light.color = new Vector3([r, g, b]);
-
+            light.diffuseColor = new Vector3([r, g, b]);
         }
 
         function setupLightingControls()
@@ -284,10 +296,10 @@
 
             document.getElementById("light-active").checked = g_lightRegistry.getLight(0).active;
 
-            let color = g_lightRegistry.getLight(0).color;
-            document.getElementById("light-color-r").value = color.elements[0];
-            document.getElementById("light-color-g").value = color.elements[1];
-            document.getElementById("light-color-b").value = color.elements[2];
+            let color = g_lightRegistry.getLight(0).diffuseColor;
+            document.getElementById("diffuse-light-color-r").value = color.elements[0];
+            document.getElementById("diffuse-light-color-g").value = color.elements[1];
+            document.getElementById("diffuse-light-color-b").value = color.elements[2];
         }
 
         async function changeLightingType() {

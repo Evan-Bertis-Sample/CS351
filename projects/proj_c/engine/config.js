@@ -39,13 +39,15 @@ var g_USE_FETCH = true; // Used to grab files via the fetch method, not usable u
 var c_LIGHTS = [
 	new Light(
 		LIGHT_TYPE.POINT,
-		new Vector3([0.2, 0.0, 1.0]),
+		new Vector3([0.2, 0.0, 1.0]), // diffuse color
+		new Vector3([0.2, 0.0, 1.0]), // specular color
 		10.0,
-		new Vector3([0.0, 30.0, 0.0])
+		new Vector3([10.0, 15.0, 20.0])
 	), // this is the light that the user has control over
 	new Light(
 		LIGHT_TYPE.DIRECTIONAL, 
 		new Vector3([0.1, 0.0, 1.0]), 
+		new Vector3([0.1, 0.0, 1.0]),
 		0.1, 
 		new Vector3([-1.0, -1.0, -1.0])
 	),
@@ -130,7 +132,7 @@ var c_MATERIALS = [
 		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.8, 0.4, 0.6, 1.0])),
-			new MaterialParameter("u_specular_influence", 1.0)
+			new MaterialParameter("u_specular_influence", 3.5)
 		]
 	),
 	new MaterialDescriptor(

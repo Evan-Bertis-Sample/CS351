@@ -1083,11 +1083,12 @@ class RotateOnMouseDragComponent extends Component {
 
 class LightComponent extends Component
 {
-    constructor(type, color, intensity, flickerSpeed = 5, flickerAmount = 0.05)
+    constructor(type, diffuseColor, specularColor, intensity, flickerSpeed = 5, flickerAmount = 0.05)
     {
         super()
         this.type = type
-        this.color = color
+        this.diffuseColor = diffuseColor
+        this.specularColor = specularColor;
         this.intensity = intensity
         this.flickerSpeed = flickerSpeed + Math.random() * 0.5
         this.flickerAmount = flickerAmount + Math.random() * 0.05
@@ -1097,7 +1098,7 @@ class LightComponent extends Component
     start()
     {
         // add a point light, and bind it to the transform
-        let light = g_lightRegistry.addLight(this.color, this.intensity, this.transform.position, this.type)
+        let light = g_lightRegistry.addLight(this.diffuseColor, this.specularColor, this.intensity, this.transform.position, this.type)
 
         if (light != null)
         {
