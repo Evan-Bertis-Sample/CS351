@@ -99,7 +99,7 @@ void main() {
     vec4 specularLight = vec4(0.0, 0.0, 0.0, 1.0);
 
 
-    for (int i = 0; i < 16; i++)
+    for (int i = 0; i < 1; i++)
     {
         if (i >= u_lightBuffer.numLights)
         {
@@ -158,4 +158,5 @@ void main() {
     }
 
     gl_FragColor = color;
+    gl_FragColor = diffuseLight;
 }

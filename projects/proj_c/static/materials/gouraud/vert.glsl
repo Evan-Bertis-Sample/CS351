@@ -48,6 +48,7 @@ vec4 lerp(vec4 a, vec4 b, float t) {
 
 vec3 calculatePointLightDiffuse(Light light, vec4 position, vec4 normal) {
     vec3 lightDirection = normalize(light.position - position.xyz);
+    return lightDirection;
     float lightDistance = length(light.position - position.xyz);
     float attenuation = 1.0 / (1.0 + 0.1 * lightDistance + 0.01 * lightDistance * lightDistance);
     float diffuse = max(dot(normal.xyz, lightDirection), 0.0);
@@ -86,16 +87,17 @@ vec3 calculateDirectionalLightSpecular(Light light, vec4 position, vec4 normal)
 void main() {
     // Transform the vertex position into screen space
     mat4 mvp = u_projectionMatrix * u_viewMatrix * u_modelMatrix;
-    vec4 pos = mvp * a_position;
+    vec4 viewPos = mvp * a_position;
+    vec4 worldPos = u_modelMatrix * a_position;
 
     // check that the vertex is in front of the camera
-    if(pos.z < 0.0) {
+    if(viewPos.z < 0.0) {
         // if not, set the vertex position to the origin
-        pos = vec4(0.0, 0.0, 0.0, 0.0);
+        viewPos = vec4(0.0, 0.0, 0.0, 0.0);
     }
 
-    pos = pos / pos.w;
-    gl_Position = pos;
+    viewPos = viewPos / viewPos.w;
+    gl_Position = viewPos;
 
     if(u_enable_lighting == 0.0) {
         vec4 normalColor = vec4(a_normal.x, a_normal.y, a_normal.z, 1.0) * 0.5 + 0.5;
@@ -110,7 +112,7 @@ void main() {
     vec4 diffuseLight = vec4(0.0, 0.0, 0.0, 1.0);
     vec4 specularLight = vec4(0.0, 0.0, 0.0, 1.0);
 
-    for(int i = 0; i < 2; i++) {
+    for(int i = 0; i < 1; i++) {
         if(i >= u_lightBuffer.numLights) {
             break;
         }
@@ -118,16 +120,16 @@ void main() {
         Light light = u_lightBuffer.lights[i];
         if(light.lightType == 0) {
             // point light
-            diffuseLight += vec4(calculatePointLightDiffuse(light, pos, normal), 1.0);
-            specularLight += vec4(calculatePointLightSpecular(light, pos, normal), 1.0);
+            diffuseLight += vec4(calculatePointLightDiffuse(light, worldPos, normal), 1.0);
+            specularLight += vec4(calculatePointLightSpecular(light, worldPos, normal), 1.0);
         } else {
-            diffuseLight += vec4(calculateDirectionalLightDiffuse(light, pos, normal), 1.0);
-            specularLight += vec4(calculateDirectionalLightSpecular(light, pos, normal), 1.0);
+            diffuseLight += vec4(calculateDirectionalLightDiffuse(light, worldPos, normal), 1.0);
+            specularLight += vec4(calculateDirectionalLightSpecular(light, worldPos, normal), 1.0);
         }
     }
 
     // calculate the frensel effect
-    vec4 viewDirection = normalize(vec4(u_cameraPosition, 1.0) - pos);
+    vec4 viewDirection = normalize(vec4(u_cameraPosition, 1.0) - worldPos);
     float frensel = 1.0 - dot(normal, viewDirection);
     // make sure that the frensel effect is positive
     // sqrt(pow)
@@ -140,33 +142,31 @@ void main() {
     color = color * (ambientLightColor + diffuseLight * u_diffuse_influence);
     color += frenselColor * u_frensel_influence;
     color += specularLight * u_specular_influence;
-    v_color = color;
+
 
     // this is for the grid on the platform
     // i didn't feel like texturing the model
 
     // add a grid to the object, based on x and z coordinates, but only if the normal is pointing up
     float grid = 0.0;
-    if(mod(pos.x, gridSize * 10.0) < gridSize || mod(pos.z, gridSize * 10.0) < gridSize) {
+    if(mod(viewPos.x, gridSize * 10.0) < gridSize || mod(viewPos.z, gridSize * 10.0) < gridSize) {
         grid = 1.0;
     }
 
     // multiply it by the dot product of the normal and the up vector
-
     if(u_show_grid > 0.0) {
         grid *= max(dot(normal, vec4(0, 1, 0, 0)), 0.0);
 
         // multiply the grid by the distance from the origin
-        grid *= 1.0 - (length(pos) / 60.0);
+        grid *= 1.0 - (length(viewPos) / 60.0);
 
         // clamp the grid value
         grid = clamp(grid, 0.0, 1.0);
 
         // now lerping the grid color with the final color
-        // color = lerp(color, gridColor, grid);
+        color = lerp(color, gridColor, grid);
     }
 
-    // v_color = color;
     v_uv = a_uv;
-    v_color = specularLight * u_specular_influence;
+    v_color = color;
 }
