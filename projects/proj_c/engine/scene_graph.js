@@ -307,6 +307,7 @@ class Camera {
         this.position = descriptor.position;
         this.rotation = descriptor.rotation;
         this.projectionMatrix = new Matrix4().set(descriptor.getProjectionMatrix());
+        
     }
 
     resize() {
@@ -359,6 +360,12 @@ class Camera {
 
     setRotationFromAxisAngle(axis, angle) {
         this.rotation.setFromAxisAngle(axis.x, axis.y, axis.z, angle);
+    }
+
+    isInViewFrustrum(node, modelMatrix)
+    {
+        // do some basic object culling
+
     }
 }
 

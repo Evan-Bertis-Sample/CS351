@@ -60,7 +60,7 @@ function buildCamera() {
 
 function buildEnviornment() {
 	// build the stars
-	let numStars = 500;
+	let numStars = 1000;
 	let starRadius = 400;
 	let minimumRadius = c_WALKABLE_RADIUS + 40;
 	let starMaterial = "star";
@@ -155,8 +155,8 @@ function buildEnviornment() {
 		parent = null,
 		position = new Vector3([0, 0, 0]),
 		rotation = new Quaternion(),
-		scale = new Vector3([10, 10, 10]),
-		meshName = "hex_sphere",
+		scale = new Vector3([7, 7, 7]),
+		meshName = "low_poly_sphere",
 		materialName = "center_sphere",
 		components = [
 			new RotateComponent(new Vector3([0, 1, 0]), 10),
@@ -171,7 +171,7 @@ function buildStar(identifier, position, scale, parent, starMaterial) {
 		position = position,
 		rotation = new Quaternion(),
 		scale = scale,
-		meshName = "sphere",
+		meshName = "low_poly_sphere",
 		materialName = starMaterial,
 		components = [
 			new RotateComponent(new Vector3([0, 1, 0]), 5),
@@ -188,7 +188,7 @@ function buildDysonSphere(identifier, position, scale, innerMaterial, outerMater
 		position = position,
 		rotation = new Quaternion(),
 		scale = scale,
-		meshName = "sphere",
+		meshName = "low_poly_sphere",
 		materialName = innerMaterial,
 		components = [
 			new ShakerComponent(2.5),
@@ -216,7 +216,7 @@ function buildRobot() {
 	let robotBaseEntity = g_ecs.createEntity(
 		entityName = "Robot Parent",
 		parent = null,
-		position = new Vector3([0, 0, 15]),
+		position = new Vector3([0, 0, 25]),
 		rotation = new Quaternion(),
 		scale = new Vector3([1, 1, 1]),
 		meshName = "",
@@ -274,7 +274,7 @@ function buildRobot() {
 		position = new Vector3([0, 0, 0]),
 		rotation = new Quaternion(),
 		scale = new Vector3([0.5, 0.5, 0.5]),
-		meshName = "sphere",
+		meshName = "low_poly_sphere",
 		materialName = "black_hole",
 		components = [
 			new ShakerComponent(0.5),
@@ -415,7 +415,7 @@ function buildLeg(i, numLegs, legDistance, segmentLength, robotBaseEntity, groun
 		position = legPosition.mul(-segmentSize).sub(new Vector3([0, 0.5, 0])),
 		rotation = new Quaternion(),
 		scale = new Vector3([segmentSize, segmentSize, segmentSize]),
-		meshName = "sphere",
+		meshName = "low_poly_sphere",
 		materialName = "robot_outers",
 		components = []
 	);
@@ -452,7 +452,7 @@ function buildLeg(i, numLegs, legDistance, segmentLength, robotBaseEntity, groun
 		position = new Vector3([0, 0, 0]),
 		rotation = new Quaternion(),
 		scale = new Vector3([segmentSize, segmentSize, segmentSize]),
-		meshName = "sphere",
+		meshName = "low_poly_sphere",
 		materialName = "robot_outers",
 		components = []
 	);
@@ -464,7 +464,7 @@ function buildLeg(i, numLegs, legDistance, segmentLength, robotBaseEntity, groun
 		position = new Vector3([0, 0, 0]),
 		rotation = new Quaternion(),
 		scale = new Vector3([segmentSize, segmentSize, segmentSize]),
-		meshName = "sphere",
+		meshName = "low_poly_sphere",
 		materialName = "robot_outers",
 		components = []
 	);
@@ -524,7 +524,7 @@ function buildArrows(parent) {
 function buildCrystals() {
 	// build the crystals
 	let numCrystalsPerLayer = 12;
-	let layerRadii = [40];
+	let layerRadii = [50];
 
 	let crystalParent = g_ecs.createEntity(
 		entityName = "crystal_parent",

@@ -245,6 +245,7 @@ var c_MESHES = [
 	"./static/meshes/robot_head.obj",
 	"./static/meshes/crystal.obj",
 	"./static/meshes/hex_sphere.obj",
+	"./static/meshes/low_poly_sphere.obj",
 ];
 
 

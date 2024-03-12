@@ -30,26 +30,19 @@ uniform float u_specular_influence;
 uniform float u_frensel_influence;
 uniform vec4 u_frensel_color;
 uniform float u_frensel_border;
-uniform float u_show_grid;
+uniform LightBuffer u_lightBuffer;
+
 // constants
 const vec4 ambientLightColor = vec4(0.44, 0.45, 0.49, 1.0);
 const float cellShadingWeight = 0.4;
-const float gridSize = 0.5;
-const vec4 gridColor = vec4(0.6, 0.52, 0.85, 1.0);
 
-uniform LightBuffer u_lightBuffer;
+
 
 // varying variables to pass to fragment shader
 varying vec4 v_color;
 varying vec2 v_uv;
-
-float nStep(float x, float numSteps) {
-    return floor(x * numSteps) / float(numSteps);
-}
-
-vec4 lerp(vec4 a, vec4 b, float t) {
-    return a * (1.0 - t) + b * t;
-}
+varying vec4 v_position;
+varying vec4 v_normal;
 
 vec3 calculatePointLightDiffuse(Light light, vec4 position, vec4 normal) {
     vec3 lightDirection = normalize(light.position - position.xyz);
@@ -135,28 +128,9 @@ void main() {
         color = color * (ambientLight + diffuseLight * u_diffuse_influence + specularLight * u_specular_influence) + frenselColor * u_frensel_influence;
     }
 
-    // add a grid to the object, based on x and z coordinates, but only if the normal is pointing up
-    float grid = 0.0;
-    if(mod(worldPosition.x, gridSize * 10.0) < gridSize || mod(worldPosition.z, gridSize * 10.0) < gridSize) {
-        grid = 1.0;
-    }
-
-    // multiply it by the dot product of the normal and the up vector
-
-    if(u_show_grid > 0.0) {
-        grid *= max(dot(normal, vec4(0, 1, 0, 0)), 0.0);
-
-        // multiply the grid by the distance from the origin
-        grid *= 1.0 - (length(worldPosition) / 60.0);
-
-        // clamp the grid value
-        grid = clamp(grid, 0.0, 1.0);
-
-        // now lerping the grid color with the final color
-        color = lerp(color, gridColor, grid);
-    }
-
     // Pass the computed color and texture coordinates to the fragment shader
     v_color = color;
     v_uv = a_uv;
+    v_normal = normal;
+    v_position = worldPosition;
 }
