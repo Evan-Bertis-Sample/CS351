@@ -171,11 +171,11 @@
                         <!-- light color -->
                         <label>Specular Color</label>
                         <label>R</label>
-                        <input type="range" id="specular-light-color-r" min="0" max="1" value="1" step="0.1" oninput="setDiffuseLightColor()">
+                        <input type="range" id="specular-light-color-r" min="0" max="1" value="1" step="0.1" oninput="setSpecularLightColor()">
                         <label>G</label>
-                        <input type="range" id="specular-light-color-g" min="0" max="1" value="1" step="0.1" oninput="setDiffuseLightColor()">
+                        <input type="range" id="specular-light-color-g" min="0" max="1" value="1" step="0.1" oninput="setSpecularLightColor()">
                         <label>B</label>
-                        <input type="range" id="specular-light-color-b" min="0" max="1" value="1" step="0.1" oninput="setDiffuseLightColor()">
+                        <input type="range" id="specular-light-color-b" min="0" max="1" value="1" step="0.1" oninput="setSpecularLightColor()">
                     </div>
 
                 </div>
@@ -286,12 +286,13 @@
             light.diffuseColor = new Vector3([r, g, b]);
         }
 
-        function setSpecularColor()
+        function setSpecularLightColor()
         {
             let r = document.getElementById("specular-light-color-r").value;
             let g = document.getElementById("specular-light-color-g").value;
             let b = document.getElementById("specular-light-color-b").value;
             let light = g_lightRegistry.getLight(0)
+            console.log("Setting specular color to: " + r + " " + g + " " + b);
             light.specularColor = new Vector3([r, g, b]);
         }
 

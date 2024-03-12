@@ -40,14 +40,14 @@ var c_LIGHTS = [
 	new Light(
 		LIGHT_TYPE.POINT,
 		new Vector3([0.2, 0.0, 1.0]), // diffuse color
-		new Vector3([0.2, 0.0, 1.0]), // specular color
+		new Vector3([1.0, 1.0, 1.0]), // specular color
 		10.0,
 		new Vector3([10.0, 15.0, 20.0])
 	), // this is the light that the user has control over
 	new Light(
 		LIGHT_TYPE.DIRECTIONAL, 
 		new Vector3([0.1, 0.0, 1.0]), 
-		new Vector3([0.1, 0.0, 1.0]),
+		new Vector3([0.1, 0.1, 0.1]),
 		0.1, 
 		new Vector3([-1.0, -1.0, -1.0])
 	),

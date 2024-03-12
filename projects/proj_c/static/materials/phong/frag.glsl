@@ -80,7 +80,7 @@ vec3 calculatePointLightSpecular(Light light, vec4 v_position, vec4 normal)
     vec3 lightDirection = normalize(light.position - v_position.xyz);
     vec3 viewDirection = normalize(u_cameraPosition - v_position.xyz);
     vec3 reflectDirection = reflect(-lightDirection, normal.xyz);
-    float specular = pow(max(dot(viewDirection, reflectDirection), 0.0), 1.0);
+    float specular = pow(max(dot(viewDirection, reflectDirection), 0.0), 32.0);
     float lightDistance = length(light.position - v_position.xyz);
     float attenuation = calculateAttenuation(light, lightDistance);
     return specular * attenuation * light.intensity * light.specularColor;

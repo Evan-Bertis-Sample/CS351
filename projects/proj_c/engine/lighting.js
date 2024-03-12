@@ -138,7 +138,7 @@ class LightingRegistry {
         for (let i = 0; i < this.MAX_LIGHTS; i++) {
             let positionName = "u_lightBuffer.lights[0].position".replace("0", i);
             let diffuseName = "u_lightBuffer.lights[0].diffuseColor".replace("0", i);
-            let specularName = "u_lightingBuffer.lights[0].specularColor".replace("0", i)
+            let specularName = "u_lightBuffer.lights[0].specularColor".replace("0", i)
             let intensityName = "u_lightBuffer.lights[0].intensity".replace("0", i);
             let lightTypeName = "u_lightBuffer.lights[0].lightType".replace("0", i);
             let distanceFunctionName = "u_lightBuffer.lights[0].attenuationFunction".replace("0", i);
