@@ -24,6 +24,7 @@ const vec4 gridColor = vec4(0.6, 0.52, 0.85, 1.0);
 
 uniform vec3 u_cameraPosition;
 uniform vec4 u_color;
+uniform float u_shininess;
 uniform float u_diffuse_influence;
 uniform float u_specular_influence;
 uniform float u_frensel_influence;
@@ -80,7 +81,7 @@ vec3 calculatePointLightSpecular(Light light, vec4 v_position, vec4 normal)
     vec3 lightDirection = normalize(light.position - v_position.xyz);
     vec3 viewDirection = normalize(u_cameraPosition - v_position.xyz);
     vec3 reflectDirection = reflect(-lightDirection, normal.xyz);
-    float specular = pow(max(dot(viewDirection, reflectDirection), 0.0), 32.0);
+    float specular = pow(max(dot(viewDirection, reflectDirection), 0.0), u_shininess);
     float lightDistance = length(light.position - v_position.xyz);
     float attenuation = calculateAttenuation(light, lightDistance);
     return specular * attenuation * light.intensity * light.specularColor;
@@ -99,7 +100,7 @@ vec3 calculateDirectionalLightSpecular(Light light, vec4 position, vec4 normal)
     vec3 lightDirection = normalize(-light.position);
     vec3 viewDirection = normalize(u_cameraPosition - position.xyz);
     vec3 reflectDirection = reflect(-lightDirection, normal.xyz);
-    float specular = pow(max(dot(viewDirection, reflectDirection), 0.0), 32.0);
+    float specular = pow(max(dot(viewDirection, reflectDirection), 0.0), u_shininess);
     return specular * light.intensity * light.specularColor;
 }
 
