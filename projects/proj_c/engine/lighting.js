@@ -87,6 +87,14 @@ class LightingRegistry {
         return light;
     }
 
+    getLight(index) {
+        if (index < 0 || index >= this.lights.length) {
+            return null;
+        }
+
+        return this.lights[index];
+    }
+
     passLight(gl, light, index) {
         let lightLocations = this.lightLocations.get(gl.program);
         let positionLocation = lightLocations.get(`position[${index}]`);

@@ -93,6 +93,23 @@
 
                 <div>
                     <h4>Lighting Controls</h4>
+                    <!-- Vector 3 Input for position of light -->
+                    <!-- 3 floating point fields with sliders -->
+                    <div class="vector-container">
+                        <label for="light-position-x">X</label>
+                        <input type="range" id="light-position-x" min="-25" max="25" value="0" step="0.1" oninput="changeLightPosition()">
+                        <input type="number" id="light-position-x-number" value="0" step="0.1" oninput="changeLightPosition()">
+
+                        <label for="light-position-y">Y</label>
+                        <input type="range" id="light-position-y" min="-25" max="25" value="0" step="0.1" oninput="changeLightPosition()">
+                        <input type="number" id="light-position-y-number" value="0" step="0.1" oninput="changeLightPosition()">
+
+                        <label for="light-position-z">Z</label>
+                        <input type="range" id="light-position-z" min="-25" max="25" value="0" step="0.1" oninput="changeLightPosition()">
+                        <input type="number" id="light-position-z-number" value="0" step="0.1" oninput="changeLightPosition()">
+
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -143,6 +160,22 @@
         function hideModal() {
             var modal = document.getElementById("controls");
             modal.style.display = "none";
+        }
+
+        function changeLightPosition()
+        {
+            var x = document.getElementById("light-position-x").value;
+            var y = document.getElementById("light-position-y").value;
+            var z = document.getElementById("light-position-z").value;
+
+            document.getElementById("light-position-x-number").value = x;
+            document.getElementById("light-position-y-number").value = y;
+            document.getElementById("light-position-z-number").value = z;
+
+            let position = new Vector3([x, z, -y]);
+            let light = g_lightRegistry.getLight(0)
+
+            light.position = position;
         }
 
         async function changeLightingType() {
