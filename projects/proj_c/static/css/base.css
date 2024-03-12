@@ -23,7 +23,7 @@ body {
     width: 100%;
     height: auto;
     margin: 0;
-    padding: 1rem 20rem;
+    padding: 0.5rem 20rem;
     display: flex; 
     flex-direction: row;
     gap: 0.5rem;

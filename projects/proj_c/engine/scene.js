@@ -50,7 +50,7 @@ function buildCamera() {
 					movementSpeed: 30,
 					offset: new Vector3([0, 30, 40]),
 					originalRotation: new Quaternion().setFromAxisAngle(1, 0, 0, 30),
-					rotationSpeed: 0.1,
+					rotationSpeed: 0.25,
 				}
 			),
 		]
@@ -148,6 +148,20 @@ function buildEnviornment() {
 			new BobComponent(0.2, 5),
 		]
 	);
+
+	// build a slowly spinning sphere at the origin
+	let sphere = g_ecs.createEntity(
+		entityName = "central_sphere",
+		parent = null,
+		position = new Vector3([0, 0, 0]),
+		rotation = new Quaternion(),
+		scale = new Vector3([5, 5, 5]),
+		meshName = "sphere",
+		materialName = "center_sphere",
+		components = [
+			new RotateComponent(new Vector3([0, 1, 0]), 10),
+		]
+	)
 }
 
 function buildStar(identifier, position, scale, parent, starMaterial) {
@@ -507,8 +521,7 @@ function buildArrows(parent) {
 	);
 }
 
-function buildCrystals()
-{
+function buildCrystals() {
 	// build the crystals
 	let numCrystalsPerLayer = 12;
 	let layerRadii = [40];
@@ -576,7 +589,7 @@ function buildCrystal(identifier, position, scale, parent) {
 			new RotateComponent(new Vector3([0, 1, 0]), 100),
 			new BobComponent(0.3, 5, true),
 			new LightComponent(
-				LIGHT_TYPE.POINT, 
+				LIGHT_TYPE.POINT,
 				lightColor,
 				1.5
 			)
@@ -611,8 +624,7 @@ function buildCrystal(identifier, position, scale, parent) {
 	return crystalEntity;
 }
 
-function buildPlanet(position)
-{
+function buildPlanet(position) {
 	let parentEntity = g_ecs.createEntity(
 		entityName = "planet_parent",
 		parent = null,

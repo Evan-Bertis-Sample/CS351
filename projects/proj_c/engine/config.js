@@ -113,6 +113,14 @@ var c_MATERIALS = [
 		]
 	),
 	new MaterialDescriptor(
+		"center_sphere",
+		"static/materials/phong",
+		[
+			new MaterialParameter("u_color", new Vector4([0.8, 0.4, 0.6, 1.0])),
+			new MaterialParameter("u_specular_influence", 1.0)
+		]
+	),
+	new MaterialDescriptor(
 		"robot_inners",
 		"static/materials/phong",
 		[
