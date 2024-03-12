@@ -6,11 +6,12 @@ const LIGHT_TYPE = {
 }
 
 class Light {
-    constructor(lightType, diffuseColor, specularColor, intensity, position) {
+    constructor(lightType, diffuseColor, specularColor, intensity, position, attenuationFunction = 2) {
         this.lightType = lightType;
         this.diffuseColor = diffuseColor;
         this.specularColor = specularColor
         this.intensity = intensity;
+        this.attenuationFunction = attenuationFunction;
 
         // make sure that the position is a vec3
         this.position = new Vector3(position.elements)
@@ -105,6 +106,7 @@ class LightingRegistry {
         let specularLocation = lightLocations.get(`specularColor[${index}]`)
         let intensityLocation = lightLocations.get(`intensity[${index}]`);
         let lightTypeLocation = lightLocations.get(`lightType[${index}]`);
+        let distanceFunctionLocation = lightLocations.get(`attenuationFunction[${index}]`);
 
         gl.uniform3fv(positionLocation, light.position.elements);
         gl.uniform3fv(diffuseLocation, light.diffuseColor.elements);
@@ -114,7 +116,9 @@ class LightingRegistry {
             gl.uniform1f(intensityLocation, light.intensity);
         else
             gl.uniform1f(intensityLocation, 0);
+
         gl.uniform1i(lightTypeLocation, light.lightType);
+        gl.uniform1i(distanceFunctionLocation, light.attenuationFunction);
     }
 
 
@@ -127,18 +131,21 @@ class LightingRegistry {
             let specularName = "u_lightingBuffer.lights[0].specularColor".replace("0", i)
             let intensityName = "u_lightBuffer.lights[0].intensity".replace("0", i);
             let lightTypeName = "u_lightBuffer.lights[0].lightType".replace("0", i);
+            let distanceFunctionName = "u_lightBuffer.lights[0].attenuationFunction".replace("0", i);
 
             let positionLocation = gl.getUniformLocation(gl.program, positionName);
             let diffuseLocation = gl.getUniformLocation(gl.program, diffuseName);
             let specularLocation = gl.getUniformLocation(gl.program, specularName);
             let intensityLocation = gl.getUniformLocation(gl.program, intensityName);
             let lightTypeLocation = gl.getUniformLocation(gl.program, lightTypeName);
+            let distanceFunctionLocation = gl.getUniformLocation(gl.program, distanceFunctionName);
 
             mapLocation.set(`position[${i}]`, positionLocation);
             mapLocation.set(`diffuseColor[${i}]`, diffuseLocation);
             mapLocation.set(`specularColor[${i}]`, specularLocation);
             mapLocation.set(`intensity[${i}]`, intensityLocation);
             mapLocation.set(`lightType[${i}]`, lightTypeLocation);
+            mapLocation.set(`attenuationFunction[${i}]`, distanceFunctionLocation);
         }
 
         this.lightLocations.set(gl.program, mapLocation);

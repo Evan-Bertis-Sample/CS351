@@ -271,10 +271,17 @@
             let r = document.getElementById("diffuse-light-color-r").value;
             let g = document.getElementById("diffuse-light-color-g").value;
             let b = document.getElementById("diffuse-light-color-b").value;
-
             let light = g_lightRegistry.getLight(0)
-
             light.diffuseColor = new Vector3([r, g, b]);
+        }
+
+        function setSpecularColor()
+        {
+            let r = document.getElementById("specular-light-color-r").value;
+            let g = document.getElementById("specular-light-color-g").value;
+            let b = document.getElementById("specular-light-color-b").value;
+            let light = g_lightRegistry.getLight(0)
+            light.specularColor = new Vector3([r, g, b]);
         }
 
         function setupLightingControls()
@@ -296,10 +303,15 @@
 
             document.getElementById("light-active").checked = g_lightRegistry.getLight(0).active;
 
-            let color = g_lightRegistry.getLight(0).diffuseColor;
-            document.getElementById("diffuse-light-color-r").value = color.elements[0];
-            document.getElementById("diffuse-light-color-g").value = color.elements[1];
-            document.getElementById("diffuse-light-color-b").value = color.elements[2];
+            let diffuseColor = g_lightRegistry.getLight(0).diffuseColor;
+            document.getElementById("diffuse-light-color-r").value = diffuseColor.elements[0];
+            document.getElementById("diffuse-light-color-g").value = diffuseColor.elements[1];
+            document.getElementById("diffuse-light-color-b").value = diffuseColor.elements[2];
+
+            let specularColor = g_lightRegistry.getLight(0).specularColor;
+            document.getElementById("specular-light-color-r").value = specularColor.elements[0];
+            document.getElementById("specular-light-color-g").value = specularColor.elements[1];
+            document.getElementById("specular-light-color-b").value = specularColor.elements[2];
         }
 
         async function changeLightingType() {

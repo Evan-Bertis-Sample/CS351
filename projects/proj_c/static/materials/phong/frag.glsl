@@ -7,6 +7,7 @@ struct Light {
     vec3 specularColor;
     float intensity;
     int lightType; // 0 for point light, 1 for directional light
+    int attenuationFunction; // 0 for 1/dist, 1 for 1/dist^2, 2 for 1/(1+0.1*dist+0.01*dist^2), 3 for none
 };
 
 struct LightBuffer
@@ -46,10 +47,30 @@ vec4 lerp(vec4 a, vec4 b, float t) {
     return a * (1.0 - t) + b * t;
 }
 
+float calculateAttenuation(Light light, float lightDistance)
+{
+    if (light.attenuationFunction == 0)
+    {
+        return 1.0 / lightDistance;
+    }
+    else if (light.attenuationFunction == 1)
+    {
+        return 1.0 / (lightDistance * lightDistance);
+    }
+    else if (light.attenuationFunction == 2)
+    {
+        return 1.0 / (1.0 + 0.1 * lightDistance + 0.01 * lightDistance * lightDistance);
+    }
+    else
+    {
+        return 1.0;
+    }
+}
+
 vec3 calculatePointLightDiffuse(Light light, vec4 position, vec4 normal) {
     vec3 lightDirection = normalize(light.position - position.xyz);
     float lightDistance = length(light.position - position.xyz);
-    float attenuation = 1.0 / (1.0 + 0.1 * lightDistance + 0.01 * lightDistance * lightDistance);
+    float attenuation = calculateAttenuation(light, lightDistance);
     float diffuse = max(dot(normal.xyz, lightDirection), 0.0);
     return diffuse * attenuation * light.intensity * light.diffuseColor;
 }
@@ -61,7 +82,7 @@ vec3 calculatePointLightSpecular(Light light, vec4 v_position, vec4 normal)
     vec3 reflectDirection = reflect(-lightDirection, normal.xyz);
     float specular = pow(max(dot(viewDirection, reflectDirection), 0.0), 1.0);
     float lightDistance = length(light.position - v_position.xyz);
-    float attenuation = 1.0 / (1.0 + 0.1 * lightDistance + 0.01 * lightDistance * lightDistance);
+    float attenuation = calculateAttenuation(light, lightDistance);
     return specular * attenuation * light.intensity * light.specularColor;
 }
 

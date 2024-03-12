@@ -2,7 +2,8 @@ precision mediump float;
 
 struct Light {
     vec3 position;
-    vec3 color;
+    vec3 diffuseColor;
+    vec3 specularColor;
     float intensity;
     int lightType; // 0 for point light, 1 for directional light
 };
@@ -12,6 +13,7 @@ struct LightBuffer
     Light lights[16];
     int numLights;
 };
+
 
 // Vertex shader inputs
 attribute vec4 a_position;
@@ -49,7 +51,7 @@ vec3 calculatePointLightDiffuse(Light light, vec4 position, vec4 normal) {
     float lightDistance = length(light.position - position.xyz);
     float attenuation = 1.0 / (1.0 + 0.1 * lightDistance + 0.01 * lightDistance * lightDistance);
     float diffuse = max(dot(normal.xyz, lightDirection), 0.0);
-    return diffuse * attenuation * light.intensity * light.color;
+    return diffuse * attenuation * light.intensity * light.diffuseColor;
 }
 
 vec3 calculatePointLightSpecular(Light light, vec4 v_position, vec4 normal)
@@ -60,14 +62,14 @@ vec3 calculatePointLightSpecular(Light light, vec4 v_position, vec4 normal)
     float specular = pow(max(dot(viewDirection, reflectDirection), 0.0), 32.0);
     float lightDistance = length(light.position - v_position.xyz);
     float attenuation = 1.0 / (1.0 + 0.1 * lightDistance + 0.01 * lightDistance * lightDistance);
-    return specular * attenuation * light.intensity * light.color;
+    return specular * attenuation * light.intensity * light.specularColor;
 }
 
 vec3 calculateDirectionalLightDiffuse(Light light, vec4 position, vec4 normal)
 {
     vec3 lightDirection = normalize(-light.position);
     float diffuse = max(dot(normal.xyz, lightDirection), 0.0);
-    return diffuse * light.intensity * light.color;
+    return diffuse * light.intensity * light.diffuseColor;
 }
 
 
@@ -77,7 +79,7 @@ vec3 calculateDirectionalLightSpecular(Light light, vec4 position, vec4 normal)
     vec3 viewDirection = normalize(u_cameraPosition - position.xyz);
     vec3 reflectDirection = reflect(-lightDirection, normal.xyz);
     float specular = pow(max(dot(viewDirection, reflectDirection), 0.0), 32.0);
-    return specular * light.intensity * light.color;
+    return specular * light.intensity * light.specularColor;
 }
 
 void main() {
