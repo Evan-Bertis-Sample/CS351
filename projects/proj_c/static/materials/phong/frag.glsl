@@ -129,9 +129,9 @@ void main() {
     frensel = pow(frensel, 1.0 / u_frensel_border);
 
     vec4 frenselColor = u_frensel_color * frensel;
-    // calculate the final color
-    color = color * (ambientLightColor + diffuseLight * u_diffuse_influence + specularLight * u_specular_influence);
+    color = color * (ambientLightColor + diffuseLight * u_diffuse_influence);
     color += frenselColor * u_frensel_influence;
+    color += specularLight * u_specular_influence;
 
     // this is for the grid on the platform
     // i didn't feel like texturing the model

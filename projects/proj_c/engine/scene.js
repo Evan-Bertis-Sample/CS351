@@ -155,8 +155,8 @@ function buildEnviornment() {
 		parent = null,
 		position = new Vector3([0, 0, 0]),
 		rotation = new Quaternion(),
-		scale = new Vector3([5, 5, 5]),
-		meshName = "sphere",
+		scale = new Vector3([10, 10, 10]),
+		meshName = "hex_sphere",
 		materialName = "center_sphere",
 		components = [
 			new RotateComponent(new Vector3([0, 1, 0]), 10),

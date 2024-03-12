@@ -110,11 +110,7 @@ void main() {
     vec4 diffuseLight = vec4(0.0, 0.0, 0.0, 1.0);
     vec4 specularLight = vec4(0.0, 0.0, 0.0, 1.0);
 
-    v_color = u_color;
-    v_uv = a_uv;
-    return;
-
-    for(int i = 0; i < 16; i++) {
+    for(int i = 0; i < 2; i++) {
         if(i >= u_lightBuffer.numLights) {
             break;
         }
@@ -141,8 +137,10 @@ void main() {
     vec4 frenselColor = u_frensel_color * frensel;
     vec4 color = u_color;
     // calculate the final color
-    color = color * (ambientLightColor + diffuseLight * u_diffuse_influence + specularLight * u_specular_influence);
+    color = color * (ambientLightColor + diffuseLight * u_diffuse_influence);
     color += frenselColor * u_frensel_influence;
+    color += specularLight * u_specular_influence;
+    v_color = color;
 
     // this is for the grid on the platform
     // i didn't feel like texturing the model
@@ -165,9 +163,10 @@ void main() {
         grid = clamp(grid, 0.0, 1.0);
 
         // now lerping the grid color with the final color
-        color = lerp(color, gridColor, grid);
+        // color = lerp(color, gridColor, grid);
     }
 
-    v_color = color;
+    // v_color = color;
     v_uv = a_uv;
+    v_color = specularLight * u_specular_influence;
 }
