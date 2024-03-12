@@ -14,6 +14,8 @@ class Light {
         // make sure that the position is a vec3
         this.position = new Vector3(position.elements)
         this.transformBinding = null
+
+        this.active = true;
     }
 
     bindTransform(transform) {
@@ -104,7 +106,11 @@ class LightingRegistry {
 
         gl.uniform3fv(positionLocation, light.position.elements);
         gl.uniform3fv(colorLocation, light.color.elements);
-        gl.uniform1f(intensityLocation, light.intensity);
+
+        if (light.active)
+            gl.uniform1f(intensityLocation, light.intensity);
+        else
+            gl.uniform1f(intensityLocation, 0);
         gl.uniform1i(lightTypeLocation, light.lightType);
     }
 

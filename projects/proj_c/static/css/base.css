@@ -294,6 +294,7 @@ select:hover {
     display: flex;
     flex-direction: row;
     justify-content: center;
+    align-items: center;
     gap: 0.5rem;
 }
 
@@ -361,4 +362,20 @@ input[type=number]::-webkit-outer-spin-button {
 /* Firefox */
 input[type=number] {
     -moz-appearance: textfield;
-  }
+}
+
+/* checkbox, including custom colors */
+input[type=checkbox] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 0.25em;
+    outline: none;
+    background: var(--light-secondary);
+}
+
+input[type=checkbox]:checked {
+    background: var(--dark-primary);
+}
