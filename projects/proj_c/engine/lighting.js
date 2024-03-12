@@ -171,4 +171,10 @@ class LightingRegistry {
         let ambientIntensityLocation = gl.getUniformLocation(gl.program, "u_lightBuffer.ambientIntensity");
         this.ambientLightIntensityLocations.set(gl.program, ambientIntensityLocation);
     }
+
+    foreachLight(callback) {
+        for (let i = 0; i < this.lights.length; i++) {
+            callback(this.lights[i]);
+        }
+    }
 }

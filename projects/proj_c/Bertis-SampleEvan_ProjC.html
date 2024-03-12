@@ -101,15 +101,20 @@
                             Controls
                         </button>
 
-                        <button onclick="invertLightingSetting()">
-                            Toggle Lighting
-                        </button>
-
                         <!-- Dropdown for choosing lighting type -->
                         <select id="lighting-type" onchange="changeLightingType()">
                             <option value="phong">Phong</option>
                             <option value="gouraud">Gouraud</option>
                             <option value="test">Test</option>
+                        </select>
+
+                        <!-- Dropdown for choosing ATT type -->
+                        <select id="att-type" onchange="changeATT()">
+                            <option value="2">Polynomial</option> <!-- Default because I think it looks nice -->
+                            <option value="0">Linear (1/dist)</option>
+                            <option value="1">Quadratic (1/dist*dist)</option>
+                            <option value="3">None</option>
+
                         </select>
                     </div>
 
@@ -305,6 +310,18 @@
 
             let label = document.getElementById("ambient-light-intensity-number");
             label.value = intensity;
+        }
+
+        function changeATT()
+        {
+            var e = document.getElementById("att-type");
+            var value = e.options[e.selectedIndex].value;
+            // make sure to convert to a int
+            console.log("Changing ATT to: " + value);
+
+            const set = (light) => light.attenuationFunction = value;
+
+            g_lightRegistry.foreachLight(set);
         }
 
         function setupLightingControls()

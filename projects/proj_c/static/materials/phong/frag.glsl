@@ -51,11 +51,11 @@ float calculateAttenuation(Light light, float lightDistance)
 {
     if (light.attenuationFunction == 0)
     {
-        return 1.0 / lightDistance;
+        return 3.0 / lightDistance;
     }
     else if (light.attenuationFunction == 1)
     {
-        return 1.0 / (lightDistance * lightDistance);
+        return 3.0 / (lightDistance * lightDistance);
     }
     else if (light.attenuationFunction == 2)
     {
