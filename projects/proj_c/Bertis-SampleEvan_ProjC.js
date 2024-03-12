@@ -110,6 +110,9 @@ async function main() {
 		fpsCounter.innerHTML = "FPS: " + fps.toFixed(0);
 	};
 
+	// set up the lighting controls -- located in the html
+	setupLightingControls()
+
 	// tick();
 	setInterval(tick, 1000 / 60);
 }

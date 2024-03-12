@@ -14,7 +14,7 @@
 
 </head>
 
-<body onload="main()">
+<body onload="main();">
     <div class="webgl-container">
         <canvas id="webgl">
             Please use a browser that supports "canvas"
@@ -112,14 +112,25 @@
                     <div class="vector-container">
                         <!-- light intensity -->
                         <label for="light-intensity">Intensity</label>
-                        <input type="range" id="light-intensity" min="0" max="10" value="1" step="0.1" oninput="changeLightIntensity()">
-                        <input type="number" id="light-intensity-number" value="1" step="0.1" oninput="changeLightIntensity()">
+                        <input type="range" id="light-intensity" min="0" max="10" value="10" step="0.1" oninput="changeLightIntensity()">
+                        <input type="number" id="light-intensity-number" value="10" step="0.1" oninput="changeLightIntensity()">
 
                         <!-- active or not -->
                         <label for="light-active">Active</label>
                         <input type="checkbox" id="light-active" checked="true" onclick="setLightStatus()">
+                    </div>
 
-                        
+                    <div class="vector-container">
+                        <!-- light color -->
+                        <label>R</label>
+                        <input type="range" id="light-color-r" min="0" max="1" value="1" step="0.1" oninput="setLightColor()">
+
+                        <label>G</label>
+                        <input type="range" id="light-color-g" min="0" max="1" value="1" step="0.1" oninput="setLightColor()">
+
+                        <label>B</label>
+                        <input type="range" id="light-color-b" min="0" max="1" value="1" step="0.1" oninput="setLightColor()">
+
                     </div>
 
                 </div>
@@ -219,6 +230,43 @@
         {
             let light = g_lightRegistry.getLight(0)
             light.active = !light.active;
+        }
+
+        function setLightColor()
+        {
+            let r = document.getElementById("light-color-r").value;
+            let g = document.getElementById("light-color-g").value;
+            let b = document.getElementById("light-color-b").value;
+
+            let light = g_lightRegistry.getLight(0)
+
+            light.color = new Vector3([r, g, b]);
+
+        }
+
+        function setupLightingControls()
+        {
+            let position = g_lightRegistry.getLight(0).position;
+            position = new Vector3([position.elements[0], -position.elements[2], position.elements[1]]);
+
+            document.getElementById("light-position-x").value = position.elements[0];
+            document.getElementById("light-position-y").value = position.elements[1];
+            document.getElementById("light-position-z").value = position.elements[2];
+
+            document.getElementById("light-position-x-number").value = position.elements[0];
+            document.getElementById("light-position-y-number").value = position.elements[1];
+            document.getElementById("light-position-z-number").value = position.elements[2];
+
+
+            document.getElementById("light-intensity").value = g_lightRegistry.getLight(0).intensity;
+            document.getElementById("light-intensity-number").value = g_lightRegistry.getLight(0).intensity;
+
+            document.getElementById("light-active").checked = g_lightRegistry.getLight(0).active;
+
+            let color = g_lightRegistry.getLight(0).color;
+            document.getElementById("light-color-r").value = color.elements[0];
+            document.getElementById("light-color-g").value = color.elements[1];
+            document.getElementById("light-color-b").value = color.elements[2];
         }
 
         async function changeLightingType() {
