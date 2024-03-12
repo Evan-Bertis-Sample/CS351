@@ -114,7 +114,7 @@ async function main() {
 	setupLightingControls()
 
 	// tick();
-	setInterval(tick, 1000 / 60);
+	setInterval(tick, 1000 / 144);
 }
 
 // Initializes WebGL and the scene

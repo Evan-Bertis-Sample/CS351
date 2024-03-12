@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="static/css/footer.css" />
 
     <!-- Fonts -->
-    <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&display=swap" rel="stylesheet"> -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&display=swap" rel="stylesheet">
 
 </head>
 
@@ -69,11 +69,18 @@
 
     <div class="body-container">
         <div>
-            <h1>Project C: Better Lighting and Materials</h1>
-            <h3>Evan Bertis-Sample</h3>
-            
             <div class="col-container">
-                <div>
+                <div class="info-col">
+
+                    <h1>Project C: Better Lighting and Materials</h1>
+                    <h3>Evan Bertis-Sample</h3>
+                    <p>
+                        The final iteration of our space-world, this time complete with additional lights!
+                        This version of the renderer supports up to 16 lights, and supports different lighting techniques.
+                    </p>
+
+                    <br>
+
                     <button onclick="showModal()">
                         Controls
                     </button>
@@ -92,10 +99,16 @@
                 </div>
 
                 <div>
-                    <b>Point Light Controls </b>
+                    <div class="vector-container-align-left">
+                        <b>Point Light Controls </b>
+                        <button value="Reset" onclick="resetLightPosition()">Reset Position</button>
+                        <button value="Reset" onclick="resetLightPosition()">Reset Color</button>
+                    </div>
                     <!-- Vector 3 Input for position of light -->
                     <!-- 3 floating point fields with sliders -->
                     <div class="vector-container">
+                        <label>Position</label>
+
                         <label for="light-position-x">X</label>
                         <input type="range" id="light-position-x" min="-25" max="25" value="0" step="0.1" oninput="changeLightPosition()">
                         <input type="number" id="light-position-x-number" value="0" step="0.1" oninput="changeLightPosition()">
@@ -107,8 +120,6 @@
                         <label for="light-position-z">Z</label>
                         <input type="range" id="light-position-z" min="-25" max="25" value="0" step="0.1" oninput="changeLightPosition()">
                         <input type="number" id="light-position-z-number" value="0" step="0.1" oninput="changeLightPosition()">
-
-                        <button value="Reset" onclick="resetLightPosition()">Reset</button>
                     </div>
 
                     <div class="vector-container">
@@ -126,13 +137,21 @@
                         <!-- light color -->
                         <label>R</label>
                         <input type="range" id="light-color-r" min="0" max="1" value="1" step="0.1" oninput="setLightColor()">
-
                         <label>G</label>
                         <input type="range" id="light-color-g" min="0" max="1" value="1" step="0.1" oninput="setLightColor()">
-
                         <label>B</label>
                         <input type="range" id="light-color-b" min="0" max="1" value="1" step="0.1" oninput="setLightColor()">
+                    </div>
 
+                    
+                    <div class="vector-container">
+                        <!-- light color -->
+                        <label>R</label>
+                        <input type="range" id="light-color-r" min="0" max="1" value="1" step="0.1" oninput="setLightColor()">
+                        <label>G</label>
+                        <input type="range" id="light-color-g" min="0" max="1" value="1" step="0.1" oninput="setLightColor()">
+                        <label>B</label>
+                        <input type="range" id="light-color-b" min="0" max="1" value="1" step="0.1" oninput="setLightColor()">
                     </div>
 
                 </div>
