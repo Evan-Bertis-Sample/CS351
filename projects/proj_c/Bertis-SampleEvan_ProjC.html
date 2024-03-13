@@ -21,11 +21,6 @@
         </canvas>
     </div>
 
-    <div class="subtitle-container">
-        <b id="camera"> Camera Mode: Follow </b>
-        <b id="fps"> FPS: 0 </b>
-    </div>
-
     <div class="modal" id="controls">
         <div class="modal-content">
             <div class="modal-actions-container">
@@ -76,6 +71,11 @@
             <div class="col-container">
                 <div class="info-col">
 
+                    <div class="subtitle-container">
+                        <b id="camera"> Camera Mode: Follow </b>
+                        <b id="fps"> FPS: 0 </b>
+                    </div>
+
                     <h1>Project C: Better Lighting and Materials</h1>
                     <h3>Evan Bertis-Sample</h3>
                     <p>
@@ -83,80 +83,77 @@
                         This version of the renderer supports up to 16 lights, and supports different lighting techniques.
                     </p>
 
-                    <div class="vector-container">
-                        <!-- light color -->
-                        <label>Global Ambient Color</label>
-                        <label>R</label>
-                        <input type="range" id="ambient-light-color-r" min="0" max="1" value="1" step="0.1" oninput="setAmbientLightColor()">
-                        <label>G</label>
-                        <input type="range" id="ambient-light-color-g" min="0" max="1" value="1" step="0.1" oninput="setAmbientLightColor()">
-                        <label>B</label>
-                        <input type="range" id="ambient-light-color-b" min="0" max="1" value="1" step="0.1" oninput="setAmbientLightColor()">
-                    </div>
-
-                    <div class="vector-container">
-                        <label for="ambient-light-intensity">Ambient Light Intensity</label>
-                        <input type="range" id="ambient-light-intensity" min="0" max="2" value="1" step="0.05" oninput="setAmbientLightIntensity()">
-                        <input type="number" id="ambient-light-intensity-number" value="1" step="0.05" oninput="setAmbientLightIntensity()">
-                    </div>
-
-                    <div class="vector-container">
+                    <div class="vector-container-align-left vertical-padding-small">
                         <!-- Dropdown for choosing lighting type -->
-                        <select id="lighting-type" onchange="changeLightingType()">
-                            <option value="phong">Phong</option>
-                            <option value="gouraud">Gouraud</option>
-                            <option value="test">Test</option>
-                        </select>
+                        <div>
+                            <label for="lighting-type">Lighting Model</label>
+                            <select id="lighting-type" onchange="changeLightingType()">
+                                <option value="phong">Phong</option>
+                                <option value="gouraud">Gouraud</option>
+                                <option value="test">Test</option>
+                            </select>
+                        </div>
 
                         <!-- Dropdown for choosing ATT type -->
-                        <select id="att-type" onchange="changeATT()">
-                            <option value="2">Polynomial</option> <!-- Default because I think it looks nice -->
-                            <option value="0">Linear (1/dist)</option>
-                            <option value="1">Quadratic (1/dist*dist)</option>
-                            <option value="3">None</option>
-                        </select>
+                        <div>
+                            <label for="att-type">Attenuation Function</label>
+                            <select id="att-type" onchange="changeATT()">
+                                <option value="2">Polynomial</option> <!-- Default because I think it looks nice -->
+                                <option value="0">Linear (1/dist)</option>
+                                <option value="1">Quadratic (1/dist*dist)</option>
+                                <option value="3">None</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="vector-container-align-left vertical-padding-small">
+                        <!-- Drop down for material type for the central sphere -->
+                        <div>
+                            <label for="material-type">Central Sphere Material</label>
+                            <select id="material-type" onchange="changeMaterialType('central_sphere', 'material-type')">
+                                <option value="center_sphere">Default</option>
+                                <option value="red">Red</option>
+                                <option value="green">Green</option>
+                                <option value="blue">Blue</option>
+                                <option value="gray">Gray</option>
+                                <option value="black_hole">Black Hole</option>
+                                <option value="star">Star</option>
+                                <option value="crystal_blue">Blue Crystal</option>
+                                <option value="crystal_purple">Purple Crystal</option>
+                                <option value="crystal_pink">Pink Crystal</option>
+                                <option value="platform"> Platform </option>
+                            </select>
+                        </div>
 
                         <!-- Drop down for material type for the central sphere -->
-                        <select id="material-type" onchange="changeMaterialType('central_sphere', 'material-type')">
-                            <option value="center_sphere">Default</option>
-                            <option value="red">Red</option>
-                            <option value="green">Green</option>
-                            <option value="blue">Blue</option>
-                            <option value="gray">Gray</option>
-                            <option value="black_hole">Black Hole</option>
-                            <option value="star">Star</option>
-                            <option value="crystal_blue">Blue Crystal</option>
-                            <option value="crystal_purple">Purple Crystal</option>
-                            <option value="crystal_pink">Pink Crystal</option>
-                            <option value="platform"> Platform </option>
-                        </select>
-
-                        <!-- Drop down for material type for the central sphere -->
-                        <select id="material-type-2" onchange="changeMaterialType('black_hole', 'material-type-2')">
-                            <option value="black_hole">Default</option>
-                            <option value="center_sphere">Shiny</option>
-                            <option value="red">Red</option>
-                            <option value="green">Green</option>
-                            <option value="blue">Blue</option>
-                            <option value="gray">Gray</option>
-                            <option value="star">Star</option>
-                            <option value="crystal_blue">Blue Crystal</option>
-                            <option value="crystal_purple">Purple Crystal</option>
-                            <option value="crystal_pink">Pink Crystal</option>
-                            <option value="platform"> Platform </option>
-                        </select>
+                        <div>
+                            <label for="material-type-2">Black Hole Material</label>
+                            <select id="material-type-2" onchange="changeMaterialType('black_hole', 'material-type-2')">
+                                <option value="black_hole">Default</option>
+                                <option value="center_sphere">Shiny</option>
+                                <option value="red">Red</option>
+                                <option value="green">Green</option>
+                                <option value="blue">Blue</option>
+                                <option value="gray">Gray</option>
+                                <option value="star">Star</option>
+                                <option value="crystal_blue">Blue Crystal</option>
+                                <option value="crystal_purple">Purple Crystal</option>
+                                <option value="crystal_pink">Pink Crystal</option>
+                                <option value="platform"> Platform </option>
+                            </select>
+                        </div>
                     </div>
 
                 </div>
 
                 <div>
                     <div class="vector-container-align-left">
-                        <b>Point Light Controls </b>
+                        <b> Lighting Controls </b>
                     </div>
                     <!-- Vector 3 Input for position of light -->
                     <!-- 3 floating point fields with sliders -->
                     <div class="vector-container">
-                        <label>Light Position</label>
+                        <label>Point Light Position</label>
 
                         <label for="light-position-x">X</label>
                         <input type="range" id="light-position-x" min="-25" max="25" value="0" step="0.1" oninput="changeLightPosition()">
@@ -173,7 +170,7 @@
 
                     <div class="vector-container">
                         <!-- light intensity -->
-                        <label for="light-intensity">Light Intensity</label>
+                        <label for="light-intensity">Point Light Intensity</label>
                         <input type="range" id="light-intensity" min="0" max="10" value="10" step="0.1" oninput="changeLightIntensity()">
                         <input type="number" id="light-intensity-number" value="10" step="0.1" oninput="changeLightIntensity()">
 
@@ -184,7 +181,7 @@
 
                     <div class="vector-container">
                         <!-- light color -->
-                        <label>Diffuse Color</label>
+                        <label>Point Light Diffuse Color</label>
                         <label>R</label>
                         <input type="range" id="diffuse-light-color-r" min="0" max="1" value="1" step="0.1" oninput="setDiffuseLightColor()">
                         <label>G</label>
@@ -192,17 +189,35 @@
                         <label>B</label>
                         <input type="range" id="diffuse-light-color-b" min="0" max="1" value="1" step="0.1" oninput="setDiffuseLightColor()">
                     </div>
-
                     
                     <div class="vector-container">
                         <!-- light color -->
-                        <label>Specular Color</label>
+                        <label>Point Light Specular Color</label>
                         <label>R</label>
                         <input type="range" id="specular-light-color-r" min="0" max="1" value="1" step="0.1" oninput="setSpecularLightColor()">
                         <label>G</label>
                         <input type="range" id="specular-light-color-g" min="0" max="1" value="1" step="0.1" oninput="setSpecularLightColor()">
                         <label>B</label>
                         <input type="range" id="specular-light-color-b" min="0" max="1" value="1" step="0.1" oninput="setSpecularLightColor()">
+                    </div>
+
+                    <b>Ambient Light</b>
+
+                    <div class="vector-container">
+                        <!-- light color -->
+                        <label>Global Ambient Color</label>
+                        <label>R</label>
+                        <input type="range" id="ambient-light-color-r" min="0" max="1" value="1" step="0.1" oninput="setAmbientLightColor()">
+                        <label>G</label>
+                        <input type="range" id="ambient-light-color-g" min="0" max="1" value="1" step="0.1" oninput="setAmbientLightColor()">
+                        <label>B</label>
+                        <input type="range" id="ambient-light-color-b" min="0" max="1" value="1" step="0.1" oninput="setAmbientLightColor()">
+                    </div>
+
+                    <div class="vector-container">
+                        <label for="ambient-light-intensity">Ambient Light Intensity</label>
+                        <input type="range" id="ambient-light-intensity" min="0" max="2" value="1" step="0.05" oninput="setAmbientLightIntensity()">
+                        <input type="number" id="ambient-light-intensity-number" value="1" step="0.05" oninput="setAmbientLightIntensity()">
                     </div>
 
                 </div>
