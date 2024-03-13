@@ -56,16 +56,24 @@ function buildCamera() {
 
 	let lookAtObject = g_ecs.createEntity(
 		entityName = "look_at_object",
-		parent = cameraEntity,
-		position = new Vector3([0, 0, -1]),
+		parent = null,
+		position = new Vector3([0, 0, 0]),
 		rotation = new Quaternion(),
 		scale = new Vector3([10, 10, 10]),
-		meshName = "low_poly_sphere",
-		materialName = "red",
+		meshName = "sphere",
+		materialName = "",
 		components = [
+			new FollowLookAtComponent(
+				"webgl", 8
+			),
+			new LightComponent(
+				LIGHT_TYPE.POINT,
+				new Vector3([1.0, 0.0, 1.0]),
+				new Vector3([1, 1, 1]),
+				10
+			)
 		]
-	)
-
+	);
 }
 
 function buildEnviornment() {

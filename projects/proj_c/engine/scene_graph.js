@@ -365,7 +365,25 @@ class Camera {
     isInViewFrustrum(node, modelMatrix)
     {
         // do some basic object culling
+        // looked into this initially for the project, but didn't have time to implement it
+    }
 
+    getLookAtPosition(distance)
+    {
+        // get the position that the camera is looking at
+        let rotationMatrix = new Matrix4();
+        rotationMatrix.setFromQuat(this.rotation.x, this.rotation.y, this.rotation.z, this.rotation.w);
+        let direction = new Vector4([0, 0, distance, 0])
+
+        let lookAt = rotationMatrix.multiplyVector4(direction);
+        lookAt = new Vector3([lookAt.elements[0], lookAt.elements[1], lookAt.elements[2]]);
+
+        // add to the position
+        let position = this.position;
+        lookAt = lookAt.add(position);
+
+        lookAt.printMe();
+        return lookAt;
     }
 }
 

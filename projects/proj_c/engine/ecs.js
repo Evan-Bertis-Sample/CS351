@@ -867,7 +867,7 @@ class CameraControllerComponent extends Component {
 
         // set the posiition of this object to the camera
         this.transform.position = this.camera.getPosition();
-        // this.transform.rotation = this.camera.getRotation();
+        this.transform.rotation = this.camera.getRotation();
     }
 
     handleFollowMode(deltaTime) {
@@ -932,7 +932,7 @@ class CameraControllerComponent extends Component {
         let moveDirection = new Vector3([xzAxis.elements[0], yMovement, xzAxis.elements[1]]).normalize();
         // rotate the move direction based upon the camera's rotation
         moveDirection = this.camera.getRotation().multiplyVector3(moveDirection, moveDirection)
-        moveDirection.printMe();
+        // moveDirection.printMe();
         let oldPosition = this.camera.getPosition();
 
         let newPosition = new Vector3(
@@ -978,6 +978,21 @@ class CameraControllerComponent extends Component {
         let rotation = new Quaternion().setFromRotationMatrix(lookAtMatrix);
 
         this.camera.setRotation(rotation);
+    }
+}
+
+class FollowLookAtComponent extends Component {
+    constructor(cameraEntityID, lookAtDisance)
+    {
+        super();
+        this.cameraEntity = g_sceneGraph.getCamera(cameraEntityID);
+        this.lookAtDisance = lookAtDisance;
+    }
+
+    update(deltaTime)
+    {
+        // set the position to the look at
+        this.transform.position = this.cameraEntity.getLookAtPosition(this.lookAtDisance);
     }
 }
 
