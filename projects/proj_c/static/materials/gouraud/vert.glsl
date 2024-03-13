@@ -1,3 +1,4 @@
+// floating point precision
 precision mediump float;
 
 struct Light {
@@ -6,14 +7,22 @@ struct Light {
     vec3 specularColor;
     float intensity;
     int lightType; // 0 for point light, 1 for directional light
+    int attenuationFunction; // 0 for 1/dist, 1 for 1/dist^2, 2 for 1/(1+0.1*dist+0.01*dist^2), 3 for none
 };
 
 struct LightBuffer
 {
     Light lights[16];
     int numLights;
+    vec3 ambientLight;
+    float ambientIntensity;
 };
 
+uniform LightBuffer u_lightBuffer;
+uniform float u_frensel_influence;
+uniform float u_specular_influence;
+uniform float u_diffuse_influence;
+uniform float u_shininess;
 
 // Vertex shader inputs
 attribute vec4 a_position;
@@ -27,18 +36,8 @@ uniform mat4 u_modelMatrix;
 uniform float u_enable_lighting;
 uniform vec3 u_cameraPosition;
 uniform vec4 u_color;
-uniform float u_diffuse_influence;
-uniform float u_specular_influence;
-uniform float u_frensel_influence;
 uniform vec4 u_frensel_color;
 uniform float u_frensel_border;
-uniform LightBuffer u_lightBuffer;
-
-// constants
-const vec4 ambientLightColor = vec4(0.44, 0.45, 0.49, 1.0);
-const float cellShadingWeight = 0.4;
-
-
 
 // varying variables to pass to fragment shader
 varying vec4 v_color;
@@ -46,10 +45,31 @@ varying vec2 v_uv;
 varying vec4 v_position;
 varying vec4 v_normal;
 
+
+float calculateAttenuation(Light light, float lightDistance)
+{
+    if (light.attenuationFunction == 0)
+    {
+        return 3.0 / lightDistance;
+    }
+    else if (light.attenuationFunction == 1)
+    {
+        return 3.0 / (lightDistance * lightDistance);
+    }
+    else if (light.attenuationFunction == 2)
+    {
+        return 1.0 / (1.0 + 0.1 * lightDistance + 0.01 * lightDistance * lightDistance);
+    }
+    else
+    {
+        return 1.0;
+    }
+}  
+
 vec3 calculatePointLightDiffuse(Light light, vec4 position, vec4 normal) {
     vec3 lightDirection = normalize(light.position - position.xyz);
     float lightDistance = length(light.position - position.xyz);
-    float attenuation = 1.0 / (1.0 + 0.1 * lightDistance + 0.01 * lightDistance * lightDistance);
+    float attenuation = calculateAttenuation(light, lightDistance);
     float diffuse = max(dot(normal.xyz, lightDirection), 0.0);
     return diffuse * attenuation * light.intensity * light.diffuseColor;
 }
@@ -59,9 +79,9 @@ vec3 calculatePointLightSpecular(Light light, vec4 v_position, vec4 normal)
     vec3 lightDirection = normalize(light.position - v_position.xyz);
     vec3 viewDirection = normalize(u_cameraPosition - v_position.xyz);
     vec3 reflectDirection = reflect(-lightDirection, normal.xyz);
-    float specular = pow(max(dot(viewDirection, reflectDirection), 0.0), 32.0);
+    float specular = pow(max(dot(viewDirection, reflectDirection), 0.0), u_shininess);
     float lightDistance = length(light.position - v_position.xyz);
-    float attenuation = 1.0 / (1.0 + 0.1 * lightDistance + 0.01 * lightDistance * lightDistance);
+    float attenuation = calculateAttenuation(light, lightDistance);
     return specular * attenuation * light.intensity * light.specularColor;
 }
 
@@ -78,7 +98,7 @@ vec3 calculateDirectionalLightSpecular(Light light, vec4 position, vec4 normal)
     vec3 lightDirection = normalize(-light.position);
     vec3 viewDirection = normalize(u_cameraPosition - position.xyz);
     vec3 reflectDirection = reflect(-lightDirection, normal.xyz);
-    float specular = pow(max(dot(viewDirection, reflectDirection), 0.0), 32.0);
+    float specular = pow(max(dot(viewDirection, reflectDirection), 0.0), u_shininess);
     return specular * light.intensity * light.specularColor;
 }
 
@@ -104,7 +124,7 @@ void main() {
     vec4 color = u_color;
 
     if(u_enable_lighting != 0.0) {
-        vec4 ambientLight = ambientLightColor;
+        vec4 ambientLight = vec4(u_lightBuffer.ambientLight, 1.0) * u_lightBuffer.ambientIntensity;
         vec4 diffuseLight = vec4(0.0);
         vec4 specularLight = vec4(0.0);
 

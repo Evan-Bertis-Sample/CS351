@@ -18,20 +18,21 @@ struct LightBuffer
     float ambientIntensity;
 };
 
+uniform LightBuffer u_lightBuffer;
+uniform float u_frensel_influence;
+uniform float u_specular_influence;
+uniform float u_diffuse_influence;
+uniform float u_shininess;
+
 const float cellShadingWeight = 0.4;
 const float gridSize = 0.5;
 const vec4 gridColor = vec4(0.6, 0.52, 0.85, 1.0);
 
-uniform vec3 u_cameraPosition;
 uniform vec4 u_color;
-uniform float u_shininess;
-uniform float u_diffuse_influence;
-uniform float u_specular_influence;
-uniform float u_frensel_influence;
+uniform vec3 u_cameraPosition;
 uniform vec4 u_frensel_color;
 uniform float u_frensel_border;
 uniform float u_show_grid;
-uniform LightBuffer u_lightBuffer;
 
 
 // varying variables -- passed from vertex shader
@@ -39,10 +40,6 @@ varying vec4 v_position;
 varying vec4 v_normal;
 varying float v_enable_lighting;
 varying vec2 v_uv;
-
-float nStep(float x, float numSteps) {
-    return floor(x * numSteps) / float(numSteps);
-}
 
 vec4 lerp(vec4 a, vec4 b, float t) {
     return a * (1.0 - t) + b * t;
