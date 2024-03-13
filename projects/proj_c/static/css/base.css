@@ -409,5 +409,24 @@ input[type=checkbox]:checked {
 
 .info-col
 {
-    max-width: 30rem;
+    max-width: 40rem;
+}
+
+.control-button
+{
+    /* put in the bottom left corer of the parent element */
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: var(--light-primary);
+    color: var(--dark-primary);
+    margin: 2rem;
+    box-shadow: 0 4px 8px 0 var(--shadow-color);
+    z-index: 9999;
+}
+
+.control-button:hover
+{
+    background-color: var(--light-secondary);
+    color: var(--dark-secondary);
 }

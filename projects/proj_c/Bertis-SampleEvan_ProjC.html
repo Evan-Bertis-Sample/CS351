@@ -67,6 +67,10 @@
         </div>
     </div>
 
+    <button class="control-button" onclick="showModal()">
+        Controls
+    </button>
+
     <div class="body-container">
         <div>
             <div class="col-container">
@@ -97,10 +101,6 @@
                     </div>
 
                     <div class="vector-container">
-                        <button onclick="showModal()">
-                            Controls
-                        </button>
-
                         <!-- Dropdown for choosing lighting type -->
                         <select id="lighting-type" onchange="changeLightingType()">
                             <option value="phong">Phong</option>
@@ -152,8 +152,6 @@
                 <div>
                     <div class="vector-container-align-left">
                         <b>Point Light Controls </b>
-                        <button value="Reset" onclick="resetLightPosition()">Reset Position</button>
-                        <button value="Reset" onclick="resetLightPosition()">Reset Color</button>
                     </div>
                     <!-- Vector 3 Input for position of light -->
                     <!-- 3 floating point fields with sliders -->
@@ -274,8 +272,6 @@
 
             light.position = position;
         }
-
-        function resetLightPosition()
         {
             document.getElementById("light-position-x").value = 0;
             document.getElementById("light-position-y").value = 0;

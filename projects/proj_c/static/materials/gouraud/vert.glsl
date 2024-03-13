@@ -127,6 +127,7 @@ void main() {
         // Calculate the Fresnel effect
         vec4 viewDirection = normalize(vec4(u_cameraPosition, 1.0) - v_position);
         float frensel = 1.0 - dot(normal, viewDirection);
+        frensel = pow(frensel, 1.0 / u_frensel_border);
         vec4 frenselColor = u_frensel_color * frensel;
 
         color = u_color * vec4(u_lightBuffer.ambientLight * u_lightBuffer.ambientIntensity, 1.0);

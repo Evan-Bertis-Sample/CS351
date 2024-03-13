@@ -135,6 +135,7 @@ void main() {
         // Calculate the Fresnel effect
         vec4 viewDirection = normalize(vec4(u_cameraPosition, 1.0) - v_position);
         float frensel = 1.0 - dot(normal, viewDirection);
+        frensel = pow(frensel, 1.0 / u_frensel_border);
         vec4 frenselColor = u_frensel_color * frensel;
 
         color = u_color * vec4(u_lightBuffer.ambientLight * u_lightBuffer.ambientIntensity, 1.0);
@@ -142,9 +143,6 @@ void main() {
         color += frenselColor * u_frensel_influence;
         color += specularLight * u_specular_influence;
     }
-
-    // this is for the grid on the platform
-    // i didn't feel like texturing the model
 
     // add a grid to the object, based on x and z coordinates, but only if the normal is pointing up
     float grid = 0.0;
