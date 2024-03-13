@@ -59,7 +59,7 @@ var c_DEFAULT_SHADER_PARAMS = new Map([
 		"phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.65, 0.65, 0.65, 1.0])),
-			new MaterialParameter("u_shininess", 8.0),
+			new MaterialParameter("u_shininess", 16.0),
 			new MaterialParameter("u_diffuse_influence", 0.8),
 			new MaterialParameter("u_specular_influence", 0.2),
 			new MaterialParameter("u_frensel_influence", 0.1),
@@ -73,7 +73,7 @@ var c_DEFAULT_SHADER_PARAMS = new Map([
 		"gouraud",
 		[
 			new MaterialParameter("u_color", new Vector4([0.65, 0.65, 0.65, 1.0])),
-			new MaterialParameter("u_shininess", 10.0),
+			new MaterialParameter("u_shininess", 16.0),
 			new MaterialParameter("u_diffuse_influence", 0.8),
 			new MaterialParameter("u_specular_influence", 0.2),
 			new MaterialParameter("u_frensel_influence", 0.1),
@@ -93,6 +93,8 @@ var c_MATERIALS = [
 		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.65, 0.65, 0.65, 1.0])),
+			new MaterialParameter("u_specular_influence", 0.1),
+			new MaterialParameter("u_shininess", 1.0)
 		]
 	),
 	new MaterialDescriptor(
@@ -100,6 +102,8 @@ var c_MATERIALS = [
 		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([1.0, 0.0, 0.0, 1.0])),
+			new MaterialParameter("u_specular_influence", 0.1),
+			new MaterialParameter("u_shininess", 1.0)
 		]
 	),
 	new MaterialDescriptor(
@@ -107,6 +111,8 @@ var c_MATERIALS = [
 		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.0, 1.0, 0.0, 1.0])),
+			new MaterialParameter("u_specular_influence", 0.1),
+			new MaterialParameter("u_shininess", 1.0)
 		]
 	),
 	new MaterialDescriptor(
@@ -114,6 +120,8 @@ var c_MATERIALS = [
 		"static/materials/phong",
 		[
 			new MaterialParameter("u_color", new Vector4([0.0, 0.0, 1.0, 1.0])),
+			new MaterialParameter("u_specular_influence", 0.1),
+			new MaterialParameter("u_shininess", 1.0)
 		]
 	),
 	new MaterialDescriptor(
@@ -122,6 +130,10 @@ var c_MATERIALS = [
 		[
 			new MaterialParameter("u_color", new Vector4([0.8, 0.4, 0.6, 1.0])),
 			new MaterialParameter("u_specular_influence", 3.5),
+			new MaterialParameter("u_diffuse_influence", 1.0),
+			new MaterialParameter("u_frensel_influence", 0.5),
+			new MaterialParameter("u_frensel_border", 2.0),
+			new MaterialParameter("u_frensel_color", new Vector4([0.8, 0.4, 0.6, 1.0])),
 			new MaterialParameter("u_shininess", 64.0),
 		]
 	),
@@ -147,11 +159,6 @@ var c_MATERIALS = [
 		]
 	),
 	new MaterialDescriptor(
-		"skybox",
-		"static/materials/skybox",
-		[]
-	),
-	new MaterialDescriptor(
 		"black_hole",
 		"static/materials/phong",
 		[
@@ -169,7 +176,7 @@ var c_MATERIALS = [
 		[
 			new MaterialParameter("u_color", new Vector4([0.7, 0.0, 1.0, 1.0])),
 			new MaterialParameter("u_diffuse_influence", 1.0),
-			new MaterialParameter("u_specular_influence", 1.0),
+			new MaterialParameter("u_specular_influence", 0.0),
 			new MaterialParameter("u_frensel_influence", 1.0),
 			new MaterialParameter("u_frensel_border", 1.5),
 		]
@@ -180,7 +187,7 @@ var c_MATERIALS = [
 		[
 			new MaterialParameter("u_color", new Vector4([0.0, 0.8, 1.0, 1.0])),
 			new MaterialParameter("u_diffuse_influence", 1.0),
-			new MaterialParameter("u_specular_influence", 1.0),
+			new MaterialParameter("u_specular_influence", 2.0),
 			new MaterialParameter("u_frensel_influence", 1.0),
 			new MaterialParameter("u_frensel_border", 1.5),
 			new MaterialParameter("u_shininess", 64.0),
@@ -192,7 +199,7 @@ var c_MATERIALS = [
 		[
 			new MaterialParameter("u_color", new Vector4([0.3, 0.0, 1.0, 1.0])),
 			new MaterialParameter("u_diffuse_influence", 1.0),
-			new MaterialParameter("u_specular_influence", 1.0),
+			new MaterialParameter("u_specular_influence", 2.0),
 			new MaterialParameter("u_frensel_influence", 1.0),
 			new MaterialParameter("u_frensel_border", 1.5),
 			new MaterialParameter("u_shininess", 64.0),
@@ -204,7 +211,7 @@ var c_MATERIALS = [
 		[
 			new MaterialParameter("u_color", new Vector4([0.7, 0.0, 1.0, 1.0])),
 			new MaterialParameter("u_diffuse_influence", 1.0),
-			new MaterialParameter("u_specular_influence", 1.0),
+			new MaterialParameter("u_specular_influence", 2.0),
 			new MaterialParameter("u_frensel_influence", 1.0),
 			new MaterialParameter("u_frensel_color", new Vector4([1.0, 1.0, 1.0, 1.0])),
 			new MaterialParameter("u_frensel_border", 1.5),

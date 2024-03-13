@@ -116,13 +116,34 @@
                             <option value="3">None</option>
                         </select>
 
-                        <!-- Drop down for material type -->
-                        <select id="material-type" onchange="changeMaterialType()">
+                        <!-- Drop down for material type for the central sphere -->
+                        <select id="material-type" onchange="changeMaterialType('central_sphere', 'material-type')">
                             <option value="center_sphere">Default</option>
                             <option value="red">Red</option>
+                            <option value="green">Green</option>
+                            <option value="blue">Blue</option>
+                            <option value="gray">Gray</option>
                             <option value="black_hole">Black Hole</option>
                             <option value="star">Star</option>
-                            <!-- <option value="test">Test</option> -->
+                            <option value="crystal_blue">Blue Crystal</option>
+                            <option value="crystal_purple">Purple Crystal</option>
+                            <option value="crystal_pink">Pink Crystal</option>
+                            <option value="platform"> Platform </option>
+                        </select>
+
+                        <!-- Drop down for material type for the central sphere -->
+                        <select id="material-type-2" onchange="changeMaterialType('black_hole', 'material-type-2')">
+                            <option value="black_hole">Default</option>
+                            <option value="center_sphere">Shiny</option>
+                            <option value="red">Red</option>
+                            <option value="green">Green</option>
+                            <option value="blue">Blue</option>
+                            <option value="gray">Gray</option>
+                            <option value="star">Star</option>
+                            <option value="crystal_blue">Blue Crystal</option>
+                            <option value="crystal_purple">Purple Crystal</option>
+                            <option value="crystal_pink">Pink Crystal</option>
+                            <option value="platform"> Platform </option>
                         </select>
                     </div>
 
@@ -333,10 +354,9 @@
             g_lightRegistry.foreachLight(set);
         }
 
-        function changeMaterialType()
+        function changeMaterialType(entityName, selectID)
         {
-            let entityName = "central_sphere";
-            let material = document.getElementById("material-type").value;
+            let material = document.getElementById(selectID).value;
             // find the entity
             let entity = g_ecs.getEntity(entityName);
             entity.node.renderInfo.material = material;
