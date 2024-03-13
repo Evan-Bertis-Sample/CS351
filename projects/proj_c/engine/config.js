@@ -67,8 +67,8 @@ var c_DEFAULT_SHADER_PARAMS = new Map([
 			new MaterialParameter("u_frensel_border", 1.0),
 			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
 			new MaterialParameter("u_show_grid", 0.0),
-			new MaterialParameter("u_displacement_amplitude", 1.0),
-			new MaterialParameter("u_displacement_frequency", 1.0),
+			new MaterialParameter("u_displacement_amplitude", 0.0),
+			new MaterialParameter("u_displacement_frequency", 0.0),
 		]
 	],
 	[
@@ -83,8 +83,8 @@ var c_DEFAULT_SHADER_PARAMS = new Map([
 			new MaterialParameter("u_frensel_border", 1.0),
 			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
 			new MaterialParameter("u_show_grid", 0.0),
-			new MaterialParameter("u_displacement_amplitude", 1.0),
-			new MaterialParameter("u_displacement_frequency", 1.0),
+			new MaterialParameter("u_displacement_amplitude", 0.0),
+			new MaterialParameter("u_displacement_frequency", 0.0),
 		]
 	],
 	[
@@ -99,8 +99,8 @@ var c_DEFAULT_SHADER_PARAMS = new Map([
 			new MaterialParameter("u_frensel_border", 1.0),
 			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
 			new MaterialParameter("u_show_grid", 0.0),
-			new MaterialParameter("u_displacement_amplitude", 1.0),
-			new MaterialParameter("u_displacement_frequency", 1.0),
+			new MaterialParameter("u_displacement_amplitude", 0.0),
+			new MaterialParameter("u_displacement_frequency", 0.0),
 		]
 	],
 	[
@@ -115,8 +115,8 @@ var c_DEFAULT_SHADER_PARAMS = new Map([
 			new MaterialParameter("u_frensel_border", 1.0),
 			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
 			new MaterialParameter("u_show_grid", 0.0),
-			new MaterialParameter("u_displacement_amplitude", 1.0),
-			new MaterialParameter("u_displacement_frequency", 1.0),
+			new MaterialParameter("u_displacement_amplitude", 0.0),
+			new MaterialParameter("u_displacement_frequency", 0.0),
 		]
 	],
 	[
@@ -212,6 +212,20 @@ var c_MATERIALS = [
 		]
 	),
 	new MaterialDescriptor(
+		"black_hole_small",
+		"static/materials/phong",
+		[
+			new MaterialParameter("u_color", new Vector4([0.0, 0.0, 0.0, 1.0])),
+			new MaterialParameter("u_diffuse_influence", 0.0),
+			new MaterialParameter("u_specular_influence", 0.0),
+			new MaterialParameter("u_frensel_influence", 1.0),
+			new MaterialParameter("u_frensel_color", new Vector4([1.0, 0.0, 1.0, 1.0])),
+			new MaterialParameter("u_frensel_border", 1.5),
+			new MaterialParameter("u_displacement_amplitude", 0.2),
+			new MaterialParameter("u_displacement_frequency", 100.5),
+		]
+	),
+	new MaterialDescriptor(
 		"black_hole",
 		"static/materials/phong",
 		[
@@ -221,6 +235,22 @@ var c_MATERIALS = [
 			new MaterialParameter("u_frensel_influence", 1.0),
 			new MaterialParameter("u_frensel_color", new Vector4([1.0, 0.0, 1.0, 1.0])),
 			new MaterialParameter("u_frensel_border", 1.5),
+			new MaterialParameter("u_displacement_amplitude", 0.5),
+			new MaterialParameter("u_displacement_frequency", 10.5),
+		]
+	),
+	new MaterialDescriptor(
+		"black_hole_big",
+		"static/materials/phong",
+		[
+			new MaterialParameter("u_color", new Vector4([0.0, 0.0, 0.0, 1.0])),
+			new MaterialParameter("u_diffuse_influence", 0.0),
+			new MaterialParameter("u_specular_influence", 0.0),
+			new MaterialParameter("u_frensel_influence", 1.0),
+			new MaterialParameter("u_frensel_color", new Vector4([1.0, 0.0, 1.0, 1.0])),
+			new MaterialParameter("u_frensel_border", 1.5),
+			new MaterialParameter("u_displacement_amplitude", 1.5),
+			new MaterialParameter("u_displacement_frequency", 10.5),
 		]
 	),
 	new MaterialDescriptor(

@@ -285,7 +285,7 @@ function buildRobot() {
 		rotation = new Quaternion(),
 		scale = new Vector3([0.5, 0.5, 0.5]),
 		meshName = "low_poly_sphere",
-		materialName = "black_hole",
+		materialName = "black_hole_small",
 		components = [
 			new ShakerComponent(0.5),
 			new LightComponent(
