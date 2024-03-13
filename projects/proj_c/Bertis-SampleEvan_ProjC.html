@@ -69,7 +69,6 @@
                     <h3>Evan Bertis-Sample</h3>
                     <p>
                         The final iteration of our space-world, this time complete with additional lights!
-                        This version of the renderer supports up to 16 lights, and supports different lighting techniques.
                     </p>
 
                     <div class="vector-container-align-left vertical-padding-small">
@@ -87,7 +86,7 @@
 
                         <!-- Dropdown for choosing ATT type -->
                         <div>
-                            <label for="att-type">Attenuation Function</label>
+                            <label for="att-type">Attenuation</label>
                             <select id="att-type" onchange="changeATT()">
                                 <option value="2">Polynomial</option> <!-- Default because I think it looks nice -->
                                 <option value="0">Linear (1/dist)</option>
@@ -95,6 +94,11 @@
                                 <option value="3">None</option>
                             </select>
                         </div>
+
+                        <!-- Ability to turn off headlight -->
+                        <button id="headlight-button" onclick="toggleHeadlight()">
+                            Headlight Off
+                        </button>
                     </div>
 
                     <div class="vector-container-align-left vertical-padding-small">
@@ -354,6 +358,24 @@
             const set = (light) => light.attenuationFunction = value;
 
             g_lightRegistry.foreachLight(set);
+        }
+
+        function toggleHeadlight()
+        {
+            // fetch the light
+            let entity = g_ecs.getEntity("look_at_object");
+            let lightComponent = entity.getComponent(LightComponent);
+
+            let light = lightComponent.light;
+
+            if (light.active) {
+                light.active = false;
+                document.getElementById("headlight-button").innerHTML = "Headlight On";
+            }
+            else {
+                light.active = true;
+                document.getElementById("headlight-button").innerHTML = "Headlight Off";
+            }
         }
 
         function changeMaterialType(entityName, selectID)

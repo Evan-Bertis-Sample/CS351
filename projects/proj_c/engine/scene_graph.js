@@ -382,7 +382,7 @@ class Camera {
         let position = this.position;
         lookAt = lookAt.add(position);
 
-        lookAt.printMe();
+        // lookAt.printMe();
         return lookAt;
     }
 }
