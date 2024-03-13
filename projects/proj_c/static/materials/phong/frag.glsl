@@ -112,48 +112,36 @@ void main() {
         return;
     }
 
+    // Initial color setup
     vec4 color = u_color;
+    if(v_enable_lighting != 0.0) {
+        vec4 diffuseLight = vec4(0.0);
+        vec4 specularLight = vec4(0.0);
 
-    // calculate the diffuse light
-    vec4 diffuseLight = vec4(0.0, 0.0, 0.0, 1.0);
-    vec4 specularLight = vec4(0.0, 0.0, 0.0, 1.0);
-
-
-    for (int i = 0; i < 16; i++)
-    {
-        if (i >= u_lightBuffer.numLights)
-        {
-            break;
+        for(int i = 0; i < 16; i++) {
+            if(i >= u_lightBuffer.numLights) {
+                break;
+            }
+            Light light = u_lightBuffer.lights[i];
+            if(light.lightType == 0) { // Point light
+                diffuseLight += vec4(calculatePointLightDiffuse(light, v_position, normal), 1.0);
+                specularLight += vec4(calculatePointLightSpecular(light, v_position, normal), 1.0);
+            } else { // Directional light
+                diffuseLight += vec4(calculateDirectionalLightDiffuse(light, v_position, normal), 1.0);
+                specularLight += vec4(calculateDirectionalLightSpecular(light, v_position, normal), 1.0);
+            }
         }
 
-        Light light = u_lightBuffer.lights[i];
-        if (light.lightType == 0)
-        {
-            // point light
-            diffuseLight += vec4(calculatePointLightDiffuse(light, v_position, normal), 1.0);
-            specularLight += vec4(calculatePointLightSpecular(light, v_position, normal), 1.0);
-        }
-        else
-        {
-            diffuseLight += vec4(calculateDirectionalLightDiffuse(light, v_position, normal), 1.0);
-            specularLight += vec4(calculateDirectionalLightSpecular(light, v_position, normal), 1.0);
-        }
+        // Calculate the Fresnel effect
+        vec4 viewDirection = normalize(vec4(u_cameraPosition, 1.0) - v_position);
+        float frensel = 1.0 - dot(normal, viewDirection);
+        vec4 frenselColor = u_frensel_color * frensel;
+
+        color = u_color * vec4(u_lightBuffer.ambientLight * u_lightBuffer.ambientIntensity, 1.0);
+        color += (diffuseLight * u_diffuse_influence);
+        color += frenselColor * u_frensel_influence;
+        color += specularLight * u_specular_influence;
     }
-
-    // calculate the frensel effect
-    vec4 viewDirection = normalize(vec4(u_cameraPosition, 1.0) - v_position);
-    float frensel = 1.0 - dot(normal, viewDirection);
-    // make sure that the frensel effect is positive
-    // sqrt(pow)
-    frensel = sqrt(frensel * frensel);
-    frensel = pow(frensel, 1.0 / u_frensel_border);
-
-    vec4 frenselColor = u_frensel_color * frensel;
-
-    color = u_color * vec4(u_lightBuffer.ambientLight * u_lightBuffer.ambientIntensity, 1.0);
-    color += (diffuseLight * u_diffuse_influence);
-    color += frenselColor * u_frensel_influence;
-    color += specularLight * u_specular_influence;
 
     // this is for the grid on the platform
     // i didn't feel like texturing the model

@@ -10,8 +10,7 @@ struct Light {
     int attenuationFunction; // 0 for 1/dist, 1 for 1/dist^2, 2 for 1/(1+0.1*dist+0.01*dist^2), 3 for none
 };
 
-struct LightBuffer
-{
+struct LightBuffer {
     Light lights[16];
     int numLights;
     vec3 ambientLight;
@@ -45,26 +44,17 @@ varying vec2 v_uv;
 varying vec4 v_position;
 varying vec4 v_normal;
 
-
-float calculateAttenuation(Light light, float lightDistance)
-{
-    if (light.attenuationFunction == 0)
-    {
+float calculateAttenuation(Light light, float lightDistance) {
+    if(light.attenuationFunction == 0) {
         return 3.0 / lightDistance;
-    }
-    else if (light.attenuationFunction == 1)
-    {
+    } else if(light.attenuationFunction == 1) {
         return 3.0 / (lightDistance * lightDistance);
-    }
-    else if (light.attenuationFunction == 2)
-    {
+    } else if(light.attenuationFunction == 2) {
         return 1.0 / (1.0 + 0.1 * lightDistance + 0.01 * lightDistance * lightDistance);
-    }
-    else
-    {
+    } else {
         return 1.0;
     }
-}  
+}
 
 vec3 calculatePointLightDiffuse(Light light, vec4 position, vec4 normal) {
     vec3 lightDirection = normalize(light.position - position.xyz);
@@ -74,8 +64,7 @@ vec3 calculatePointLightDiffuse(Light light, vec4 position, vec4 normal) {
     return diffuse * attenuation * light.intensity * light.diffuseColor;
 }
 
-vec3 calculatePointLightSpecular(Light light, vec4 v_position, vec4 normal)
-{
+vec3 calculatePointLightSpecular(Light light, vec4 v_position, vec4 normal) {
     vec3 lightDirection = normalize(light.position - v_position.xyz);
     vec3 viewDirection = normalize(u_cameraPosition - v_position.xyz);
     vec3 reflectDirection = reflect(-lightDirection, normal.xyz);
@@ -85,16 +74,13 @@ vec3 calculatePointLightSpecular(Light light, vec4 v_position, vec4 normal)
     return specular * attenuation * light.intensity * light.specularColor;
 }
 
-vec3 calculateDirectionalLightDiffuse(Light light, vec4 position, vec4 normal)
-{
+vec3 calculateDirectionalLightDiffuse(Light light, vec4 position, vec4 normal) {
     vec3 lightDirection = normalize(-light.position);
     float diffuse = max(dot(normal.xyz, lightDirection), 0.0);
     return diffuse * light.intensity * light.diffuseColor;
 }
 
-
-vec3 calculateDirectionalLightSpecular(Light light, vec4 position, vec4 normal)
-{
+vec3 calculateDirectionalLightSpecular(Light light, vec4 position, vec4 normal) {
     vec3 lightDirection = normalize(-light.position);
     vec3 viewDirection = normalize(u_cameraPosition - position.xyz);
     vec3 reflectDirection = reflect(-lightDirection, normal.xyz);
@@ -115,25 +101,21 @@ void main() {
         pos = vec4(0.0, 0.0, 0.0, 0.0);
     }
 
-
     pos = pos / pos.w;
     gl_Position = pos;
 
-
     // Initial color setup
     vec4 color = u_color;
-
     if(u_enable_lighting != 0.0) {
-        vec4 ambientLight = vec4(u_lightBuffer.ambientLight, 1.0) * u_lightBuffer.ambientIntensity;
         vec4 diffuseLight = vec4(0.0);
         vec4 specularLight = vec4(0.0);
 
-        for (int i = 0; i < 16; i++) {
-            if (i >= u_lightBuffer.numLights) {
+        for(int i = 0; i < 16; i++) {
+            if(i >= u_lightBuffer.numLights) {
                 break;
             }
             Light light = u_lightBuffer.lights[i];
-            if (light.lightType == 0) { // Point light
+            if(light.lightType == 0) { // Point light
                 diffuseLight += vec4(calculatePointLightDiffuse(light, worldPosition, normal), 1.0);
                 specularLight += vec4(calculatePointLightSpecular(light, worldPosition, normal), 1.0);
             } else { // Directional light
@@ -143,11 +125,14 @@ void main() {
         }
 
         // Calculate the Fresnel effect
-        vec4 viewDirection = normalize(vec4(u_cameraPosition, 1.0) - worldPosition);
-        float frensel = pow(max(1.0 - dot(normal, viewDirection), 0.0), u_frensel_border);
+        vec4 viewDirection = normalize(vec4(u_cameraPosition, 1.0) - v_position);
+        float frensel = 1.0 - dot(normal, viewDirection);
         vec4 frenselColor = u_frensel_color * frensel;
 
-        color = color * (ambientLight + diffuseLight * u_diffuse_influence + specularLight * u_specular_influence) + frenselColor * u_frensel_influence;
+        color = u_color * vec4(u_lightBuffer.ambientLight * u_lightBuffer.ambientIntensity, 1.0);
+        color += (diffuseLight * u_diffuse_influence);
+        color += frenselColor * u_frensel_influence;
+        color += specularLight * u_specular_influence;
     }
 
     // Pass the computed color and texture coordinates to the fragment shader
