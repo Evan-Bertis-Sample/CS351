@@ -1,36 +1,43 @@
-## Cameras, Cameras, Cameras
+## A Space Disco
 ```
 Author    : Evan Bertis-Sample
 NetID     : eab0652
-Date      : 2-19-2024
+Date      : 3-13-2023
 Course    : CS 351 - Introduction to Computer Graphics
-Assignment: Project B - 3D Views
+Assignment: Project C - Berter Lighting and Materials
 ```
 
 ![Current Scene](./images/final.png)
 
-*A render of the final scene, featuring a cube robot with 8 legs on a platform that multiple dyson spheres orbit around.*
+*A render of the final scene, featuring a cube robot with 8 legs on a platform that multiple dyson spheres orbit around, and a nice metalic ball in the center*
 
 ### Goals and Ambitions
 
-Last project, I had already implemented a basic camera system, which made this project fairly trivial to implement. However, there were a few things that I wanted to do to improve upon my camera implementation:
+For the past few projects, I had very naively hard-programmed lighting information into my shaders, for this project, my biggest objective was to make the lighting system more dynamic and flexible. I wanted to be able to change the lighting information in the scene without having to recompile the shaders. I also wanted to make the scene more complex, and add more models to the scene. I also wanted to make the scene more visually appealing, and add more color to the scene's lighting.
 
-* Improve the camera system to be more flexible, and support multiple cameras
-* Make the camera operate independently of the scene graph
-* Add support for a variable amount of viewports
-
-In addition, I wanted to make a scene that was more complex than the last one, and that would be more interesting to look at. I've opted to continue with the space theme, but added a few more elements to the scene to make it more interesting. These elements include:
-
-* A robot with 8 legs
-* A platform that the robot stands on
-* Multiple dyson spheres that orbit around the platform
-* Crystals that are scattered around the scene (NEW)
-* Planets that orbit around the dyson spheres (NEW)
-* A head for the robot (NEW)
-* A grid texture for the platform (NEW)
+On top of that, I really wanted to include more rendering options. Previously, I only had a toggle that would switch between the Phong shading system and the debug mode, which showed the normals of the models. I wanted to add more options, such as options for the lighting models and the materials of the models. Luckily, both of these were a requirement for the project, so I was able to kill two birds with one stone.
 
 
-### Assemblies
+### Scene Graph and Assemblies
+
+![Scene Graph](./images/scene_graph.jpg)
+
+*Pardon the poor quality of the picture.*
+
+The scene graph had to be slightly simplified for drawing purposes. In essence, there are 9 main children of the parent node:
+
+* The Star Parent (invisible)
+* The Robot (player)
+* Physical Camera Object (allows the camera to have a transform)
+* The Platform
+* The Planet Parent (invisible)
+* The Ball at the Orign
+* The Crystal Parent (invisible)
+* The Point Light Object controlled by the user
+* The Dyson Sphere Parent (invisible)
+
+There are a few jointed assmblies in the scene, which are as follows:
+
 
 ![Robot](./images/robot.png) 
 
@@ -38,24 +45,21 @@ In addition, I wanted to make a scene that was more complex than the last one, a
 
 ![Dyson Sphere](./images/dyson_sphere.png)
 
-2. The dyson spheres, which are made up of a black hole and a ring. These are joined together such that black hole is the parent of the ring.
+2. The dyson spheres, which are made up of a black hole and a ring. These are joined together such that black hole is the parent of the ring. All dyson spheres are parented to an invisible object at the center of the scene, that constantly rotates.
 
-![Platform](./images/platform.png)
-
-3. The platform, which is made of 3 segments, the actual platform that the robot stands on, the ring around the platform, and the crystal beneath the platform.
 
 ![Crystal](./images/crystal.png)
 
-4. Each crystal is comprised of 4 segments. The base, and the 3 surrounding crystals that orbit around the base. The base is the parent of the 3 surrounding crystals.
+1. Each crystal is comprised of 4 segments. The base, and the 3 surrounding crystals that orbit around the base. The base is the parent of the 3 surrounding crystals. All crystals are parented to an invisible object at the center of the scene, that constantly rotates.
 
 ![Planet](./images/planets.png)
 
-5. The planet is combrised of 3 segments. The planet, it's moon, and the moon's moon. The planet is the parent of the moon, and the moon is the parent of the moon's moon.
+5. The planet is combrised of 3 segments. The planet, it's moon, and the moon's moon. The planet is the parent of the moon, and the moon is the parent of the moon's moon. The planet is parented to an invisible object at the center of the scene, that constantly rotates.
 
 
 ### Help Guide
 
-Running the project is simple. Just double click on the `Bertis-SampleEvan_ProjB.html` file, and it should open in your default web browser. The controls are as follows:
+Running the project is simple. Just double click on the `Bertis-SampleEvan_ProjC.html` file, and it should open in your default web browser. The controls are as follows:
 
 
 ![Controls](./images/control_modal.png)
@@ -63,13 +67,25 @@ Running the project is simple. Just double click on the `Bertis-SampleEvan_ProjB
 * **WASD** - Move to move the player character
 * **Space** - Switch the camera mode for the left viewport
     * For the Follow mode, the camera will follow the robot
-    * For the Free mode, the camera will be free to move around the scene, and can be controlled using the mouse and WASD
-* **Mouse Drag (left viewport)** - Rotate the crystals around the platform
-* **Mouse Drag (right viewport)** - Rotate the orthographic camera around the scene
+    * For the Free mode, the camera will be free to move around the scene, and can be controlled using the mouse and WASD. You can rotate the camera with Mouse Drag. You can also raise and lower the camera with Q and E.
 
 All controls can be viewed by clicking the `Controls` button in the bottom left of the screen.
 
 Additionally, there is a button in the bottom left of the screen (`Toggle Lighting`) that will toggle between the Phong shading system and the debug mode, which shows the normals of the models. This is useful for debugging the scene, and seeing how the lighting system works.
+
+New to this project is a bunch of lighting controls, seperated into two sections.
+
+![Left Controls](./images/controls_left.png)
+
+Using these controls, you are able to modify some global lighting settings, particularly the lighting model used, and the attenuation function used. 
+
+You can also choose to turn on/off the headlight, which is located at the camera's look at position.
+
+In addition to this, you can change the materials of two objects in the scene: the sphere in the center of the scene, and the black whole inside of the player's head. I advise you try out the black hole material on the center sphere! You can see some cool vertex distortions.
+
+![Right Controls](./images/controls_right.png)
+
+Using these controls, you are able to modify the position and colors of the point light in the scene. You can also change the color of the ambient light in the scene.
 
 ### Results
 
@@ -82,3 +98,14 @@ Here are some screenshots of the scene from different angles:
 ![Dyson Sphere](./images/dyson_sphere.png)
 ![Crystals](./images/crystal.png)
 ![Planets](./images/planets.png)
+
+
+## Lighting Model Comparisions
+![Phong](./images/phong.png)
+![Blinn-Phong](./images/blinn_phong.png)
+![Gouraud](./images/gouraud.png)
+![Blinn-Gouraud](./images/blinn_gouraud.png)
+![Stylized](./images/stylized.png)
+
+
+I am very happy with the results of this project. I was able to accomplish all of my goals, and I think the scene looks great. I was able to add a lot of color to the scene, and I was able to make the lighting system much more dynamic and flexible. I was also able to add more models to the scene, and make the scene more complex. I was also able to add more rendering options, and I think the scene looks great. I am very happy with the results of this project, and I think it is a great way to end the semester.

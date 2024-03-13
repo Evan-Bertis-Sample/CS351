@@ -7,9 +7,10 @@
 
 # CONFIG
 STATIC_DIR = '././static'
+PATH_PREFIX = './static'
 OUTPUT = 'engine/static.js'
 DICT_NAME = 'g_static'
-ALLOWED_FILE_TYPES = ['.css', '.glsl', '.obj']
+ALLOWED_FILE_TYPES = ['.glsl', '.obj']
 
 # Go through the static directory and load all files into a dictionary
 # Such that the file name is the key and the file contents is the value
@@ -36,7 +37,7 @@ def load_static():
                 # get the entire file path relative to the static directory
                 # this is used as the key in the dictionary
                 dir_path = os.path.dirname(path)
-                rel_path = STATIC_DIR + "/" + os.path.relpath(dir_path, STATIC_DIR)
+                rel_path = PATH_PREFIX + "/" + os.path.relpath(dir_path, STATIC_DIR)
                 key = os.path.join(rel_path, file)
                 # replace backslashes with forward slashes
                 key = key.replace('\\', '/')

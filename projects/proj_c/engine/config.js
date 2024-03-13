@@ -34,7 +34,7 @@ var c_CAMERAS = new Map([
 ]);
 
 // Debugging
-var g_USE_FETCH = true; // Used to grab files via the fetch method, not usable using the file:// protocol
+var g_USE_FETCH = false; // Used to grab files via the fetch method, not usable using the file:// protocol
 
 var c_LIGHTS = [
 	new Light(

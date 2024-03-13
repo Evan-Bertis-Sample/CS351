@@ -10,24 +10,7 @@ function buildScene() {
 	buildEnviornment();
 	buildRobot();
 	buildCrystals();
-
 	buildPlanet();
-
-	// build an arrow set for the orthographic camera
-	let arrowParent = g_ecs.createEntity(
-		entityName = "ortho_arrow_parent",
-		parent = null,
-		position = new Vector3([-120, -40, 90]),
-		rotation = new Quaternion(),
-		scale = new Vector3([20, 20, 20]),
-		meshName = "",
-		materialName = "",
-		components = []
-	);
-
-	buildArrows(arrowParent);
-
-
 	console.log("Scene built");
 }
 
@@ -255,20 +238,6 @@ function buildRobot() {
 			),
 		]
 	);
-
-	// add an arrow ontop of the robot
-	let arrowParent = g_ecs.createEntity(
-		entityName = "arrow_parent",
-		parent = robotBaseEntity,
-		position = new Vector3([0, 4, 0]),
-		rotation = new Quaternion(),
-		scale = new Vector3([1, 1, 1]),
-		meshName = "",
-		materialName = "",
-		components = []
-	);
-
-	// buildArrows(arrowParent);
 
 	// add the head
 	let robotHeadEntity = g_ecs.createEntity(
