@@ -43,6 +43,7 @@ varying vec4 v_color;
 varying vec2 v_uv;
 varying vec4 v_position;
 varying vec4 v_normal;
+varying float v_enable_lighting;
 
 // sin based displacement variables
 // sin based displacement variables
@@ -149,10 +150,15 @@ void main() {
         color += frenselColor * u_frensel_influence;
         color += specularLight * u_specular_influence;
     }
+    else
+    {
+        color = vec4(a_normal.x, a_normal.y, a_normal.z, 1.0) * 0.5 + 0.5;
+    }
 
     // Pass the computed color and texture coordinates to the fragment shader
     v_color = color;
     v_uv = a_uv;
     v_normal = normal;
     v_position = worldPos;
+    v_enable_lighting = u_enable_lighting;
 }

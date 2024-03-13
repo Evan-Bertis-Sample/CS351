@@ -5,6 +5,7 @@ varying vec4 v_color;
 varying vec4 v_position;
 varying vec2 v_uv;
 varying vec4 v_normal;
+varying float v_enable_lighting;
 
 uniform float u_show_grid;
 
@@ -28,7 +29,7 @@ void main() {
     vec4 color = v_color;
 
     // multiply it by the dot product of the v_normal and the up vector
-    if(u_show_grid > 0.0) {
+    if(u_show_grid > 0.0 && v_enable_lighting != 0.0) {
         grid *= max(dot(v_normal, vec4(0, 1, 0, 0)), 0.0);
 
         // multiply the grid by the distance from the origin
