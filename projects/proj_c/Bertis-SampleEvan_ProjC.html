@@ -144,6 +144,11 @@
                                 <option value="platform"> Platform </option>
                             </select>
                         </div>
+
+                        <button id="invert-button" onclick="invertLightingSetting()">
+                            See Normals
+                        </button>
+            
                     </div>
 
                 </div>
@@ -262,6 +267,15 @@
             }
 
             g_materialRegistry.setGlobalParam("u_enable_lighting", c_ENABLE_LIGHTING);
+
+            // set the button text
+            let button = document.getElementById("invert-button");
+            if (c_ENABLE_LIGHTING == 1.0) {
+                button.innerHTML = "See Normals";
+            }
+            else {
+                button.innerHTML = "See Lighting";
+            }
         }
 
         function showModal() {
