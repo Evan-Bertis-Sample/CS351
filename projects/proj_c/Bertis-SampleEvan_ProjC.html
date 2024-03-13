@@ -303,20 +303,6 @@
 
             light.position = position;
         }
-        {
-            document.getElementById("light-position-x").value = 0;
-            document.getElementById("light-position-y").value = 0;
-            document.getElementById("light-position-z").value = 0;
-
-            document.getElementById("light-position-x-number").value = 0;
-            document.getElementById("light-position-y-number").value = 0;
-            document.getElementById("light-position-z-number").value = 0;
-
-            let position = new Vector3([0, 0, 0]);
-            let light = g_lightRegistry.getLight(0)
-
-            light.position = position;
-        }
 
         function changeLightIntensity()
         {

@@ -7,8 +7,6 @@ function buildScene() {
 	g_sceneGraph = new SceneGraph();
 	g_ecs = new ECS(g_sceneGraph);
 
-	// build the camera
-	// buildCamera();
 	buildEnviornment();
 	buildRobot();
 	buildCrystals();
@@ -55,6 +53,18 @@ function buildCamera() {
 			),
 		]
 	);
+
+	let lookAtObject = g_ecs.createEntity(
+		entityName = "look_at_object",
+		parent = cameraEntity,
+		position = new Vector3([0, 0, -1]),
+		rotation = new Quaternion(),
+		scale = new Vector3([10, 10, 10]),
+		meshName = "low_poly_sphere",
+		materialName = "red",
+		components = [
+		]
+	)
 
 }
 

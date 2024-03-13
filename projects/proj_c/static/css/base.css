@@ -16,20 +16,25 @@ body {
     background-color: var(--light-primary);
     margin: 0;
     padding: 0;
+
+    overflow: hidden;
 }
 
 .body-container {
     box-sizing: border-box;
     width: 100%;
     height: auto;
+    max-height: 35vh;
     margin: 0;
     padding: 0.25rem 10rem;
     display: flex; 
     flex-direction: row;
     gap: 0.5rem;
-    overflow-x: hidden;
-    overflow-y: hidden;
     justify-content: center;
+    /* shrink items to fit vertically */
+    align-items: flex-start;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 .body-container > *

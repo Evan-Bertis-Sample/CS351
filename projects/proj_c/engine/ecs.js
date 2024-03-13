@@ -867,6 +867,7 @@ class CameraControllerComponent extends Component {
 
         // set the posiition of this object to the camera
         this.transform.position = this.camera.getPosition();
+        // this.transform.rotation = this.camera.getRotation();
     }
 
     handleFollowMode(deltaTime) {
