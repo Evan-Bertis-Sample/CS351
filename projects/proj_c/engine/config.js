@@ -250,7 +250,7 @@ var c_MATERIALS = [
 			new MaterialParameter("u_frensel_color", new Vector4([1.0, 0.0, 1.0, 1.0])),
 			new MaterialParameter("u_frensel_border", 1.5),
 			new MaterialParameter("u_displacement_amplitude", 1.5),
-			new MaterialParameter("u_displacement_frequency", 10.5),
+			new MaterialParameter("u_displacement_frequency", 100.5),
 		]
 	),
 	new MaterialDescriptor(
