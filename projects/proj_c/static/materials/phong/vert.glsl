@@ -18,11 +18,20 @@ varying vec4 v_normal;
 varying float v_enable_lighting;
 varying vec2 v_uv;
 
+// sin based displacement variables
+uniform float u_time;
+const float PI = 3.14159265359;
+const float frequency = 1.0;
+const float amplitude = 3.1;
+
 // main
 void main() {
     // Transform the vertex position into screen space
     mat4 mvp = u_projectionMatrix * u_viewMatrix * u_modelMatrix;
     vec4 pos = mvp * a_position;
+
+    // displacement
+    pos.y += sin(u_time * frequency + pos.x * frequency) * amplitude;
 
     // check that the vertex is in front of the camera
     if(pos.z < 0.0) {

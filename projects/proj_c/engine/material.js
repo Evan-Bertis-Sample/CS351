@@ -182,7 +182,7 @@ class ShaderSet {
             
             let location = this.uLoc_params.get(gl.program).get(param.name);
             if (location == null || location < 0) {
-                console.log('Failed to get the storage location of ' + param.name);
+                // console.log('Failed to get the storage location of ' + param.name);
                 continue;
             }
             param.loadParameter(gl, location);
@@ -372,8 +372,12 @@ class MaterialRegistry {
             for (let i = 0; i < material.params.length; i++) {
                 if (material.params[i].name == name) {
                     material.params[i].value = value;
+                    break;
                 }
             }
+
+            // didn't find the param, add a new one
+            material.params.push(new MaterialParameter(name, value));
         }
     }
 

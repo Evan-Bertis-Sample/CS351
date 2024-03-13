@@ -28,6 +28,7 @@ var g_vertexBufferID; // The vertex buffer for the application
 var g_normalBuffer; // The normal buffer for the application
 
 // update loop
+var g_timeTracker = 0;
 var g_timeElapsed = 0;
 var g_deltaTime = 0;
 
@@ -89,22 +90,27 @@ async function main() {
 	buildCamera()
 
 	// update loop
+	g_timeTracker = Date.now();
 	g_timeElapsed = 0;
 	g_ecs.start();
 
 	let fpsCounter = document.getElementById("fps");
 	let fps = 0;
 
+	g_materialRegistry.setGlobalParam("u_time", 0)
+
 	var tick = function () {
 		let newTime = Date.now();
-		g_deltaTime = (newTime - g_timeElapsed) / 1000;
-		g_timeElapsed = newTime;
+		g_deltaTime = (newTime - g_timeTracker) / 1000;
+		g_timeTracker = newTime;
 		g_ecs.update(g_deltaTime);
 		g_inputManager.update();
+		g_timeElapsed += g_deltaTime;
 		for (let [key, value] of g_elementToCanvas) {
 			drawAll(value);
 		}
 		g_lightRegistry.updateLights();
+		g_materialRegistry.setGlobalParam("u_time", g_timeElapsed);
 		
 		fps = 1 / g_deltaTime;
 		fpsCounter.innerHTML = "FPS: " + fps.toFixed(0);
