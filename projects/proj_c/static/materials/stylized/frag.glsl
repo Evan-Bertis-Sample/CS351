@@ -27,6 +27,7 @@ uniform float u_shininess;
 const float cellShadingWeight = 0.4;
 const float diffuseSteps = 4.0;
 const float specularSteps = 3.0;
+const float frenselSteps = 16.0;
 
 const float gridSize = 0.5;
 const vec4 gridColor = vec4(0.6, 0.52, 0.85, 1.0);
@@ -159,6 +160,10 @@ void main() {
         vec4 viewDirection = normalize(vec4(u_cameraPosition, 1.0) - v_position);
         float frensel = 1.0 - dot(normal, viewDirection);
         frensel = pow(frensel, 1.0 / u_frensel_border);
+
+        // nstep the fresnel value
+        frensel = nStep(frensel, frenselSteps) * cellShadingWeight + frensel * (1.0 - cellShadingWeight);
+
         vec4 frenselColor = u_frensel_color * frensel;
 
         color = u_color * vec4(u_lightBuffer.ambientLight * u_lightBuffer.ambientIntensity, 1.0);
