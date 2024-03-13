@@ -67,6 +67,8 @@ var c_DEFAULT_SHADER_PARAMS = new Map([
 			new MaterialParameter("u_frensel_border", 1.0),
 			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
 			new MaterialParameter("u_show_grid", 0.0),
+			new MaterialParameter("u_displacement_amplitude", 1.0),
+			new MaterialParameter("u_displacement_frequency", 1.0),
 		]
 	],
 	[
@@ -81,6 +83,8 @@ var c_DEFAULT_SHADER_PARAMS = new Map([
 			new MaterialParameter("u_frensel_border", 1.0),
 			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
 			new MaterialParameter("u_show_grid", 0.0),
+			new MaterialParameter("u_displacement_amplitude", 1.0),
+			new MaterialParameter("u_displacement_frequency", 1.0),
 		]
 	],
 	[
@@ -95,6 +99,8 @@ var c_DEFAULT_SHADER_PARAMS = new Map([
 			new MaterialParameter("u_frensel_border", 1.0),
 			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
 			new MaterialParameter("u_show_grid", 0.0),
+			new MaterialParameter("u_displacement_amplitude", 1.0),
+			new MaterialParameter("u_displacement_frequency", 1.0),
 		]
 	],
 	[
@@ -109,6 +115,8 @@ var c_DEFAULT_SHADER_PARAMS = new Map([
 			new MaterialParameter("u_frensel_border", 1.0),
 			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
 			new MaterialParameter("u_show_grid", 0.0),
+			new MaterialParameter("u_displacement_amplitude", 1.0),
+			new MaterialParameter("u_displacement_frequency", 1.0),
 		]
 	],
 	[
@@ -123,6 +131,8 @@ var c_DEFAULT_SHADER_PARAMS = new Map([
 			new MaterialParameter("u_frensel_border", 1.0),
 			new MaterialParameter("u_enable_lighting", c_ENABLE_LIGHTING),
 			new MaterialParameter("u_show_grid", 0.0),
+			new MaterialParameter("u_displacement_amplitude", 0.0),
+			new MaterialParameter("u_displacement_frequency", 0.0),
 		]
 	],
 
